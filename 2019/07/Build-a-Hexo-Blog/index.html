@@ -1,0 +1,1011 @@
+<!DOCTYPE html>
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+<html class="theme-next pisces use-motion" lang="en">
+<head><meta name="generator" content="Hexo 3.9.0">
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css?v=4.7.0">
+
+<link rel="stylesheet" href="/css/main.css?v=7.2.0">
+
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/bug_32.png?v=7.2.0">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/bug_16.png?v=7.2.0">
+
+
+  <link rel="mask-icon" href="/images/bug_1154556.svg?v=7.2.0" color="#222">
+
+
+
+
+
+
+
+<script id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Pisces',
+    version: '7.2.0',
+    sidebar: {"position":"left","display":"post","offset":12,"onmobile":false},
+    back2top: true,
+    back2top_sidebar: false,
+    fancybox: false,
+    fastclick: false,
+    lazyload: false,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <meta name="description" content="记录一下慢慢接触Hexo中学习到的知识吧，做一个梳理。 准备工作Node.js使用的是Nodejs 10，从官网下载的时候发现Nodejs 10的支持时间还很长，所以就用的这个，第一个接触这个东西，不是很懂。 受制于用啥软件都要用最新版的强迫症思想，去查了查怎么升级Nodejs，然后node版本如何升级中提到了一句话：               爬坑后的结论：window系统升级node只能到n">
+<meta name="keywords" content="Hexo">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Build a Hexo Blog">
+<meta property="og:url" content="https://yichengsu.github.io/2019/07/Build-a-Hexo-Blog/index.html">
+<meta property="og:site_name" content="suyc&#39;s blog">
+<meta property="og:description" content="记录一下慢慢接触Hexo中学习到的知识吧，做一个梳理。 准备工作Node.js使用的是Nodejs 10，从官网下载的时候发现Nodejs 10的支持时间还很长，所以就用的这个，第一个接触这个东西，不是很懂。 受制于用啥软件都要用最新版的强迫症思想，去查了查怎么升级Nodejs，然后node版本如何升级中提到了一句话：               爬坑后的结论：window系统升级node只能到n">
+<meta property="og:locale" content="en">
+<meta property="og:image" content="https://yichengsu.github.io/images/linux.jpg">
+<meta property="og:image" content="https://yichengsu.github.io/images/linux.jpg">
+<meta property="og:updated_time" content="2019-07-13T06:47:17.170Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Build a Hexo Blog">
+<meta name="twitter:description" content="记录一下慢慢接触Hexo中学习到的知识吧，做一个梳理。 准备工作Node.js使用的是Nodejs 10，从官网下载的时候发现Nodejs 10的支持时间还很长，所以就用的这个，第一个接触这个东西，不是很懂。 受制于用啥软件都要用最新版的强迫症思想，去查了查怎么升级Nodejs，然后node版本如何升级中提到了一句话：               爬坑后的结论：window系统升级node只能到n">
+<meta name="twitter:image" content="https://yichengsu.github.io/images/linux.jpg">
+
+
+
+
+
+  
+  
+  <link rel="canonical" href="https://yichengsu.github.io/2019/07/Build-a-Hexo-Blog/">
+
+
+
+<script id="page.configurations">
+  CONFIG.page = {
+    sidebar: "",
+  };
+</script>
+
+  <title>Build a Hexo Blog | suyc's blog</title>
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .motion-element,
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-title { opacity: initial; }
+
+  .use-motion .logo,
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="en">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">suyc's blog</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+    
+      
+        <h1 class="site-subtitle" itemprop="description">哎，什么时候才能把英语学好啊🙇‍~</h1>
+      
+    
+    
+  </div>
+
+  <div class="site-nav-toggle">
+    <button aria-label="Toggle navigation bar">
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  
+    <ul id="menu" class="menu">
+      
+        
+        
+        
+          
+          <li class="menu-item menu-item-home">
+
+    
+    
+      
+    
+
+    
+
+    <a href="/" rel="section"><i class="menu-item-icon fa fa-fw fa-home"></i> <br>Home</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-about">
+
+    
+    
+      
+    
+
+    
+
+    <a href="/about/" rel="section"><i class="menu-item-icon fa fa-fw fa-user"></i> <br>About</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-tags">
+
+    
+    
+      
+    
+
+    
+
+    <a href="/tags/" rel="section"><i class="menu-item-icon fa fa-fw fa-tags"></i> <br>Tags</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-categories">
+
+    
+    
+      
+    
+
+    
+
+    <a href="/categories/" rel="section"><i class="menu-item-icon fa fa-fw fa-th"></i> <br>Categories</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-archives">
+
+    
+    
+      
+    
+
+    
+
+    <a href="/archives/" rel="section"><i class="menu-item-icon fa fa-fw fa-archive"></i> <br>Archives</a>
+
+  </li>
+
+      
+      
+    </ul>
+  
+
+  
+
+  
+</nav>
+
+
+
+</div>
+    </header>
+
+    
+  
+  
+
+  
+
+  <span class="exturl github-corner" data-url="aHR0cHM6Ly9naXRodWIuY29tL3lpY2hlbmdzdQ==" title="Follow me on GitHub" aria-label="Follow me on GitHub"><svg width="80" height="80" viewbox="0 0 250 250" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"/><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"/><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"/></svg></span>
+
+
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+            
+
+          
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="https://yichengsu.github.io/2019/07/Build-a-Hexo-Blog/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="suyc">
+      <meta itemprop="description" content="One meets its destiny on the road he takes to avoid it.">
+      <meta itemprop="image" content="/images/myavatar.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="suyc's blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h2 class="post-title" itemprop="name headline">Build a Hexo Blog
+
+              
+            
+          </h2>
+        
+
+        <div class="post-meta">
+
+          
+          
+          
+
+          
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Posted on</span>
+              
+
+              
+                
+              
+
+              <time title="Created: 2019-07-11 17:05:04" itemprop="dateCreated datePublished" datetime="2019-07-11T17:05:04+08:00">2019-07-11</time>
+            </span>
+          
+
+          
+            
+
+            
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">Edited on</span>
+                
+                <time title="Modified: 2019-07-13 14:47:17" itemprop="dateModified" datetime="2019-07-13T14:47:17+08:00">2019-07-13</time>
+              </span>
+            
+          
+
+          
+
+          
+            
+            
+          
+
+          
+          
+
+          
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+                 Views:  
+                <span class="busuanzi-value" id="busuanzi_value_page_pv"></span>
+              </span>
+            </span>
+          
+
+          
+
+          <br>
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>记录一下慢慢接触Hexo中学习到的知识吧，做一个梳理。</p>
+<h1 id="准备工作"><a href="#准备工作" class="headerlink" title="准备工作"></a>准备工作</h1><h2 id="Node-js"><a href="#Node-js" class="headerlink" title="Node.js"></a>Node.js</h2><p>使用的是Nodejs 10，从官网下载的时候发现Nodejs 10的支持时间还很长，所以就用的这个，第一个接触这个东西，不是很懂。</p>
+<p>受制于用啥软件都要用最新版的强迫症思想，去查了查怎么升级Nodejs，然后<span class="exturl" data-url="aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L2d1emhhbzU5My9hcnRpY2xlL2RldGFpbHMvODE3MTIwMTY=" title="https://blog.csdn.net/guzhao593/article/details/81712016">node版本如何升级<i class="fa fa-external-link"></i></span>中提到了一句话：</p>
+<!-- >爬坑后的结论：window系统升级node只能到node官网下载window安装包来覆盖之前的node。 -->
+<div class="note warning">
+            <p>爬坑后的结论：window系统升级node只能到node官网下载window安装包来覆盖之前的node。</p>
+          </div>
+
+<p>所以安安静静的用吧，先别想着升级了，<code>node -v</code>查看版本，我的版本是<em>v10.15.3</em>。</p>
+<h2 id="npm"><a href="#npm" class="headerlink" title="npm"></a>npm</h2><p>下载了nodejs之后就可以用npm管理包了，同样是第一次用。类似Python的pip，安装包的。但是和pip不太一样的是，可以选择把包装在项目文件里还是装在全局，所以在安装时就会有点迷糊。</p>
+<p><code>npm install xxx -g</code> 安装在全局，可能就安装到了node的安装目录，和pip一样，安装好的项目可以全局使用，比如直接在命令行里用。如果不加<code>-g</code>参数就是安装到了当前项目，即在当前项目下新建一个<code>node_modules</code>文件夹，然后把包装进去，可以在项目代码里引入。所以安装的时候一定要注意安装位置。还可以指定<code>-save</code>，意思是将模块安装到项目目录下，并在package文件的dependencies节点写入依赖。关于他们的具体区别可以看这篇<span class="exturl" data-url="aHR0cHM6Ly93d3cubGltaXRjb2RlLmNvbS9kZXRhaWwvNTlhMTViMWE2OWU5NTcwMmUwNzgwMjQ5Lmh0bWw=" title="https://www.limitcode.com/detail/59a15b1a69e95702e0780249.html">文章<i class="fa fa-external-link"></i></span>，就不多说了。<br>有了这些知识，去看Hexo的官网的相关信息就不会迷糊了。</p>
+<p>使用<code>npm install npm -g</code>命令可以方便的升级npm，<em>这样我心里舒服多了</em>。<br><code>npm list -g --depth 0</code>查看全局安装包，<code>npm outdated -g --depth=0</code>查看全局能升级的。同理，不加<code>-g</code>就是看当前项目的咯。<code>npm list xxx</code>查看某个包。</p>
+<p>其他的用法还有uninstall/ls/update/search，详见<span class="exturl" data-url="aHR0cHM6Ly93d3cucnVub29iLmNvbS9ub2RlanMvbm9kZWpzLW5wbS5odG1s" title="https://www.runoob.com/nodejs/nodejs-npm.html">runoob<i class="fa fa-external-link"></i></span></p>
+<h1 id="Hexo"><a href="#Hexo" class="headerlink" title="Hexo"></a>Hexo</h1><p>安装过程详见官网，有了上边的准备知识就不难了。<br>安装完成后有如下几个部分：</p>
+<ul>
+<li><strong>_config.yml</strong> 网站配置信息，这里边可以设置的不多，theme的设置项非常多</li>
+<li><strong>package.json</strong> 包信息，使用的包用了<code>-save</code>在这里都会有记载，所以安装包的时候只需要把使用<code>-save</code>，那么把当前项目<span class="label info">写作分支</span>同步到git后，更换设备直接安装这里边的项目即可</li>
+<li><strong>scaffolds</strong> 模板文件，其实就是md文件头模板吧~</li>
+<li><strong>source</strong> 新建的文章都在这里，还有其他资源，比如images</li>
+<li><strong>themes</strong> 下载的主题</li>
+<li><strong>node_modules</strong> 安装在当前项目的包都在这里，这个在gitignore里不会同步这个文件，因为换了设备的时候使用npm重新安装即可</li>
+<li><strong>.gitignore</strong> 这个应该是下载hexo的时候hexo的git信息，<em>有个问题是怎么利用这个给项目备份，换电脑了还能把这些文件恢复回来，是个问题，还在研究</em></li>
+</ul>
+<p>从官网的配置页面很容易就能修改_config.yml文件。</p>
+<h2 id="命令"><a href="#命令" class="headerlink" title="命令"></a>命令</h2><p><code>hexo new [layout] &lt;title&gt;</code> 新建一个文章~标题文章过长记得加引号，支持中文。</p>
+<p><code>hexo generate/g</code> 生成静态文件，可以直接部署<code>-d/--deploy</code>或者监视<code>-w/--watch</code>，监视的意思就是边改边生成静态文件~<br>也可以用<code>hexo server/s</code>的形式，边改边看。</p>
+<p><code>hexo deploy/d</code> 部署，<code>-g/--generate</code>同时生成静态文件。<br><strong><code>g -d</code>和<code>d -g</code>是一样的</strong></p>
+<p><code>hexo clean</code> 清除缓存，清除缓存文件<code>db.json</code>和已生成的静态文件<code>public</code></p>
+<p><code>hexo list &lt;type&gt;</code> 可以查看网站的各种信息，可用的参数有<code>page, post, route, tag, category</code>，很好~</p>
+<h2 id="写作"><a href="#写作" class="headerlink" title="写作"></a>写作</h2><h3 id="布局"><a href="#布局" class="headerlink" title="布局"></a>布局</h3><p>有三种默认布局，post会发一个文章到博客的Archives类别里；page会新建一个标签页，和Archives是一个级别的，<em>需要去主题页面加入生成的页面，才能正常解析</em>，例如可以添加About me页面；draft是草稿。<br>可以定义很多布局，比如一个categories就有一个布局，这样每次新写文章的时候直接new对应的布局就行了。据我尝试，新建的布局都会被放到<code>_post</code>目录下当作文章看待。</p>
+<p>布局中的title对应着正文中文章名称，而md文件的名称则对应着url解析时对应的文章名称</p>
+<h3 id="草稿"><a href="#草稿" class="headerlink" title="草稿"></a>草稿</h3><p>这个模式应该还挺有用的，<code>hexo publish [layout] &lt;title&gt;</code>可以发布写好的草稿<br><code>--draft</code>可以预览草稿</p>
+<h3 id="分类"><a href="#分类" class="headerlink" title="分类"></a>分类</h3><p>可以使用两种分类方式，一个是<code>categories</code>，另外一个是<code>tags</code>，使用方式是有两种：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">tags/categories:</span><br><span class="line">- t1</span><br><span class="line">- t2</span><br><span class="line"></span><br><span class="line">tags/categories: [t1, t2]</span><br></pre></td></tr></table></figure>
+
+<p>区别是categories包含层级关系，tags则全是并列关系~</p>
+<h3 id="正文中的标签插件"><a href="#正文中的标签插件" class="headerlink" title="正文中的标签插件"></a>正文中的标签插件</h3><p>这一类是hexo解析的特殊格式，可以快速在正文中插入所需的东西。算是给markdown做了个扩展吧，感觉这部分比较好。<br><strong>问题是很多编辑器没有办法预览这个部分</strong>，所以最好以server的形式看，也可以修改vscode中的配置信息使其兼容图片的预览。所以我更喜欢用原生markdown，除了图片可以用这个外，因为可以直接用插件预览。</p>
+<h4 id="引用块"><a href="#引用块" class="headerlink" title="引用块"></a>引用块</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">&#123;% blockquote [author[, source]] [link] [source_link_title] %&#125;</span><br><span class="line">content</span><br><span class="line">&#123;% endblockquote %&#125;</span><br></pre></td></tr></table></figure>
+
+<p><em>别名quote</em>，代替了<code>&gt;</code>的引用形式，增加了一些解释字段，内容更加丰富。</p>
+<blockquote><p>One meets its destiny on the road he takes to avoid it.</p>
+<footer><strong>Kung Fu Panda</strong><cite><span class="exturl" data-url="aHR0cHM6Ly9tb3ZpZS5kb3ViYW4uY29tL3N1YmplY3QvMTc4MzQ1Ny8=" title="https://movie.douban.com/subject/1783457/">douban<i class="fa fa-external-link"></i></span></cite></footer></blockquote>
+
+
+<h4 id="代码块"><a href="#代码块" class="headerlink" title="代码块"></a>代码块</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">&#123;% codeblock [title] [lang:language] [url] [link text] %&#125;</span><br><span class="line">code snippet</span><br><span class="line">&#123;% endcodeblock %&#125;</span><br></pre></td></tr></table></figure>
+
+<p><em>别名code</em>，相比原生代码块，增加了对引用网址等信息的解析</p>
+<h4 id="图片"><a href="#图片" class="headerlink" title="图片"></a>图片</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&#123;% img [class names] /path/to/image [width] [height] [title text [alt text]] %&#125;</span><br></pre></td></tr></table></figure>
+
+<p>这个class names还是没搞懂啊，应该是对应的css文件，直接修改图片属性。<em>路径是source目录下的图片。</em><br>其实我还是更喜欢使用<code>source/images</code>的形式传入图片，然后<code>![](/images/image.jpg)</code>引入图片，问题是预览的时候根路径是当前路径，难以预览。</p>
+<p>可以使用<code>post_asset_folder: true</code>设置为一个文章对应一个文件夹，这样会导致文件夹太多了，作为一个强迫症看着心里难受，还是扔一个文件夹好。在这个模式下，官方推荐使用{<code>% asset_img name image %</code>}方式引入图片，不会在预览的时候消失。这个命令会自动在同名文件夹下读取这个文件夹的资源了。我没这么做哦。</p>
+<img src="/images/linux.jpg" width="200" height="200" title="Linux">
+
+<h4 id="Link"><a href="#Link" class="headerlink" title="Link"></a>Link</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&#123;% link text url [external] [title] %&#125;</span><br></pre></td></tr></table></figure>
+
+<p>它和默认的Link相比就是链接text之间允许空格</p>
+<p>除了上述命令外，还有：加入一个iframe，就是嵌入一个子网页；source中的代码文件；Youtube视频；引用文章或文章中的资源等。</p>
+<h2 id="推送到Github"><a href="#推送到Github" class="headerlink" title="推送到Github"></a>推送到Github</h2><p><code>hexo clean &amp;&amp; hexo deploy</code>，这个好像不用<code>-g</code>参数也会重新生成。<br><em>记得推送到master分支啊，尝试推送到别的分支github.io并不会更新</em>，这个推送了<span class="label info">部署分支</span></p>
+<div class="note info">
+            <h3 id="Tip"><a href="#Tip" class="headerlink" title="Tip"></a>Tip</h3><p>个人感觉可以直接使用下载时的gitignore，然后把项目推送到写作分支，然后再重新部署的只需要<code>git clone</code>下来项目文件，然后用<code>npm install</code>即可，因为在使用hexo建站的时候就是类似的流程，而所需的model在安装时都被记录下来了，待尝试</p>
+          </div>
+
+<h1 id="NexT"><a href="#NexT" class="headerlink" title="NexT"></a>NexT</h1><p><strong>使用了NexT后，会重新解析所有布局，包括图片和<code>quote</code>。</strong></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git clone https://github.com/theme-next/hexo-theme-next themes/next</span><br></pre></td></tr></table></figure>
+
+<p>目录下直接执行这个下载最新的，好处是以后可以直接用git更新~ <code>git pull</code>就可以更新这个主题，但是可能会遇到冲突，需要懂一点git知识，才能合并。</p>
+<h2 id="Theme-Setting"><a href="#Theme-Setting" class="headerlink" title="Theme Setting"></a>Theme Setting</h2><p>NexT的官网的Theme setting页面做得很好，跟配置页面几乎同步在介绍各种设置的作用。</p>
+<ul>
+<li>修改<code>favicon</code>可以修改浏览器标题前的那个小图标~</li>
+<li>修改<code>avatar</code>可以放上个人的照片，等回头我拍个好的照片就放上去。</li>
+<li><span class="exturl" data-url="aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L2ppYW5neXUxMDEzL2FydGljbGUvZGV0YWlscy84MDY0OTc3NA==" title="https://blog.csdn.net/jiangyu1013/article/details/80649774">关于许可协议的介绍<i class="fa fa-external-link"></i></span>可以看看这个，添加许可协议</li>
+<li><code>mobile_layout_economy: true</code> 可以设置自适应窄屏</li>
+<li>logo就是在上边添加一个logo，不能修改其他的，可能没什么用。</li>
+<li>各种小图标来自<span class="exturl" data-url="aHR0cHM6Ly9mb250YXdlc29tZS5jb20vdjQuNy4wL2ljb25zLw==" title="https://fontawesome.com/v4.7.0/icons/">Font Awesom v4.7<i class="fa fa-external-link"></i></span>，可以去这里看，然后把icon的名字记下来就行了，比如修改footer图标，我用的这个是bug。</li>
+<li>有三种方式控制首页文章的长度，可以混合用，效果更好哦<ul>
+<li>第一种是可以设置description字段在每篇文章的开头</li>
+<li>第二种是在文章任意部分添加<code>&lt;!-- more --&gt;</code>，就会从这里截断，这是Hexo推荐的，比如有些博主喜欢每个文章的预览都是一个图片，就可以用这个，开头放上图片，然后截断</li>
+<li>第三种是在设置里设置<code>auto_excerpt</code>，控制字数进行截断，我主要使用的是这个</li>
+</ul>
+</li>
+<li>代码风格改成了night，觉得这个比较好看，其他的没有改，别的还是默认好看</li>
+<li><code>busuanzi_count.enable</code>显示访客量，这是框架自带的，应该不用接入什么api，尝试中…</li>
+<li>搜索功能/CND加速背景待尝试</li>
+<li>数学公式巨官网介绍只需设置math.enable=true就行，尝试中</li>
+</ul>
+<p>$$<br>a &amp;= b + c \<br>  &amp;= d + e + f + g \<br>  &amp;= h + i<br>$$</p>
+<h2 id="标签插件"><a href="#标签插件" class="headerlink" title="标签插件"></a>标签插件</h2><p>NexT也提供了一套标签插件，可以看看和Hexo的哪个好用啊~</p>
+<span itemprop="image" itemscope itemtype="http://schema.org/ImageObject"><img itemprop="url image" src="/images/linux.jpg" class="full-image" alt="alt about img" title="title" style="max-width: none; width: 200px;"><meta itemprop="width" content="auto"><meta itemprop="height" content="auto"></span>
+<p>图片的表达好像差不多，就是这个标签不带边框。<br>note的表达更加多样性，还可以在note中使用<code>###</code>写入标题，<em>最多支持三级标题，使用四级标题的时候TOC解析会出问题</em>。<br>label就是给这段文字加个<span class="label success">颜色</span>。class很通用，都是这几个类别。<br>使用了NexT后，无论哪种形式的Link都会在后边加一个小图标，很nice。<br>Tab和Button和PDF等不常用，没写~</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">&#123;% fi /url, [alt], [title], [size] %&#125;</span><br><span class="line"></span><br><span class="line">&#123;% note [class] [no-icon] %&#125;</span><br><span class="line">Any content (support inline tags too.io).</span><br><span class="line">&#123;% endnote %&#125;</span><br><span class="line">[class]   : default | primary | success | info | warning | danger.</span><br><span class="line">[no-icon] : Disable icon in note.</span><br><span class="line"></span><br><span class="line">&#123;% label [class]@Text %&#125;</span><br><span class="line">[class] : default | primary | success | info | warning | danger.</span><br><span class="line"></span><br><span class="line">&#123;% video url %&#125;</span><br></pre></td></tr></table></figure>
+
+<h1 id="vscode"><a href="#vscode" class="headerlink" title="vscode"></a>vscode</h1>
+      
+    </div>
+
+    
+
+    
+      
+    
+
+    
+    
+    
+
+    
+
+    
+      
+    
+    
+
+    
+      <div>
+        
+
+
+
+
+  
+
+
+
+<ul class="post-copyright">
+  <li class="post-copyright-author">
+    <strong>Post author:  </strong>suyc</li>
+  <li class="post-copyright-link">
+    <strong>Post link: </strong>
+    
+    <a href="https://yichengsu.github.io/2019/07/Build-a-Hexo-Blog/" title="Build a Hexo Blog">https://yichengsu.github.io/2019/07/Build-a-Hexo-Blog/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>Copyright Notice:  </strong>All articles in this blog are licensed under <span class="exturl" data-url="aHR0cHM6Ly9jcmVhdGl2ZWNvbW1vbnMub3JnL2xpY2Vuc2VzL2J5LW5jLXNhLzQuMC9lbg=="><i class="fa fa-fw fa-creative-commons"></i>BY-NC-SA</span> unless stating additionally.</li>
+</ul>
+
+      </div>
+    
+
+    <footer class="post-footer">
+      
+        
+          
+        
+        <div class="post-tags">
+          
+            <a href="/tags/Hexo/" rel="tag"># Hexo</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2019/07/test/" rel="prev" title="test">
+                test <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+  </div>
+
+
+          </div>
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            Table of Contents
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            Overview
+          </li>
+        </ul>
+      
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image" src="/images/myavatar.jpg" alt="suyc">
+            
+              <p class="site-author-name" itemprop="name">suyc</p>
+              <div class="site-description motion-element" itemprop="description">One meets its destiny on the road he takes to avoid it.</div>
+          </div>
+
+          
+            <nav class="site-state motion-element">
+              
+                <div class="site-state-item site-state-posts">
+                
+                  <a href="/archives/">
+                
+                    <span class="site-state-item-count">2</span>
+                    <span class="site-state-item-name">posts</span>
+                  </a>
+                </div>
+              
+
+              
+                
+                
+                <div class="site-state-item site-state-categories">
+                  
+                    
+                      <a href="/categories/">
+                    
+                  
+                    
+                    
+                      
+                    
+                      
+                    
+                    <span class="site-state-item-count">2</span>
+                    <span class="site-state-item-name">categories</span>
+                  </a>
+                </div>
+              
+
+              
+                
+                
+                <div class="site-state-item site-state-tags">
+                  
+                    
+                      <a href="/tags/">
+                    
+                  
+                    
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                    <span class="site-state-item-count">3</span>
+                    <span class="site-state-item-name">tags</span>
+                  </a>
+                </div>
+              
+            </nav>
+          
+
+          
+
+          
+
+          
+            <div class="links-of-author motion-element">
+              
+                <span class="links-of-author-item">
+                  
+                  
+                  
+                    
+                  
+                  <span class="exturl" data-url="bWFpbHRvOnN1eWljaGVuZzE5OTVAZ21haWwuY29t" title="E-Mail &rarr; mailto:suyicheng1995@gmail.com"><i class="fa fa-fw fa-envelope"></i></span>
+                </span>
+              
+            </div>
+          
+
+          
+             <div class="cc-license motion-element" itemprop="license">
+              
+              
+                
+              
+              
+              
+              <span class="exturl cc-opacity" data-url="aHR0cHM6Ly9jcmVhdGl2ZWNvbW1vbnMub3JnL2xpY2Vuc2VzL2J5LW5jLXNhLzQuMC9lbg=="><img src="/images/cc-by-nc-sa.svg" alt="Creative Commons"></span>
+             </div>
+          
+
+          
+          
+
+          
+        </div>
+      </div>
+
+      
+      <!--noindex-->
+        <div class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+            
+            
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#准备工作"><span class="nav-number">1.</span> <span class="nav-text">准备工作</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#Node-js"><span class="nav-number">1.1.</span> <span class="nav-text">Node.js</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#npm"><span class="nav-number">1.2.</span> <span class="nav-text">npm</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Hexo"><span class="nav-number">2.</span> <span class="nav-text">Hexo</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#命令"><span class="nav-number">2.1.</span> <span class="nav-text">命令</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#写作"><span class="nav-number">2.2.</span> <span class="nav-text">写作</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#布局"><span class="nav-number">2.2.1.</span> <span class="nav-text">布局</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#草稿"><span class="nav-number">2.2.2.</span> <span class="nav-text">草稿</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#分类"><span class="nav-number">2.2.3.</span> <span class="nav-text">分类</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#正文中的标签插件"><span class="nav-number">2.2.4.</span> <span class="nav-text">正文中的标签插件</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#引用块"><span class="nav-number">2.2.4.1.</span> <span class="nav-text">引用块</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#代码块"><span class="nav-number">2.2.4.2.</span> <span class="nav-text">代码块</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#图片"><span class="nav-number">2.2.4.3.</span> <span class="nav-text">图片</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Link"><span class="nav-number">2.2.4.4.</span> <span class="nav-text">Link</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#推送到Github"><span class="nav-number">2.3.</span> <span class="nav-text">推送到Github</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Tip"><span class="nav-number">2.3.1.</span> <span class="nav-text">Tip</span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#NexT"><span class="nav-number">3.</span> <span class="nav-text">NexT</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#Theme-Setting"><span class="nav-number">3.1.</span> <span class="nav-text">Theme Setting</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#标签插件"><span class="nav-number">3.2.</span> <span class="nav-text">标签插件</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#vscode"><span class="nav-number">4.</span> <span class="nav-text">vscode</span></a></li></ol></div>
+            
+
+          </div>
+        </div>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2019</span>
+  <span class="with-love" id="animate">
+    <i class="fa fa-bug"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">suyc</span>
+
+  
+
+  
+</div>
+
+
+  <div class="powered-by">Powered by <span class="exturl theme-link" data-url="aHR0cHM6Ly9oZXhvLmlv">Hexo</span> v3.9.0</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">Theme – <span class="exturl theme-link" data-url="aHR0cHM6Ly90aGVtZS1uZXh0Lm9yZw==">NexT.Pisces</span> v7.2.0</div>
+
+
+
+
+        
+<div class="busuanzi-count">
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+  
+    <span class="post-meta-item-icon">
+      <i class="fa fa-user"></i>
+    </span>
+    <span class="site-uv" title="Total Visitors">
+      <span class="busuanzi-value" id="busuanzi_value_site_uv"></span>
+    </span>
+  
+
+  
+    <span class="post-meta-divider">|</span>
+  
+
+  
+    <span class="post-meta-item-icon">
+      <i class="fa fa-eye"></i>
+    </span>
+    <span class="site-pv" title="Total Views">
+      <span class="busuanzi-value" id="busuanzi_value_site_pv"></span>
+    </span>
+  
+</div>
+
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+    
+
+    
+  </div>
+
+  
+
+<script>
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+
+  
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  <script src="/lib/jquery/index.js?v=3.4.1"></script>
+
+  
+  <script src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+
+
+
+  <script src="/js/utils.js?v=7.2.0"></script>
+
+  <script src="/js/motion.js?v=7.2.0"></script>
+
+
+
+  
+  
+
+
+  <script src="/js/affix.js?v=7.2.0"></script>
+
+  <script src="/js/schemes/pisces.js?v=7.2.0"></script>
+
+
+
+  
+  <script src="/js/scrollspy.js?v=7.2.0"></script>
+<script src="/js/post-details.js?v=7.2.0"></script>
+
+
+
+  <script src="/js/next-boot.js?v=7.2.0"></script>
+
+  
+
+  
+  <script src="/js/exturl.js?v=7.2.0"></script>
+
+
+  
+
+  
+
+  
+
+
+  
+
+
+  
+
+
+
+
+  
+
+  
+
+  
+  
+
+  
+  
+
+  
+
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+
+  
+
+</body>
+</html>
