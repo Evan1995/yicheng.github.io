@@ -157,11 +157,7 @@ body {
   font-size: 14px;
   line-height: 2;
   color: #555;
-  background: url("/images/background.jpg");
-  background-size: cover;
-  background-repeat: no-repeat;
-  background-attachment: fixed;
-  background-position: center;
+  background: #f2f3f4;
 }
 @media (max-width: 991px) {
   body {
@@ -333,12 +329,6 @@ kbd {
   background-image: linear-gradient(top, #eee, #fff, #eee);
   padding: 0.1em 0.3em;
   white-space: nowrap;
-}
-.main-inner {
-  opacity: 0.9;
-}
-.footer {
-  color: #f0d784;
 }
 .text-left {
   text-align: left;
@@ -1953,7 +1943,7 @@ pre .javascript .function {
   width: 4px;
   height: 4px;
   border-radius: 50%;
-  background: #fffff4;
+  background: #9f492d;
 }
 .feed-link,
 .chat {
@@ -2708,7 +2698,7 @@ ul.breadcrumb li+li:last-child {
   float: left;
   margin-left: -100%;
   width: 240px;
-  background: #f5f7f9;
+  background: #f2f3f4;
   box-shadow: none;
 }
 @media (max-width: 991px) {
