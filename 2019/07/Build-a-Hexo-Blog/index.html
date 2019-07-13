@@ -24,6 +24,16 @@
 
 
 
+  
+  
+    
+      
+    
+    
+      
+    
+  <script src="//cdn.jsdelivr.net/npm/pace-js@1/pace.min.js"></script>
+  <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/pace-js@1/themes/blue/pace-theme-minimal.css">
 
 
 
@@ -35,6 +45,13 @@
 
 
 
+
+
+  
+  
+    
+  
+  <link rel="stylesheet" href="//cdn.jsdelivr.net/gh/fancyapps/fancybox@3/dist/jquery.fancybox.min.css">
 
 
 
@@ -71,7 +88,7 @@
     sidebar: {"position":"left","display":"post","offset":12,"onmobile":false},
     back2top: true,
     back2top_sidebar: false,
-    fancybox: false,
+    fancybox: true,
     fastclick: false,
     lazyload: false,
     tabs: true,
@@ -98,7 +115,7 @@
 <meta property="og:locale" content="en">
 <meta property="og:image" content="https://yichengsu.github.io/images/linux.jpg">
 <meta property="og:image" content="https://yichengsu.github.io/images/linux.jpg">
-<meta property="og:updated_time" content="2019-07-13T06:47:17.170Z">
+<meta property="og:updated_time" content="2019-07-13T10:04:41.439Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Build a Hexo Blog">
 <meta name="twitter:description" content="记录一下慢慢接触Hexo中学习到的知识吧，做一个梳理。 准备工作Node.js使用的是Nodejs 10，从官网下载的时候发现Nodejs 10的支持时间还很长，所以就用的这个，第一个接触这个东西，不是很懂。 受制于用啥软件都要用最新版的强迫症思想，去查了查怎么升级Nodejs，然后node版本如何升级中提到了一句话：               爬坑后的结论：window系统升级node只能到n">
@@ -289,11 +306,40 @@
 
       
       
+        <li class="menu-item menu-item-search">
+          
+            <a href="javascript:;" class="popup-trigger">
+          
+            
+              <i class="menu-item-icon fa fa-search fa-fw"></i> <br>Search</a>
+        </li>
+      
     </ul>
   
 
   
 
+  
+    <div class="site-search">
+      
+  <div class="popup search-popup local-search-popup">
+  <div class="local-search-header clearfix">
+    <span class="search-icon">
+      <i class="fa fa-search"></i>
+    </span>
+    <span class="popup-btn-close">
+      <i class="fa fa-times-circle"></i>
+    </span>
+    <div class="local-search-input-wrapper">
+      <input autocomplete="off" placeholder="Searching..." spellcheck="false" type="text" id="local-search-input">
+    </div>
+  </div>
+  <div id="local-search-result"></div>
+</div>
+
+
+
+    </div>
   
 </nav>
 
@@ -331,6 +377,8 @@
   
   
 
+  
+    <div class="reading-progress-bar"></div>
   
 
   <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
@@ -396,7 +444,7 @@
                 
                   <span class="post-meta-item-text">Edited on</span>
                 
-                <time title="Modified: 2019-07-13 14:47:17" itemprop="dateModified" datetime="2019-07-13T14:47:17+08:00">2019-07-13</time>
+                <time title="Modified: 2019-07-13 18:04:41" itemprop="dateModified" datetime="2019-07-13T18:04:41+08:00">2019-07-13</time>
               </span>
             
           
@@ -450,7 +498,6 @@
 <div class="note warning">
             <p>爬坑后的结论：window系统升级node只能到node官网下载window安装包来覆盖之前的node。</p>
           </div>
-
 <p>所以安安静静的用吧，先别想着升级了，<code>node -v</code>查看版本，我的版本是<em>v10.15.3</em>。</p>
 <h2 id="npm"><a href="#npm" class="headerlink" title="npm"></a>npm</h2><p>下载了nodejs之后就可以用npm管理包了，同样是第一次用。类似Python的pip，安装包的。但是和pip不太一样的是，可以选择把包装在项目文件里还是装在全局，所以在安装时就会有点迷糊。</p>
 <p><code>npm install xxx -g</code> 安装在全局，可能就安装到了node的安装目录，和pip一样，安装好的项目可以全局使用，比如直接在命令行里用。如果不加<code>-g</code>参数就是安装到了当前项目，即在当前项目下新建一个<code>node_modules</code>文件夹，然后把包装进去，可以在项目代码里引入。所以安装的时候一定要注意安装位置。还可以指定<code>-save</code>，意思是将模块安装到项目目录下，并在package文件的dependencies节点写入依赖。关于他们的具体区别可以看这篇<span class="exturl" data-url="aHR0cHM6Ly93d3cubGltaXRjb2RlLmNvbS9kZXRhaWwvNTlhMTViMWE2OWU5NTcwMmUwNzgwMjQ5Lmh0bWw=" title="https://www.limitcode.com/detail/59a15b1a69e95702e0780249.html">文章<i class="fa fa-external-link"></i></span>，就不多说了。<br>有了这些知识，去看Hexo的官网的相关信息就不会迷糊了。</p>
@@ -475,39 +522,28 @@
 <h2 id="写作"><a href="#写作" class="headerlink" title="写作"></a>写作</h2><h3 id="布局"><a href="#布局" class="headerlink" title="布局"></a>布局</h3><p>有三种默认布局，post会发一个文章到博客的Archives类别里；page会新建一个标签页，和Archives是一个级别的，<em>需要去主题页面加入生成的页面，才能正常解析</em>，例如可以添加About me页面；draft是草稿。<br>可以定义很多布局，比如一个categories就有一个布局，这样每次新写文章的时候直接new对应的布局就行了。据我尝试，新建的布局都会被放到<code>_post</code>目录下当作文章看待。</p>
 <p>布局中的title对应着正文中文章名称，而md文件的名称则对应着url解析时对应的文章名称</p>
 <h3 id="草稿"><a href="#草稿" class="headerlink" title="草稿"></a>草稿</h3><p>这个模式应该还挺有用的，<code>hexo publish [layout] &lt;title&gt;</code>可以发布写好的草稿<br><code>--draft</code>可以预览草稿</p>
-<h3 id="分类"><a href="#分类" class="headerlink" title="分类"></a>分类</h3><p>可以使用两种分类方式，一个是<code>categories</code>，另外一个是<code>tags</code>，使用方式是有两种：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">tags/categories:</span><br><span class="line">- t1</span><br><span class="line">- t2</span><br><span class="line"></span><br><span class="line">tags/categories: [t1, t2]</span><br></pre></td></tr></table></figure>
-
+<h3 id="分类"><a href="#分类" class="headerlink" title="分类"></a>分类</h3><p>可以使用两种分类方式，一个是<code>categories</code>，另外一个是<code>tags</code>，使用方式是有两种：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">tags/categories:</span><br><span class="line">- t1</span><br><span class="line">- t2</span><br><span class="line"></span><br><span class="line">tags/categories: [t1, t2]</span><br></pre></td></tr></table></figure></p>
 <p>区别是categories包含层级关系，tags则全是并列关系~</p>
-<h3 id="正文中的标签插件"><a href="#正文中的标签插件" class="headerlink" title="正文中的标签插件"></a>正文中的标签插件</h3><p>这一类是hexo解析的特殊格式，可以快速在正文中插入所需的东西。算是给markdown做了个扩展吧，感觉这部分比较好。<br><strong>问题是很多编辑器没有办法预览这个部分</strong>，所以最好以server的形式看，也可以修改vscode中的配置信息使其兼容图片的预览。所以我更喜欢用原生markdown，除了图片可以用这个外，因为可以直接用插件预览。</p>
+<h3 id="正文中的标签插件"><a href="#正文中的标签插件" class="headerlink" title="正文中的标签插件"></a>正文中的标签插件</h3><p>这一类是hexo解析的特殊格式，可以快速在正文中插入所需的东西。算是给markdown做了个扩展吧，感觉这部分比较好。<br><strong>问题是很多编辑器没有办法预览这个部分</strong>，所以最好以server的形式看，也可以修改vscode中的配置信息使其兼容图片的预览。所以我更喜欢用原生markdown，除了图片可以用这个外，因为可以直接用插件预览。（vscode预览详见下一篇文章）</p>
 <h4 id="引用块"><a href="#引用块" class="headerlink" title="引用块"></a>引用块</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">&#123;% blockquote [author[, source]] [link] [source_link_title] %&#125;</span><br><span class="line">content</span><br><span class="line">&#123;% endblockquote %&#125;</span><br></pre></td></tr></table></figure>
-
 <p><em>别名quote</em>，代替了<code>&gt;</code>的引用形式，增加了一些解释字段，内容更加丰富。</p>
 <blockquote><p>One meets its destiny on the road he takes to avoid it.</p>
 <footer><strong>Kung Fu Panda</strong><cite><span class="exturl" data-url="aHR0cHM6Ly9tb3ZpZS5kb3ViYW4uY29tL3N1YmplY3QvMTc4MzQ1Ny8=" title="https://movie.douban.com/subject/1783457/">douban<i class="fa fa-external-link"></i></span></cite></footer></blockquote>
-
-
 <h4 id="代码块"><a href="#代码块" class="headerlink" title="代码块"></a>代码块</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">&#123;% codeblock [title] [lang:language] [url] [link text] %&#125;</span><br><span class="line">code snippet</span><br><span class="line">&#123;% endcodeblock %&#125;</span><br></pre></td></tr></table></figure>
-
 <p><em>别名code</em>，相比原生代码块，增加了对引用网址等信息的解析</p>
 <h4 id="图片"><a href="#图片" class="headerlink" title="图片"></a>图片</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&#123;% img [class names] /path/to/image [width] [height] [title text [alt text]] %&#125;</span><br></pre></td></tr></table></figure>
-
 <p>这个class names还是没搞懂啊，应该是对应的css文件，直接修改图片属性。<em>路径是source目录下的图片。</em><br>其实我还是更喜欢使用<code>source/images</code>的形式传入图片，然后<code>![](/images/image.jpg)</code>引入图片，问题是预览的时候根路径是当前路径，难以预览。</p>
 <p>可以使用<code>post_asset_folder: true</code>设置为一个文章对应一个文件夹，这样会导致文件夹太多了，作为一个强迫症看着心里难受，还是扔一个文件夹好。在这个模式下，官方推荐使用{<code>% asset_img name image %</code>}方式引入图片，不会在预览的时候消失。这个命令会自动在同名文件夹下读取这个文件夹的资源了。我没这么做哦。</p>
 <img src="/images/linux.jpg" width="200" height="200" title="Linux">
-
 <h4 id="Link"><a href="#Link" class="headerlink" title="Link"></a>Link</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&#123;% link text url [external] [title] %&#125;</span><br></pre></td></tr></table></figure>
-
 <p>它和默认的Link相比就是链接text之间允许空格</p>
 <p>除了上述命令外，还有：加入一个iframe，就是嵌入一个子网页；source中的代码文件；Youtube视频；引用文章或文章中的资源等。</p>
 <h2 id="推送到Github"><a href="#推送到Github" class="headerlink" title="推送到Github"></a>推送到Github</h2><p><code>hexo clean &amp;&amp; hexo deploy</code>，这个好像不用<code>-g</code>参数也会重新生成。<br><em>记得推送到master分支啊，尝试推送到别的分支github.io并不会更新</em>，这个推送了<span class="label info">部署分支</span></p>
 <div class="note info">
             <h3 id="Tip"><a href="#Tip" class="headerlink" title="Tip"></a>Tip</h3><p>个人感觉可以直接使用下载时的gitignore，然后把项目推送到写作分支，然后再重新部署的只需要<code>git clone</code>下来项目文件，然后用<code>npm install</code>即可，因为在使用hexo建站的时候就是类似的流程，而所需的model在安装时都被记录下来了，待尝试</p>
           </div>
-
 <h1 id="NexT"><a href="#NexT" class="headerlink" title="NexT"></a>NexT</h1><p><strong>使用了NexT后，会重新解析所有布局，包括图片和<code>quote</code>。</strong></p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git clone https://github.com/theme-next/hexo-theme-next themes/next</span><br></pre></td></tr></table></figure>
-
 <p>目录下直接执行这个下载最新的，好处是以后可以直接用git更新~ <code>git pull</code>就可以更新这个主题，但是可能会遇到冲突，需要懂一点git知识，才能合并。</p>
 <h2 id="Theme-Setting"><a href="#Theme-Setting" class="headerlink" title="Theme Setting"></a>Theme Setting</h2><p>NexT的官网的Theme setting页面做得很好，跟配置页面几乎同步在介绍各种设置的作用。</p>
 <ul>
@@ -524,17 +560,23 @@
 </ul>
 </li>
 <li>代码风格改成了night，觉得这个比较好看，其他的没有改，别的还是默认好看</li>
-<li><code>busuanzi_count.enable</code>显示访客量，这是框架自带的，应该不用接入什么api，尝试中…</li>
-<li>搜索功能/CND加速背景待尝试</li>
-<li>数学公式巨官网介绍只需设置math.enable=true就行，尝试中</li>
+<li><code>busuanzi_count.enable</code>显示访客量，这是框架自带的，不用接入什么api</li>
+<li>搜索功能棒，很简单就可以添加本地搜索</li>
 </ul>
-<p>$$<br>a &amp;= b + c \<br>  &amp;= d + e + f + g \<br>  &amp;= h + i<br>$$</p>
-<h2 id="标签插件"><a href="#标签插件" class="headerlink" title="标签插件"></a>标签插件</h2><p>NexT也提供了一套标签插件，可以看看和Hexo的哪个好用啊~</p>
-<span itemprop="image" itemscope itemtype="http://schema.org/ImageObject"><img itemprop="url image" src="/images/linux.jpg" class="full-image" alt="alt about img" title="title" style="max-width: none; width: 200px;"><meta itemprop="width" content="auto"><meta itemprop="height" content="auto"></span>
-<p>图片的表达好像差不多，就是这个标签不带边框。<br>note的表达更加多样性，还可以在note中使用<code>###</code>写入标题，<em>最多支持三级标题，使用四级标题的时候TOC解析会出问题</em>。<br>label就是给这段文字加个<span class="label success">颜色</span>。class很通用，都是这几个类别。<br>使用了NexT后，无论哪种形式的Link都会在后边加一个小图标，很nice。<br>Tab和Button和PDF等不常用，没写~</p>
+<h2 id="Math"><a href="#Math" class="headerlink" title="Math"></a>Math</h2><p>数学公式的支持，按照官网的要求，先卸载旧的<code>marked</code>，然后安装新的渲染引擎，我用的是<code>hexo-renderer-kramed</code>。然后只需设置<code>math.enable=true</code>就行，因为默认已经写了cnd加速。默认是需要在文章的开头设置<code>mathjax: true</code>才会对当前文章进行math渲染，也可以设置为对每一个文章都渲染，显然没啥必要。</p>
+<script type="math/tex; mode=display">
+\begin{equation}
+\begin{aligned}
+a &= b + c \\
+  &= d + e + f + g \\
+  &= h + i
+\end{aligned}
+\end{equation}</script><h2 id="标签插件"><a href="#标签插件" class="headerlink" title="标签插件"></a>标签插件</h2><p>NexT也提供了一套标签插件，可以看看和Hexo的哪个好用啊~<em>这个图片突然就显示title了，不知道是我的渲染方式发生了变化还是因为引入了Fancybox。</em></p>
+<span itemprop="image" itemscope itemtype="http://schema.org/ImageObject"><img itemprop="url image" src="/images/linux.jpg" class="full-image" alt="alt about img" title="Linux" style="max-width: none; width: 200px;"><meta itemprop="width" content="auto"><meta itemprop="height" content="auto"></span>
+<p>图片的表达好像差不多，就是这个标签不带边框。<br>note的表达更加多样性，还可以在note中使用<code>###</code>写入标题，<em>最多支持三级标题，使用四级标题的时候TOC解析会出问题</em>。对note进行如下设置：<code>style: modern</code>使用新式css，<code>icons: true</code>使用提示的图标。<br>label就是给这段文字加个<span class="label success">颜色</span>。class很通用，都是这几个类别。<br>使用了NexT后，无论哪种形式的Link都会在后边加一个小图标，很nice。<br>Tab和Button和PDF等不常用，没写~</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">&#123;% fi /url, [alt], [title], [size] %&#125;</span><br><span class="line"></span><br><span class="line">&#123;% note [class] [no-icon] %&#125;</span><br><span class="line">Any content (support inline tags too.io).</span><br><span class="line">&#123;% endnote %&#125;</span><br><span class="line">[class]   : default | primary | success | info | warning | danger.</span><br><span class="line">[no-icon] : Disable icon in note.</span><br><span class="line"></span><br><span class="line">&#123;% label [class]@Text %&#125;</span><br><span class="line">[class] : default | primary | success | info | warning | danger.</span><br><span class="line"></span><br><span class="line">&#123;% video url %&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="External-Libraries"><a href="#External-Libraries" class="headerlink" title="External Libraries"></a>External Libraries</h2><p>全部使用cdn加速<br>Fancybox: 对图片进行jq优化，支持大图，可以点开图片后左右切换图片 ✔<br>bookmark: 支持记录当前阅读位置，在浏览器左上角显示一个小书签，下次阅读的时候可以继续看<br>reading_progress: 在浏览器顶端显示阅读位置 ✔<br>Progress bar: 对Ajax请求优化 ✔<br>FastClick: 优化点击动作<br>Jquery Lazyload: 懒加载<br>Canvas Nest: 背景jq，点点点点点的这个背景 ✔<br>Canvas Ribbon: 炫酷的条带背景，每次点击鼠标就会换</p>
 
-<h1 id="vscode"><a href="#vscode" class="headerlink" title="vscode"></a>vscode</h1>
       
     </div>
 
@@ -680,7 +722,7 @@
                 
                   <a href="/archives/">
                 
-                    <span class="site-state-item-count">2</span>
+                    <span class="site-state-item-count">3</span>
                     <span class="site-state-item-name">posts</span>
                   </a>
                 </div>
@@ -781,7 +823,7 @@
             
 
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#准备工作"><span class="nav-number">1.</span> <span class="nav-text">准备工作</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#Node-js"><span class="nav-number">1.1.</span> <span class="nav-text">Node.js</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#npm"><span class="nav-number">1.2.</span> <span class="nav-text">npm</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Hexo"><span class="nav-number">2.</span> <span class="nav-text">Hexo</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#命令"><span class="nav-number">2.1.</span> <span class="nav-text">命令</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#写作"><span class="nav-number">2.2.</span> <span class="nav-text">写作</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#布局"><span class="nav-number">2.2.1.</span> <span class="nav-text">布局</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#草稿"><span class="nav-number">2.2.2.</span> <span class="nav-text">草稿</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#分类"><span class="nav-number">2.2.3.</span> <span class="nav-text">分类</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#正文中的标签插件"><span class="nav-number">2.2.4.</span> <span class="nav-text">正文中的标签插件</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#引用块"><span class="nav-number">2.2.4.1.</span> <span class="nav-text">引用块</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#代码块"><span class="nav-number">2.2.4.2.</span> <span class="nav-text">代码块</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#图片"><span class="nav-number">2.2.4.3.</span> <span class="nav-text">图片</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Link"><span class="nav-number">2.2.4.4.</span> <span class="nav-text">Link</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#推送到Github"><span class="nav-number">2.3.</span> <span class="nav-text">推送到Github</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Tip"><span class="nav-number">2.3.1.</span> <span class="nav-text">Tip</span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#NexT"><span class="nav-number">3.</span> <span class="nav-text">NexT</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#Theme-Setting"><span class="nav-number">3.1.</span> <span class="nav-text">Theme Setting</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#标签插件"><span class="nav-number">3.2.</span> <span class="nav-text">标签插件</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#vscode"><span class="nav-number">4.</span> <span class="nav-text">vscode</span></a></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#准备工作"><span class="nav-number">1.</span> <span class="nav-text">准备工作</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#Node-js"><span class="nav-number">1.1.</span> <span class="nav-text">Node.js</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#npm"><span class="nav-number">1.2.</span> <span class="nav-text">npm</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Hexo"><span class="nav-number">2.</span> <span class="nav-text">Hexo</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#命令"><span class="nav-number">2.1.</span> <span class="nav-text">命令</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#写作"><span class="nav-number">2.2.</span> <span class="nav-text">写作</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#布局"><span class="nav-number">2.2.1.</span> <span class="nav-text">布局</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#草稿"><span class="nav-number">2.2.2.</span> <span class="nav-text">草稿</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#分类"><span class="nav-number">2.2.3.</span> <span class="nav-text">分类</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#正文中的标签插件"><span class="nav-number">2.2.4.</span> <span class="nav-text">正文中的标签插件</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#引用块"><span class="nav-number">2.2.4.1.</span> <span class="nav-text">引用块</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#代码块"><span class="nav-number">2.2.4.2.</span> <span class="nav-text">代码块</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#图片"><span class="nav-number">2.2.4.3.</span> <span class="nav-text">图片</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Link"><span class="nav-number">2.2.4.4.</span> <span class="nav-text">Link</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#推送到Github"><span class="nav-number">2.3.</span> <span class="nav-text">推送到Github</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Tip"><span class="nav-number">2.3.1.</span> <span class="nav-text">Tip</span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#NexT"><span class="nav-number">3.</span> <span class="nav-text">NexT</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#Theme-Setting"><span class="nav-number">3.1.</span> <span class="nav-text">Theme Setting</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Math"><span class="nav-number">3.2.</span> <span class="nav-text">Math</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#标签插件"><span class="nav-number">3.3.</span> <span class="nav-text">标签插件</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#External-Libraries"><span class="nav-number">3.4.</span> <span class="nav-text">External Libraries</span></a></li></ol></li></ol></div>
             
 
           </div>
@@ -902,6 +944,17 @@
 
 
 
+  
+
+
+
+  
+    
+    
+      
+    
+  
+  <script color="207, 216, 220" opacity="0.7" zindex="-1" count="99" src="//cdn.jsdelivr.net/gh/theme-next/theme-next-canvas-nest@1/canvas-nest.min.js"></script>
 
 
 
@@ -909,6 +962,7 @@
 
 
 
+  
 
 
 
@@ -920,6 +974,12 @@
 
   
   <script src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script src="//cdn.jsdelivr.net/gh/fancyapps/fancybox@3/dist/jquery.fancybox.min.js"></script>
+
+  
+  <script src="//cdn.jsdelivr.net/gh/theme-next/theme-next-reading-progress@1/reading_progress.min.js"></script>
 
 
 
@@ -965,6 +1025,326 @@
 
 
   
+  <script>
+    // Popup Window;
+    var isfetched = false;
+    var isXml = true;
+    // Search DB path;
+    var search_path = "search.xml";
+    if (search_path.length === 0) {
+      search_path = "search.xml";
+    } else if (/json$/i.test(search_path)) {
+      isXml = false;
+    }
+    var path = "/" + search_path;
+    // monitor main search box;
+
+    var onPopupClose = function (e) {
+      $('.popup').hide();
+      $('#local-search-input').val('');
+      $('.search-result-list').remove();
+      $('#no-result').remove();
+      $(".local-search-pop-overlay").remove();
+      $('body').css('overflow', '');
+    }
+
+    function proceedsearch() {
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay"></div>')
+        .css('overflow', 'hidden');
+      $('.search-popup-overlay').click(onPopupClose);
+      $('.popup').toggle();
+      var $localSearchInput = $('#local-search-input');
+      $localSearchInput.attr("autocapitalize", "none");
+      $localSearchInput.attr("autocorrect", "off");
+      $localSearchInput.focus();
+    }
+
+    // search function;
+    var searchFunc = function(path, search_id, content_id) {
+      'use strict';
+
+      // start loading animation
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay">' +
+          '<div id="search-loading-icon">' +
+          '<i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>' +
+          '</div>' +
+          '</div>')
+        .css('overflow', 'hidden');
+      $("#search-loading-icon").css('margin', '20% auto 0 auto').css('text-align', 'center');
+
+      
+
+      $.ajax({
+        url: path,
+        dataType: isXml ? "xml" : "json",
+        async: true,
+        success: function(res) {
+          // get the contents from search data
+          isfetched = true;
+          $('.popup').detach().appendTo('.header-inner');
+          var datas = isXml ? $("entry", res).map(function() {
+            return {
+              title: $("title", this).text(),
+              content: $("content",this).text(),
+              url: $("url" , this).text()
+            };
+          }).get() : res;
+          var input = document.getElementById(search_id);
+          var resultContent = document.getElementById(content_id);
+          var inputEventFunction = function() {
+            var searchText = input.value.trim().toLowerCase();
+            var keywords = searchText.split(/[\s\-]+/);
+            if (keywords.length > 1) {
+              keywords.push(searchText);
+            }
+            var resultItems = [];
+            if (searchText.length > 0) {
+              // perform local searching
+              datas.forEach(function(data) {
+                var isMatch = false;
+                var hitCount = 0;
+                var searchTextCount = 0;
+                var title = data.title.trim();
+                var titleInLowerCase = title.toLowerCase();
+                var content = data.content.trim().replace(/<[^>]+>/g,"");
+                
+                var contentInLowerCase = content.toLowerCase();
+                var articleUrl = decodeURIComponent(data.url).replace(/\/{2,}/g, '/');
+                var indexOfTitle = [];
+                var indexOfContent = [];
+                // only match articles with not empty titles
+                if(title != '') {
+                  keywords.forEach(function(keyword) {
+                    function getIndexByWord(word, text, caseSensitive) {
+                      var wordLen = word.length;
+                      if (wordLen === 0) {
+                        return [];
+                      }
+                      var startPosition = 0, position = [], index = [];
+                      if (!caseSensitive) {
+                        text = text.toLowerCase();
+                        word = word.toLowerCase();
+                      }
+                      while ((position = text.indexOf(word, startPosition)) > -1) {
+                        index.push({position: position, word: word});
+                        startPosition = position + wordLen;
+                      }
+                      return index;
+                    }
+
+                    indexOfTitle = indexOfTitle.concat(getIndexByWord(keyword, titleInLowerCase, false));
+                    indexOfContent = indexOfContent.concat(getIndexByWord(keyword, contentInLowerCase, false));
+                  });
+                  if (indexOfTitle.length > 0 || indexOfContent.length > 0) {
+                    isMatch = true;
+                    hitCount = indexOfTitle.length + indexOfContent.length;
+                  }
+                }
+
+                // show search results
+
+                if (isMatch) {
+                  // sort index by position of keyword
+
+                  [indexOfTitle, indexOfContent].forEach(function (index) {
+                    index.sort(function (itemLeft, itemRight) {
+                      if (itemRight.position !== itemLeft.position) {
+                        return itemRight.position - itemLeft.position;
+                      } else {
+                        return itemLeft.word.length - itemRight.word.length;
+                      }
+                    });
+                  });
+
+                  // merge hits into slices
+
+                  function mergeIntoSlice(text, start, end, index) {
+                    var item = index[index.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    var hits = [];
+                    var searchTextCountInSlice = 0;
+                    while (position + word.length <= end && index.length != 0) {
+                      if (word === searchText) {
+                        searchTextCountInSlice++;
+                      }
+                      hits.push({position: position, length: word.length});
+                      var wordEnd = position + word.length;
+
+                      // move to next position of hit
+
+                      index.pop();
+                      while (index.length != 0) {
+                        item = index[index.length - 1];
+                        position = item.position;
+                        word = item.word;
+                        if (wordEnd > position) {
+                          index.pop();
+                        } else {
+                          break;
+                        }
+                      }
+                    }
+                    searchTextCount += searchTextCountInSlice;
+                    return {
+                      hits: hits,
+                      start: start,
+                      end: end,
+                      searchTextCount: searchTextCountInSlice
+                    };
+                  }
+
+                  var slicesOfTitle = [];
+                  if (indexOfTitle.length != 0) {
+                    slicesOfTitle.push(mergeIntoSlice(title, 0, title.length, indexOfTitle));
+                  }
+
+                  var slicesOfContent = [];
+                  while (indexOfContent.length != 0) {
+                    var item = indexOfContent[indexOfContent.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    // cut out 100 characters
+                    var start = position - 20;
+                    var end = position + 80;
+                    if(start < 0){
+                      start = 0;
+                    }
+                    if (end < position + word.length) {
+                      end = position + word.length;
+                    }
+                    if(end > content.length){
+                      end = content.length;
+                    }
+                    slicesOfContent.push(mergeIntoSlice(content, start, end, indexOfContent));
+                  }
+
+                  // sort slices in content by search text's count and hits' count
+
+                  slicesOfContent.sort(function (sliceLeft, sliceRight) {
+                    if (sliceLeft.searchTextCount !== sliceRight.searchTextCount) {
+                      return sliceRight.searchTextCount - sliceLeft.searchTextCount;
+                    } else if (sliceLeft.hits.length !== sliceRight.hits.length) {
+                      return sliceRight.hits.length - sliceLeft.hits.length;
+                    } else {
+                      return sliceLeft.start - sliceRight.start;
+                    }
+                  });
+
+                  // select top N slices in content
+
+                  var upperBound = parseInt('1');
+                  if (upperBound >= 0) {
+                    slicesOfContent = slicesOfContent.slice(0, upperBound);
+                  }
+
+                  // highlight title and content
+
+                  function highlightKeyword(text, slice) {
+                    var result = '';
+                    var prevEnd = slice.start;
+                    slice.hits.forEach(function (hit) {
+                      result += text.substring(prevEnd, hit.position);
+                      var end = hit.position + hit.length;
+                      result += '<b class="search-keyword">' + text.substring(hit.position, end) + '</b>';
+                      prevEnd = end;
+                    });
+                    result += text.substring(prevEnd, slice.end);
+                    return result;
+                  }
+
+                  var resultItem = '';
+
+                  if (slicesOfTitle.length != 0) {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + highlightKeyword(title, slicesOfTitle[0]) + "</a>";
+                  } else {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + title + "</a>";
+                  }
+
+                  slicesOfContent.forEach(function (slice) {
+                    resultItem += "<a href='" + articleUrl + "'>" +
+                      "<p class=\"search-result\">" + highlightKeyword(content, slice) +
+                      "...</p>" + "</a>";
+                  });
+
+                  resultItem += "</li>";
+                  resultItems.push({
+                    item: resultItem,
+                    searchTextCount: searchTextCount,
+                    hitCount: hitCount,
+                    id: resultItems.length
+                  });
+                }
+              })
+            };
+            if (keywords.length === 1 && keywords[0] === "") {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-search fa-5x"></i></div>'
+            } else if (resultItems.length === 0) {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-frown-o fa-5x"></i></div>'
+            } else {
+              resultItems.sort(function (resultLeft, resultRight) {
+                if (resultLeft.searchTextCount !== resultRight.searchTextCount) {
+                  return resultRight.searchTextCount - resultLeft.searchTextCount;
+                } else if (resultLeft.hitCount !== resultRight.hitCount) {
+                  return resultRight.hitCount - resultLeft.hitCount;
+                } else {
+                  return resultRight.id - resultLeft.id;
+                }
+              });
+              var searchResultList = '<ul class=\"search-result-list\">';
+              resultItems.forEach(function (result) {
+                searchResultList += result.item;
+              })
+              searchResultList += "</ul>";
+              resultContent.innerHTML = searchResultList;
+            }
+          }
+
+          if ('auto' === 'auto') {
+            input.addEventListener('input', inputEventFunction);
+          } else {
+            $('.search-icon').click(inputEventFunction);
+            input.addEventListener('keypress', function (event) {
+              if (event.keyCode === 13) {
+                inputEventFunction();
+              }
+            });
+          }
+
+          // remove loading animation
+          $(".local-search-pop-overlay").remove();
+          $('body').css('overflow', '');
+
+          proceedsearch();
+        }
+      });
+    }
+
+    // handle and trigger popup window;
+    $('.popup-trigger').click(function(e) {
+      e.stopPropagation();
+      if (isfetched === false) {
+        searchFunc(path, 'local-search-input', 'local-search-result');
+      } else {
+        proceedsearch();
+      };
+    });
+
+    $('.popup-btn-close').click(onPopupClose);
+    $('.popup').click(function(e){
+      e.stopPropagation();
+    });
+    $(document).on('keyup', function (event) {
+      var shouldDismissSearchPopup = event.which === 27 &&
+        $('.search-popup').is(':visible');
+      if (shouldDismissSearchPopup) {
+        onPopupClose();
+      }
+    });
+  </script>
+
 
 
 
@@ -979,6 +1359,46 @@
   
   
 
+  
+    
+      <script type="text/x-mathjax-config">
+  
+
+  MathJax.Hub.Config({
+    tex2jax: {
+      inlineMath: [ ['$', '$'], ['\\(', '\\)'] ],
+      processEscapes: true,
+      skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+    },
+    TeX: {
+      
+      equationNumbers: {
+        autoNumber: 'AMS'
+      }
+    }
+  });
+  MathJax.Hub.Register.StartupHook('TeX Jax Ready', function() {
+    MathJax.InputJax.TeX.prefilterHooks.Add(function(data) {
+      if (data.display) {
+        var next = data.script.nextSibling;
+        while (next && next.nodeName.toLowerCase() === '#text') { next = next.nextSibling }
+        if (next && next.nodeName.toLowerCase() === 'br') { next.parentNode.removeChild(next) }
+      }
+    });
+  });
+</script>
+
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Queue(function() {
+    var all = MathJax.Hub.getAllJax(), i;
+    for (i = 0; i < all.length; i += 1) {
+      document.getElementById(all[i].inputID + '-Frame').parentNode.className += ' has-jax';
+    }
+  });
+</script>
+<script src="//cdn.jsdelivr.net/npm/mathjax@2/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+    
   
 
 
