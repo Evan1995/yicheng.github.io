@@ -87,7 +87,7 @@
     version: '7.2.0',
     sidebar: {"position":"left","display":"post","offset":12,"onmobile":false},
     back2top: true,
-    back2top_sidebar: false,
+    back2top_sidebar: true,
     fancybox: true,
     fastclick: false,
     lazyload: false,
@@ -105,18 +105,18 @@
 
 
 
-  <meta name="description" content="如何在在Next 7.X中修改背景">
-<meta name="keywords" content="Hexo">
+  <meta name="description" content="Next 7.X 添加背景跟以前的版本有了很大的变化，网上很多方法都是旧版Next的，下边是我自己尝试出来的方法：路径：themes\next\source\css\_common\scaffolding\base.styl修改其中的body，把background字段覆盖：123456// background: $body-bg-color;background: url(/images/XX">
+<meta name="keywords" content="Hexo,Next7">
 <meta property="og:type" content="article">
 <meta property="og:title" content="Next 7.X 添加背景">
 <meta property="og:url" content="https://yichengsu.github.io/2019/07/Next-7-X-添加背景/index.html">
 <meta property="og:site_name" content="suyc&#39;s blog">
-<meta property="og:description" content="如何在在Next 7.X中修改背景">
+<meta property="og:description" content="Next 7.X 添加背景跟以前的版本有了很大的变化，网上很多方法都是旧版Next的，下边是我自己尝试出来的方法：路径：themes\next\source\css\_common\scaffolding\base.styl修改其中的body，把background字段覆盖：123456// background: $body-bg-color;background: url(/images/XX">
 <meta property="og:locale" content="en">
-<meta property="og:updated_time" content="2019-07-13T11:59:57.451Z">
+<meta property="og:updated_time" content="2019-07-14T04:25:50.443Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Next 7.X 添加背景">
-<meta name="twitter:description" content="如何在在Next 7.X中修改背景">
+<meta name="twitter:description" content="Next 7.X 添加背景跟以前的版本有了很大的变化，网上很多方法都是旧版Next的，下边是我自己尝试出来的方法：路径：themes\next\source\css\_common\scaffolding\base.styl修改其中的body，把background字段覆盖：123456// background: $body-bg-color;background: url(/images/XX">
 
 
 
@@ -426,13 +426,23 @@
                 
               
 
-              <time title="Created: 2019-07-13 19:46:37 / Modified: 19:59:57" itemprop="dateCreated datePublished" datetime="2019-07-13T19:46:37+08:00">2019-07-13</time>
+              <time title="Created: 2019-07-13 19:46:37" itemprop="dateCreated datePublished" datetime="2019-07-13T19:46:37+08:00">2019-07-13</time>
             </span>
           
 
           
             
 
+            
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">Edited on</span>
+                
+                <time title="Modified: 2019-07-14 12:25:50" itemprop="dateModified" datetime="2019-07-14T12:25:50+08:00">2019-07-14</time>
+              </span>
             
           
 
@@ -475,11 +485,29 @@
 
           <br>
           
-
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-file-word-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Symbols count in article: </span>
+              
+              <span title="Symbols count in article">612</span>
+            </span>
           
 
           
-            <div class="post-description">如何在在Next 7.X中修改背景</div>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-clock-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Reading time &asymp;</span>
+              
+              <span title="Reading time">1 mins.</span>
+            </span>
+          
+
           
 
         </div>
@@ -495,10 +523,21 @@
       
 
       
-        <p>Next 7.X 添加背景跟以前的版本有了很大的变化，下边是我试过的方法：<br>路径：<code>themes\next\source\css\_common\scaffolding\base.styl</code><br>修改其中的body，把background字段覆盖：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">// background: $body-bg-color;</span><br><span class="line">background: url(/images/XXX.jpg);</span><br><span class="line">background-size: cover;</span><br><span class="line">background-repeat: no-repeat;</span><br><span class="line">background-attachment: fixed;</span><br><span class="line">background-position: center;</span><br></pre></td></tr></table></figure></p>
+        <p>Next 7.X 添加背景跟以前的版本有了很大的变化，网上很多方法都是旧版Next的，下边是我自己尝试出来的方法：<br>路径：<code>themes\next\source\css\_common\scaffolding\base.styl</code><br>修改其中的body，把background字段覆盖：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">// background: $body-bg-color;</span><br><span class="line">background: url(/images/XXX.jpg);</span><br><span class="line">background-size: cover;</span><br><span class="line">background-repeat: no-repeat;</span><br><span class="line">background-attachment: fixed;</span><br><span class="line">background-position: center;</span><br></pre></td></tr></table></figure></p>
 <p>然后如果想让前边的页面虚化一些可以在最后直接添加：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">.main-inner &#123;</span><br><span class="line">    opacity: 0.9;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
 <p>最后剩下的一部分就不要虚化了，因为会导致搜索框太浅，无法使用。</p>
+<p>如果不添加背景，可以直接给背景改个颜色，我这里最后还是采取了直接改颜色的办法，可以看到背景颜色是由<code>$body-bg-color</code>决定的，可以在当前主题中搜索这个关键词，例如我这个主题是Pisces，所以我的路径是在<code>themes\next\source\css\_variables\Pisces.styl</code>里，直接把这一项的颜色改一下就行，我改成了<code>#f2f3f4</code>，就是灰的颜色重了一点，可能也看不出啥变化~</p>
 
+      
+    </div>
+
+    <div>
+      
+        <div>
+   
+		<div style="text-align:center;color: #ccc;font-size:14px;">------- The end of this article&nbsp;&nbsp;<i class="fa fa-moon-o"></i>&nbsp;&nbsp;Thanks for your reading -------</div>
+	
+</div>
       
     </div>
 
@@ -557,6 +596,8 @@
         <div class="post-tags">
           
             <a href="/tags/Hexo/" rel="tag"># Hexo</a>
+          
+            <a href="/tags/Next7/" rel="tag"># Next7</a>
           
         </div>
       
@@ -677,7 +718,9 @@
                     
                       
                     
-                    <span class="site-state-item-count">1</span>
+                      
+                    
+                    <span class="site-state-item-count">2</span>
                     <span class="site-state-item-name">tags</span>
                   </a>
                 </div>
@@ -726,6 +769,13 @@
       
 
       
+        <div class="back-to-top">
+          <i class="fa fa-arrow-up"></i>
+          
+            <span id="scrollpercent"><span>0</span>%</span>
+          
+        </div>
+      
 
     </div>
   </aside>
@@ -745,7 +795,25 @@
   <span class="author" itemprop="copyrightHolder">suyc</span>
 
   
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-area-chart"></i>
+    </span>
+    
+      <span class="post-meta-item-text">Symbols count total: </span>
+    
+    <span title="Symbols count total">8k</span>
+  
 
+  
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+    
+      <span class="post-meta-item-text">Reading time total &asymp;</span>
+    
+    <span title="Reading time total">7 mins.</span>
   
 </div>
 
@@ -802,11 +870,6 @@
       </div>
     </footer>
 
-    
-      <div class="back-to-top">
-        <i class="fa fa-arrow-up"></i>
-        
-      </div>
     
 
     
@@ -1261,6 +1324,16 @@
   
 
   
+  <script>
+    (function(){
+      var bp = document.createElement('script');
+      var curProtocol = window.location.protocol.split(':')[0];
+      bp.src = (curProtocol === 'https') ? 'https://zz.bdstatic.com/linksubmit/push.js' : 'http://push.zhanzhang.baidu.com/push.js';
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(bp, s);
+    })();
+  </script>
+
 
   
 

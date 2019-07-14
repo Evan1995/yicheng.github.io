@@ -87,7 +87,7 @@
     version: '7.2.0',
     sidebar: {"position":"left","display":"post","offset":12,"onmobile":false},
     back2top: true,
-    back2top_sidebar: false,
+    back2top_sidebar: true,
     fancybox: true,
     fastclick: false,
     lazyload: false,
@@ -106,7 +106,7 @@
 
 
   <meta name="description" content="记录一下慢慢接触Hexo中学习到的知识吧，做一个梳理。 准备工作Node.js使用的是Nodejs 10，从官网下载的时候发现Nodejs 10的支持时间还很长，所以就用的这个，第一个接触这个东西，不是很懂。 受制于用啥软件都要用最新版的强迫症思想，去查了查怎么升级Nodejs，然后node版本如何升级中提到了一句话：               爬坑后的结论：window系统升级node只能到n">
-<meta name="keywords" content="Hexo">
+<meta name="keywords" content="Hexo,Next7">
 <meta property="og:type" content="article">
 <meta property="og:title" content="Build a Hexo Blog">
 <meta property="og:url" content="https://yichengsu.github.io/2019/07/Build-a-Hexo-Blog/index.html">
@@ -115,7 +115,7 @@
 <meta property="og:locale" content="en">
 <meta property="og:image" content="https://yichengsu.github.io/images/Build-a-Hexo-Blog-linux.jpg">
 <meta property="og:image" content="https://yichengsu.github.io/images/Build-a-Hexo-Blog-linux.jpg">
-<meta property="og:updated_time" content="2019-07-13T11:58:10.907Z">
+<meta property="og:updated_time" content="2019-07-14T04:27:27.103Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Build a Hexo Blog">
 <meta name="twitter:description" content="记录一下慢慢接触Hexo中学习到的知识吧，做一个梳理。 准备工作Node.js使用的是Nodejs 10，从官网下载的时候发现Nodejs 10的支持时间还很长，所以就用的这个，第一个接触这个东西，不是很懂。 受制于用啥软件都要用最新版的强迫症思想，去查了查怎么升级Nodejs，然后node版本如何升级中提到了一句话：               爬坑后的结论：window系统升级node只能到n">
@@ -444,7 +444,7 @@
                 
                   <span class="post-meta-item-text">Edited on</span>
                 
-                <time title="Modified: 2019-07-13 19:58:10" itemprop="dateModified" datetime="2019-07-13T19:58:10+08:00">2019-07-13</time>
+                <time title="Modified: 2019-07-14 12:27:27" itemprop="dateModified" datetime="2019-07-14T12:27:27+08:00">2019-07-14</time>
               </span>
             
           
@@ -488,7 +488,27 @@
 
           <br>
           
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-file-word-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Symbols count in article: </span>
+              
+              <span title="Symbols count in article">5.6k</span>
+            </span>
+          
 
+          
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-clock-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Reading time &asymp;</span>
+              
+              <span title="Reading time">5 mins.</span>
+            </span>
           
 
           
@@ -557,10 +577,13 @@
 <div class="note info">
             <h3 id="Tip"><a href="#Tip" class="headerlink" title="Tip"></a>Tip</h3><p>个人感觉可以直接使用下载时的gitignore，然后把项目推送到写作分支，然后再重新部署的只需要<code>git clone</code>下来项目文件，然后用<code>npm install</code>即可，因为在使用hexo建站的时候就是类似的流程，而所需的model在安装时都被记录下来了，待尝试</p>
           </div>
-<h1 id="NexT"><a href="#NexT" class="headerlink" title="NexT"></a>NexT</h1><p><strong>使用了NexT后，会重新解析所有布局，包括图片和<code>quote</code>。</strong></p>
+<h1 id="NexT"><a href="#NexT" class="headerlink" title="NexT"></a>NexT</h1><div class="note info">
+            <p>本文使用的均是NexT 7.X </p>
+          </div>
+<p><strong>使用了NexT后，会重新解析所有布局，包括图片和<code>quote</code>。</strong></p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git clone https://github.com/theme-next/hexo-theme-next themes/next</span><br></pre></td></tr></table></figure>
 <p>目录下直接执行这个下载最新的，好处是以后可以直接用git更新~ <code>git pull</code>就可以更新这个主题，但是可能会遇到冲突，需要懂一点git知识，才能合并。</p>
-<h2 id="Theme-Setting"><a href="#Theme-Setting" class="headerlink" title="Theme Setting"></a>Theme Setting</h2><p>NexT的官网的Theme setting页面做得很好，跟配置页面几乎同步在介绍各种设置的作用。</p>
+<h2 id="Theme-Setting"><a href="#Theme-Setting" class="headerlink" title="Theme Setting"></a>Theme Setting</h2><p>NexT的官网的Theme setting页面做得很好，跟配置页面几乎同步在介绍各种设置的作用。下边这些都是在主题的配置页中：</p>
 <ul>
 <li>修改<code>favicon</code>可以修改浏览器标题前的那个小图标~</li>
 <li>修改<code>avatar</code>可以放上个人的照片，等回头我拍个好的照片就放上去。</li>
@@ -569,14 +592,15 @@
 <li>logo就是在上边添加一个logo，不能修改其他的，可能没什么用。</li>
 <li>各种小图标来自<span class="exturl" data-url="aHR0cHM6Ly9mb250YXdlc29tZS5jb20vdjQuNy4wL2ljb25zLw==" title="https://fontawesome.com/v4.7.0/icons/">Font Awesom v4.7<i class="fa fa-external-link"></i></span>，可以去这里看，然后把icon的名字记下来就行了，比如修改footer图标，我用的这个是bug。</li>
 <li>有三种方式控制首页文章的长度，可以混合用，效果更好哦<ul>
-<li>第一种是可以设置description字段在每篇文章的开头</li>
-<li>第二种是在文章任意部分添加<code>&lt;!-- more --&gt;</code>，就会从这里截断，这是Hexo推荐的，比如有些博主喜欢每个文章的预览都是一个图片，就可以用这个，开头放上图片，然后截断</li>
+<li>第一种是可以设置description字段在每篇文章的开头，这个在预览的时候只会出现这句话，同时这句话还会出现在文章标题的下边</li>
+<li>第二种是在文章任意部分添加<code>&lt;!-- more --&gt;</code>，就会从这里截断，这是Hexo推荐的，比如有些博主喜欢每个文章的预览都是一个图片，就可以用这个，开头放上图片，然后截断，设置项里有点开文章自动调转到这行后边的选项</li>
 <li>第三种是在设置里设置<code>auto_excerpt</code>，控制字数进行截断，我主要使用的是这个</li>
 </ul>
 </li>
 <li>代码风格改成了night，觉得这个比较好看，其他的没有改，别的还是默认好看</li>
 <li><code>busuanzi_count.enable</code>显示访客量，这是框架自带的，不用接入什么api</li>
 <li>搜索功能棒，很简单就可以添加本地搜索</li>
+<li><code>back2top</code>全设为true，把返回顶部的按钮从右下角改到sidebar的底端，同时显示阅读进度~</li>
 </ul>
 <h2 id="Math"><a href="#Math" class="headerlink" title="Math"></a>Math</h2><p>数学公式的支持，按照官网的要求，先卸载旧的<code>marked</code>，然后安装新的渲染引擎，我用的是<code>hexo-renderer-kramed</code>。然后只需设置<code>math.enable=true</code>就行，因为默认已经写了cnd加速。默认是需要在文章的开头设置<code>mathjax: true</code>才会对当前文章进行math渲染，也可以设置为对每一个文章都渲染，显然没啥必要。</p>
 <script type="math/tex; mode=display">
@@ -592,6 +616,16 @@ a &= b + c \\
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">&#123;% fi /url, [alt], [title], [size] %&#125;</span><br><span class="line"></span><br><span class="line">&#123;% note [class] [no-icon] %&#125;</span><br><span class="line">Any content (support inline tags too.io).</span><br><span class="line">&#123;% endnote %&#125;</span><br><span class="line">[class]   : default | primary | success | info | warning | danger.</span><br><span class="line">[no-icon] : Disable icon in note.</span><br><span class="line"></span><br><span class="line">&#123;% label [class]@Text %&#125;</span><br><span class="line">[class] : default | primary | success | info | warning | danger.</span><br><span class="line"></span><br><span class="line">&#123;% video url %&#125;</span><br></pre></td></tr></table></figure>
 <h2 id="External-Libraries"><a href="#External-Libraries" class="headerlink" title="External Libraries"></a>External Libraries</h2><p>全部使用cdn加速<br>Fancybox: 对图片进行jq优化，支持大图，可以点开图片后左右切换图片 ✔<br>bookmark: 支持记录当前阅读位置，在浏览器左上角显示一个小书签，下次阅读的时候可以继续看<br>reading_progress: 在浏览器顶端显示阅读位置 ✔<br>Progress bar: 对Ajax请求优化 ✔<br>FastClick: 优化点击动作<br>Jquery Lazyload: 懒加载<br>Canvas Nest: 背景jq，点点点点点的这个背景 ✔<br>Canvas Ribbon: 炫酷的条带背景，每次点击鼠标就会换</p>
 
+      
+    </div>
+
+    <div>
+      
+        <div>
+   
+		<div style="text-align:center;color: #ccc;font-size:14px;">------- The end of this article&nbsp;&nbsp;<i class="fa fa-moon-o"></i>&nbsp;&nbsp;Thanks for your reading -------</div>
+	
+</div>
       
     </div>
 
@@ -650,6 +684,8 @@ a &= b + c \\
         <div class="post-tags">
           
             <a href="/tags/Hexo/" rel="tag"># Hexo</a>
+          
+            <a href="/tags/Next7/" rel="tag"># Next7</a>
           
         </div>
       
@@ -779,7 +815,9 @@ a &= b + c \\
                     
                       
                     
-                    <span class="site-state-item-count">1</span>
+                      
+                    
+                    <span class="site-state-item-count">2</span>
                     <span class="site-state-item-name">tags</span>
                   </a>
                 </div>
@@ -845,6 +883,13 @@ a &= b + c \\
       
 
       
+        <div class="back-to-top">
+          <i class="fa fa-arrow-up"></i>
+          
+            <span id="scrollpercent"><span>0</span>%</span>
+          
+        </div>
+      
 
     </div>
   </aside>
@@ -864,7 +909,25 @@ a &= b + c \\
   <span class="author" itemprop="copyrightHolder">suyc</span>
 
   
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-area-chart"></i>
+    </span>
+    
+      <span class="post-meta-item-text">Symbols count total: </span>
+    
+    <span title="Symbols count total">8k</span>
+  
 
+  
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+    
+      <span class="post-meta-item-text">Reading time total &asymp;</span>
+    
+    <span title="Reading time total">7 mins.</span>
   
 </div>
 
@@ -921,11 +984,6 @@ a &= b + c \\
       </div>
     </footer>
 
-    
-      <div class="back-to-top">
-        <i class="fa fa-arrow-up"></i>
-        
-      </div>
     
 
     
@@ -1420,6 +1478,16 @@ a &= b + c \\
   
 
   
+  <script>
+    (function(){
+      var bp = document.createElement('script');
+      var curProtocol = window.location.protocol.split(':')[0];
+      bp.src = (curProtocol === 'https') ? 'https://zz.bdstatic.com/linksubmit/push.js' : 'http://push.zhanzhang.baidu.com/push.js';
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(bp, s);
+    })();
+  </script>
+
 
   
 
