@@ -105,18 +105,18 @@
 
 
 
-  <meta name="description" content="记录一下慢慢接触Hexo中学习到的知识吧，做一个梳理。 准备工作Node.js使用的是Nodejs 10，从官网下载的时候发现Nodejs 10的支持时间还很长，所以就用的这个，第一个接触这个东西，不是很懂。 受制于用啥软件都要用最新版的强迫症思想，去查了查怎么升级Nodejs，然后node版本如何升级中提到了一句话：               爬坑后的结论：window系统升级node只能到n">
-<meta name="keywords" content="Hexo,Next7">
+  <meta name="description" content="看了一天关于各种熵的解释，比较好的文章已经添加到了Bookmark Softmax把数据缩放到$[0,1]$，且和为$1$。对每个元素进行了操作，结果并不改变维数，即输入N维，输出还是N维。  \operatorname{Softmax}\left(x_{i}\right)=\frac{\exp \left(x_{i}\right)}{\sum_{j} \exp \left(x_{j}\right">
+<meta name="keywords" content="Deep Learning,loss function">
 <meta property="og:type" content="article">
-<meta property="og:title" content="Build a Hexo Blog">
-<meta property="og:url" content="https://yichengsu.github.io/2019/07/Build-a-Hexo-Blog/index.html">
+<meta property="og:title" content="CrossEntropyLoss之我见">
+<meta property="og:url" content="https://yichengsu.github.io/2019/08/CrossEntropyLoss之我见/index.html">
 <meta property="og:site_name" content="suyc&#39;s blog">
-<meta property="og:description" content="记录一下慢慢接触Hexo中学习到的知识吧，做一个梳理。 准备工作Node.js使用的是Nodejs 10，从官网下载的时候发现Nodejs 10的支持时间还很长，所以就用的这个，第一个接触这个东西，不是很懂。 受制于用啥软件都要用最新版的强迫症思想，去查了查怎么升级Nodejs，然后node版本如何升级中提到了一句话：               爬坑后的结论：window系统升级node只能到n">
+<meta property="og:description" content="看了一天关于各种熵的解释，比较好的文章已经添加到了Bookmark Softmax把数据缩放到$[0,1]$，且和为$1$。对每个元素进行了操作，结果并不改变维数，即输入N维，输出还是N维。  \operatorname{Softmax}\left(x_{i}\right)=\frac{\exp \left(x_{i}\right)}{\sum_{j} \exp \left(x_{j}\right">
 <meta property="og:locale" content="en">
-<meta property="og:updated_time" content="2019-08-10T13:17:55.615Z">
+<meta property="og:updated_time" content="2019-08-11T13:21:28.565Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="Build a Hexo Blog">
-<meta name="twitter:description" content="记录一下慢慢接触Hexo中学习到的知识吧，做一个梳理。 准备工作Node.js使用的是Nodejs 10，从官网下载的时候发现Nodejs 10的支持时间还很长，所以就用的这个，第一个接触这个东西，不是很懂。 受制于用啥软件都要用最新版的强迫症思想，去查了查怎么升级Nodejs，然后node版本如何升级中提到了一句话：               爬坑后的结论：window系统升级node只能到n">
+<meta name="twitter:title" content="CrossEntropyLoss之我见">
+<meta name="twitter:description" content="看了一天关于各种熵的解释，比较好的文章已经添加到了Bookmark Softmax把数据缩放到$[0,1]$，且和为$1$。对每个元素进行了操作，结果并不改变维数，即输入N维，输出还是N维。  \operatorname{Softmax}\left(x_{i}\right)=\frac{\exp \left(x_{i}\right)}{\sum_{j} \exp \left(x_{j}\right">
 
 
 
@@ -124,7 +124,7 @@
 
   
   
-  <link rel="canonical" href="https://yichengsu.github.io/2019/07/Build-a-Hexo-Blog/">
+  <link rel="canonical" href="https://yichengsu.github.io/2019/08/CrossEntropyLoss之我见/">
 
 
 
@@ -134,7 +134,7 @@
   };
 </script>
 
-  <title>Build a Hexo Blog | suyc's blog</title>
+  <title>CrossEntropyLoss之我见 | suyc's blog</title>
   
 
 
@@ -397,7 +397,7 @@
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="https://yichengsu.github.io/2019/07/Build-a-Hexo-Blog/">
+    <link itemprop="mainEntityOfPage" href="https://yichengsu.github.io/2019/08/CrossEntropyLoss之我见/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="suyc">
@@ -414,7 +414,7 @@
 
         
         
-          <h2 class="post-title" itemprop="name headline">Build a Hexo Blog
+          <h2 class="post-title" itemprop="name headline">CrossEntropyLoss之我见
 
               
             
@@ -440,7 +440,7 @@
                 
               
 
-              <time title="Created: 2019-07-11 17:05:04" itemprop="dateCreated datePublished" datetime="2019-07-11T17:05:04+08:00">2019-07-11</time>
+              <time title="Created: 2019-08-10 20:55:00" itemprop="dateCreated datePublished" datetime="2019-08-10T20:55:00+08:00">2019-08-10</time>
             </span>
           
 
@@ -455,7 +455,7 @@
                 
                   <span class="post-meta-item-text">Edited on</span>
                 
-                <time title="Modified: 2019-08-10 21:17:55" itemprop="dateModified" datetime="2019-08-10T21:17:55+08:00">2019-08-10</time>
+                <time title="Modified: 2019-08-11 21:21:28" itemprop="dateModified" datetime="2019-08-11T21:21:28+08:00">2019-08-11</time>
               </span>
             
           
@@ -469,7 +469,7 @@
                 <span class="post-meta-item-text">In</span>
               
               
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/Hexo/" itemprop="url" rel="index"><span itemprop="name">Hexo</span></a></span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/Deep-Learning/" itemprop="url" rel="index"><span itemprop="name">Deep Learning</span></a></span>
 
                 
                 
@@ -517,95 +517,31 @@
       
 
       
-        <p>记录一下慢慢接触Hexo中学习到的知识吧，做一个梳理。</p>
-<h1 id="准备工作"><a href="#准备工作" class="headerlink" title="准备工作"></a>准备工作</h1><h2 id="Node-js"><a href="#Node-js" class="headerlink" title="Node.js"></a>Node.js</h2><p>使用的是Nodejs 10，从官网下载的时候发现Nodejs 10的支持时间还很长，所以就用的这个，第一个接触这个东西，不是很懂。</p>
-<p>受制于用啥软件都要用最新版的强迫症思想，去查了查怎么升级Nodejs，然后<span class="exturl" data-url="aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L2d1emhhbzU5My9hcnRpY2xlL2RldGFpbHMvODE3MTIwMTY=" title="https://blog.csdn.net/guzhao593/article/details/81712016">node版本如何升级<i class="fa fa-external-link"></i></span>中提到了一句话：</p>
-<!-- >爬坑后的结论：window系统升级node只能到node官网下载window安装包来覆盖之前的node。 -->
-<div class="note warning">
-            <p>爬坑后的结论：window系统升级node只能到node官网下载window安装包来覆盖之前的node。</p>
-          </div>
-<p>所以安安静静的用吧，先别想着升级了，<code>node -v</code>查看版本，我的版本是<em>v10.15.3</em>。</p>
-<h2 id="npm"><a href="#npm" class="headerlink" title="npm"></a>npm</h2><p>下载了nodejs之后就可以用npm管理包了，同样是第一次用。类似Python的pip，安装包的。但是和pip不太一样的是，可以选择把包装在项目文件里还是装在全局，所以在安装时就会有点迷糊。</p>
-<p><code>npm install xxx -g</code> 安装在全局，可能就安装到了node的安装目录，和pip一样，安装好的项目可以全局使用，比如直接在命令行里用。如果不加<code>-g</code>参数就是安装到了当前项目，即在当前项目下新建一个<code>node_modules</code>文件夹，然后把包装进去，可以在项目代码里引入。所以安装的时候一定要注意安装位置。还可以指定<code>-save</code>，意思是将模块安装到项目目录下，并在package文件的dependencies节点写入依赖。关于他们的具体区别可以看这篇<span class="exturl" data-url="aHR0cHM6Ly93d3cubGltaXRjb2RlLmNvbS9kZXRhaWwvNTlhMTViMWE2OWU5NTcwMmUwNzgwMjQ5Lmh0bWw=" title="https://www.limitcode.com/detail/59a15b1a69e95702e0780249.html">文章<i class="fa fa-external-link"></i></span>，就不多说了。<br>有了这些知识，去看Hexo的官网的相关信息就不会迷糊了。</p>
-<p>使用<code>npm install npm -g</code>命令可以方便的升级npm，<em>这样我心里舒服多了</em>。<br><code>npm list -g --depth 0</code>查看全局安装包，<code>npm outdated -g --depth=0</code>查看全局能升级的。同理，不加<code>-g</code>就是看当前项目的咯。<code>npm list xxx</code>查看某个包。</p>
-<p>其他的用法还有uninstall/ls/update/search，详见<span class="exturl" data-url="aHR0cHM6Ly93d3cucnVub29iLmNvbS9ub2RlanMvbm9kZWpzLW5wbS5odG1s" title="https://www.runoob.com/nodejs/nodejs-npm.html">runoob<i class="fa fa-external-link"></i></span></p>
-<h1 id="Hexo"><a href="#Hexo" class="headerlink" title="Hexo"></a>Hexo</h1><p>安装过程详见官网，有了上边的准备知识就不难了。<br>安装完成后有如下几个部分：</p>
-<ul>
-<li><strong>_config.yml</strong> 网站配置信息，这里边可以设置的不多，theme的设置项非常多</li>
-<li><strong>package.json</strong> 包信息，使用的包用了<code>-save</code>在这里都会有记载，所以安装包的时候只需要把使用<code>-save</code>，那么把当前项目<span class="label info">写作分支</span>同步到git后，更换设备直接安装这里边的项目即可</li>
-<li><strong>scaffolds</strong> 模板文件，其实就是md文件头模板吧~</li>
-<li><strong>source</strong> 新建的文章都在这里，还有其他资源，比如images</li>
-<li><strong>themes</strong> 下载的主题</li>
-<li><strong>node_modules</strong> 安装在当前项目的包都在这里，这个在gitignore里不会同步这个文件，因为换了设备的时候使用npm重新安装即可</li>
-<li><strong>.gitignore</strong> 这个应该是下载hexo的时候hexo的git信息，<em>有个问题是怎么利用这个给项目备份，换电脑了还能把这些文件恢复回来，是个问题，还在研究</em></li>
-</ul>
-<p>从官网的配置页面很容易就能修改_config.yml文件。</p>
-<h2 id="命令"><a href="#命令" class="headerlink" title="命令"></a>命令</h2><p><code>hexo new [layout] &lt;title&gt;</code> 新建一个文章~标题文章过长记得加引号，支持中文。</p>
-<p><code>hexo generate/g</code> 生成静态文件，可以直接部署<code>-d/--deploy</code>或者监视<code>-w/--watch</code>，监视的意思就是边改边生成静态文件~<br>也可以用<code>hexo server/s</code>的形式，边改边看。</p>
-<p><code>hexo deploy/d</code> 部署，<code>-g/--generate</code>同时生成静态文件。<br><strong><code>g -d</code>和<code>d -g</code>是一样的</strong></p>
-<p><code>hexo clean</code> 清除缓存，清除缓存文件<code>db.json</code>和已生成的静态文件<code>public</code></p>
-<p><code>hexo list &lt;type&gt;</code> 可以查看网站的各种信息，可用的参数有<code>page, post, route, tag, category</code>，很好~</p>
-<h2 id="写作"><a href="#写作" class="headerlink" title="写作"></a>写作</h2><h3 id="布局"><a href="#布局" class="headerlink" title="布局"></a>布局</h3><p>有三种默认布局，post会发一个文章到博客的Archives类别里；page会新建一个标签页，和Archives是一个级别的，<em>需要去主题页面加入生成的页面，才能正常解析</em>，例如可以添加About me页面；draft是草稿。<br>可以定义很多布局，比如一个categories就有一个布局，这样每次新写文章的时候直接new对应的布局就行了。据我尝试，新建的布局都会被放到<code>_post</code>目录下当作文章看待。</p>
-<p>布局中的title对应着正文中文章名称，而md文件的名称则对应着url解析时对应的文章名称</p>
-<h3 id="草稿"><a href="#草稿" class="headerlink" title="草稿"></a>草稿</h3><p>这个模式还挺有用的，<code>hexo publish [layout] &lt;title&gt;</code>可以发布写好的草稿，有些文章舍不得删除也可以直接拖进<code>_drafts</code>文件夹，就成了草稿，再拖回<code>_posts</code>就有成了可以发布的文章。<br><code>hexo server --drafts</code>可以预览草稿</p>
-<h3 id="分类"><a href="#分类" class="headerlink" title="分类"></a>分类</h3><p>可以使用两种分类方式，一个是<code>categories</code>，另外一个是<code>tags</code>，使用方式是有两种：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">tags/categories:</span><br><span class="line">- t1</span><br><span class="line">- t2</span><br><span class="line"></span><br><span class="line">tags/categories: [t1, t2]</span><br></pre></td></tr></table></figure></p>
-<p>区别是categories包含层级关系，tags则全是并列关系~</p>
-<h3 id="正文中的标签插件"><a href="#正文中的标签插件" class="headerlink" title="正文中的标签插件"></a>正文中的标签插件</h3><p>这一类是hexo解析的特殊格式，可以快速在正文中插入所需的东西。算是给markdown做了个扩展吧，感觉这部分比较好。<br><strong>问题是很多编辑器没有办法预览这个部分</strong>，所以最好以server的形式看，也可以修改vscode中的配置信息使其兼容图片的预览。所以我更喜欢用原生markdown，除了图片可以用这个外，因为可以直接用插件预览。（vscode预览详见下一篇文章）</p>
-<h4 id="引用块"><a href="#引用块" class="headerlink" title="引用块"></a>引用块</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">&#123;% blockquote [author[, source]] [link] [source_link_title] %&#125;</span><br><span class="line">content</span><br><span class="line">&#123;% endblockquote %&#125;</span><br></pre></td></tr></table></figure>
-<p><em>别名quote</em>，代替了<code>&gt;</code>的引用形式，增加了一些解释字段，内容更加丰富。</p>
-<blockquote><p>One meets its destiny on the road he takes to avoid it.</p>
-<footer><strong>Kung Fu Panda</strong><cite><span class="exturl" data-url="aHR0cHM6Ly9tb3ZpZS5kb3ViYW4uY29tL3N1YmplY3QvMTc4MzQ1Ny8=" title="https://movie.douban.com/subject/1783457/">douban<i class="fa fa-external-link"></i></span></cite></footer></blockquote>
-<h4 id="代码块"><a href="#代码块" class="headerlink" title="代码块"></a>代码块</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">&#123;% codeblock [title] [lang:language] [url] [link text] %&#125;</span><br><span class="line">code snippet</span><br><span class="line">&#123;% endcodeblock %&#125;</span><br></pre></td></tr></table></figure>
-<p><em>别名code</em>，相比原生代码块，增加了对引用网址等信息的解析</p>
-<h4 id="图片"><a href="#图片" class="headerlink" title="图片"></a>图片</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&#123;% img [class names] /path/to/image [width] [height] [title text [alt text]] %&#125;</span><br></pre></td></tr></table></figure>
-<p>这个class names还是没搞懂啊，应该是对应的css文件，直接修改图片属性。<em>路径是source目录下的图片。</em><br>其实我还是更喜欢使用<code>source/images</code>的形式传入图片，然后<code>![](/images/image.jpg)</code>引入图片，问题是预览的时候根路径是当前路径，难以预览。</p>
-<p>可以使用<code>post_asset_folder: true</code>设置为一个文章对应一个文件夹，这样会导致文件夹太多了，作为一个强迫症看着心里难受，还是扔一个文件夹好。在这个模式下，官方推荐使用{<code>% asset_img name image %</code>}方式引入图片，不会在预览的时候消失。这个命令会自动在同名文件夹下读取这个文件夹的资源了。我没这么做哦。</p>
-<img width="200" height="200" title="Linux" data-src="/images/Build-a-Hexo-Blog-linux.jpg">
-<h4 id="Link"><a href="#Link" class="headerlink" title="Link"></a>Link</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&#123;% link text url [external] [title] %&#125;</span><br></pre></td></tr></table></figure>
-<p>它和默认的Link相比就是链接text之间允许空格</p>
-<p>除了上述命令外，还有：加入一个iframe，就是嵌入一个子网页；source中的代码文件；Youtube视频；引用文章或文章中的资源等。</p>
-<h2 id="推送到Github"><a href="#推送到Github" class="headerlink" title="推送到Github"></a>推送到Github</h2><p><code>hexo clean &amp;&amp; hexo deploy</code>，这个好像不用<code>-g</code>参数也会重新生成。<br><em>记得推送到master分支啊，尝试推送到别的分支github.io并不会更新</em>，这个推送了<span class="label info">部署分支</span></p>
-<div class="note info">
-            <h3 id="Tip"><a href="#Tip" class="headerlink" title="Tip"></a>Tip</h3><p>个人感觉可以直接使用下载时的gitignore，然后把项目推送到写作分支，然后再重新部署的只需要<code>git clone</code>下来项目文件，然后用<code>npm install</code>即可，因为在使用hexo建站的时候就是类似的流程，而所需的model在安装时都被记录下来了，待尝试</p>
-          </div>
-<h1 id="NexT"><a href="#NexT" class="headerlink" title="NexT"></a>NexT</h1><div class="note info">
-            <p>本文使用的均是NexT 7.X，新版本的<span class="exturl" data-url="aHR0cHM6Ly9naXRodWIuY29tL3RoZW1lLW5leHQvaGV4by10aGVtZS1uZXh0" title="https://github.com/theme-next/hexo-theme-next">Github<i class="fa fa-external-link"></i></span>和<span class="exturl" data-url="aHR0cHM6Ly90aGVtZS1uZXh0Lm9yZy8=" title="https://theme-next.org/">官网<i class="fa fa-external-link"></i></span>。 </p>
-          </div>
-<p><strong>使用了NexT后，会重新解析所有布局，包括图片和<code>quote</code>。</strong></p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git clone https://github.com/theme-next/hexo-theme-next themes/next</span><br></pre></td></tr></table></figure>
-<p>目录下直接执行这个下载最新的，好处是以后可以直接用git更新~ <code>git pull</code>就可以更新这个主题，但是可能会遇到冲突，需要懂一点git知识，才能合并。（这个是我猜的，没试过…）</p>
-<h2 id="Theme-Setting"><a href="#Theme-Setting" class="headerlink" title="Theme Setting"></a>Theme Setting</h2><p>NexT的官网的Theme setting页面做得很好，跟配置页面几乎同步在介绍各种设置的作用。下边这些都是在主题的配置页中：</p>
-<ul>
-<li>修改<code>favicon</code>可以修改浏览器标题前的那个小图标~</li>
-<li>修改<code>avatar</code>可以放上个人的照片，等回头我拍个好的照片就放上去。</li>
-<li><span class="exturl" data-url="aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L2ppYW5neXUxMDEzL2FydGljbGUvZGV0YWlscy84MDY0OTc3NA==" title="https://blog.csdn.net/jiangyu1013/article/details/80649774">关于许可协议的介绍<i class="fa fa-external-link"></i></span>可以看看这个，添加许可协议</li>
-<li><code>mobile_layout_economy: true</code> 可以设置自适应窄屏</li>
-<li>logo就是在上边添加一个logo，不能修改其他的，可能没什么用。</li>
-<li>各种小图标来自<span class="exturl" data-url="aHR0cHM6Ly9mb250YXdlc29tZS5jb20vdjQuNy4wL2ljb25zLw==" title="https://fontawesome.com/v4.7.0/icons/">Font Awesom v4.7<i class="fa fa-external-link"></i></span>，可以去这里看，然后把icon的名字记下来就行了，比如修改footer图标，我用的这个是bug。</li>
-<li>有三种方式控制首页文章的长度，可以混合用，效果更好哦<ul>
-<li>第一种是可以设置description字段在每篇文章的开头，这个在预览的时候只会出现这句话，同时这句话还会出现在文章标题的下边</li>
-<li>第二种是在文章任意部分添加<code>&lt;!-- more --&gt;</code>，就会从这里截断，这是Hexo推荐的，比如有些博主喜欢每个文章的预览都是一个图片，就可以用这个，开头放上图片，然后截断，设置项里有点开文章自动调转到这行后边的选项</li>
-<li>第三种是在设置里设置<code>auto_excerpt</code>，控制字数进行截断，我主要使用的是这个</li>
-</ul>
-</li>
-<li>代码风格改成了night，觉得这个比较好看，其他的没有改，别的还是默认好看</li>
-<li><code>busuanzi_count.enable</code>显示访客量，这是框架自带的，不用接入什么api</li>
-<li>搜索功能棒，很简单就可以添加本地搜索</li>
-<li><code>back2top</code>全设为true，把返回顶部的按钮从右下角改到sidebar的底端，同时显示阅读进度~</li>
-</ul>
-<h2 id="Math"><a href="#Math" class="headerlink" title="Math"></a>Math</h2><p>数学公式的支持，按照官网的要求，先卸载旧的<code>marked</code>，然后安装新的渲染引擎，我用的是<code>hexo-renderer-kramed</code>。然后只需设置<code>math.enable=true</code>就行，因为默认已经写了cnd加速。默认是需要在文章的开头设置<code>mathjax: true</code>才会对当前文章进行math渲染，也可以设置为对每一个文章都渲染，显然没啥必要。</p>
+        <p>看了一天关于各种熵的解释，比较好的文章已经添加到了<a href="/bookmark/">Bookmark</a></p>
+<h2 id="Softmax"><a href="#Softmax" class="headerlink" title="Softmax"></a>Softmax</h2><p>把数据缩放到$[0,1]$，且和为$1$。对每个元素进行了操作，结果并不改变维数，即输入N维，输出还是N维。</p>
 <script type="math/tex; mode=display">
-\begin{equation}
-\begin{aligned}
-a &= b + c \\
-  &= d + e + f + g \\
-  &= h + i
-\end{aligned}
-\end{equation}</script><h2 id="标签插件"><a href="#标签插件" class="headerlink" title="标签插件"></a>标签插件</h2><p>NexT也提供了一套标签插件，可以看看和Hexo的哪个好用啊~<em>这个图片突然就显示title了，不知道是我的渲染方式发生了变化还是因为引入了Fancybox。</em></p>
-<span itemprop="image" itemscope itemtype="http://schema.org/ImageObject"><img itemprop="url image" class="full-image" alt="alt about img" title="Linux" style="max-width: none; width: 200px;" data-src="/images/Build-a-Hexo-Blog-linux.jpg"><meta itemprop="width" content="auto"><meta itemprop="height" content="auto"></span>
-<p>图片的表达好像差不多，就是这个标签不带边框。<br>note的表达更加多样性，还可以在note中使用<code>###</code>写入标题，<em>最多支持三级标题，使用四级标题的时候TOC解析会出问题</em>。对note进行如下设置：<code>style: modern</code>使用新式css，<code>icons: true</code>使用提示的图标。<br>label就是给这段文字加个<span class="label success">颜色</span>。class很通用，都是这几个类别。<br>使用了NexT后，无论哪种形式的Link都会在后边加一个小图标，很nice。<br>Tab和Button和PDF等不常用，没写~</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">&#123;% fi /url, [alt], [title], [size] %&#125;</span><br><span class="line"></span><br><span class="line">&#123;% note [class] [no-icon] %&#125;</span><br><span class="line">Any content (support inline tags too.io).</span><br><span class="line">&#123;% endnote %&#125;</span><br><span class="line">[class]   : default | primary | success | info | warning | danger.</span><br><span class="line">[no-icon] : Disable icon in note.</span><br><span class="line"></span><br><span class="line">&#123;% label [class]@Text %&#125;</span><br><span class="line">[class] : default | primary | success | info | warning | danger.</span><br><span class="line"></span><br><span class="line">&#123;% video url %&#125;</span><br></pre></td></tr></table></figure>
-<h2 id="External-Libraries"><a href="#External-Libraries" class="headerlink" title="External Libraries"></a>External Libraries</h2><p>全部使用cdn加速<br>Fancybox: 对图片进行jq优化，支持大图，可以点开图片后左右切换图片 ✔<br>bookmark: 支持记录当前阅读位置，在浏览器左上角显示一个小书签，下次阅读的时候可以继续看<br>reading_progress: 在浏览器顶端显示阅读位置<br>Progress bar: 载入时在顶部显示进度条，可以对Ajax请求优化 ✔<br>FastClick: 优化点击动作（7.3开始删除了这个）<br>Jquery Lazyload: 图片懒加载 ✔<br>Canvas Nest: 背景jq，点点点点点的这个背景 ✔<br>Canvas Ribbon: 炫酷的条带背景，每次点击鼠标就会换</p>
+\operatorname{Softmax}\left(x_{i}\right)=\frac{\exp \left(x_{i}\right)}{\sum_{j} \exp \left(x_{j}\right)}</script><h2 id="LogSoftmax"><a href="#LogSoftmax" class="headerlink" title="LogSoftmax"></a>LogSoftmax</h2><p>结果似乎比Softmax更加稳定，结果的范围为$[-inf,0)$。结果维数依然不变。</p>
+<script type="math/tex; mode=display">
+\log \operatorname{Softmax}\left(x_{i}\right)=\log \left(\frac{\exp \left(x_{i}\right)}{\sum_{j} \exp \left(x_{j}\right)}\right)</script><h2 id="NLLLoss"><a href="#NLLLoss" class="headerlink" title="NLLLoss"></a>NLLLoss</h2><p>negative log likelihood loss，负对数似然损失函数，对Log后的结果进行损失计算，例如Logsoftmax。<script type="math/tex">l_{n}=-w_{y_n}x_{n,y_n}</script>，如果不传入<em>weight</em>，那么<em>w</em>就是1，所以<script type="math/tex">l_{n}=-x_{n,y_n}</script>，即<em>input</em>的负数，<code>reduction=mean</code>也就变成了直接除以$N$。</p>
+<script type="math/tex; mode=display">
+\ell(x, y)=\left\{
+      \begin{array}{ll}
+      {\left\{l_{1}, \dots, l_{N}\right\},} & {\text{if reduction}=\text{'none';}} \\
+      {\sum_{n=1}^{N} \frac{1}{\sum_{n=1}^{N} w_{y_n}} l_{n},} & {\text{if reduction}=\text{'mean';}} \\
+      {\sum_{n=1}^{N} l_{n},} & {\text{if reduction}=\text {'sum'.}} \\
+      \end{array}\right.</script><h2 id="CrossEntropyLoss"><a href="#CrossEntropyLoss" class="headerlink" title="CrossEntropyLoss"></a>CrossEntropyLoss</h2><p>关于Pytorch<span class="exturl" data-url="aHR0cHM6Ly9weXRvcmNoLm9yZy9kb2NzL3N0YWJsZS9ubi5odG1sI2Nyb3NzZW50cm9weWxvc3M=" title="https://pytorch.org/docs/stable/nn.html#crossentropyloss">官网<i class="fa fa-external-link"></i></span>的CrossEntropyLoss补充了几组小实验。<br>文档中给出的CrossEntropyLoss的公式如下(一下讨论的均不带<em>weight</em>)：</p>
+<script type="math/tex; mode=display">
+\operatorname{loss}(x, class)=-\log \left(\frac{\exp (x[class])}{\sum_{j} \exp (x[j])}\right)</script><p>其中的<script type="math/tex">\exp (x[class])</script>越大，就是说当这个类别对应的值越大，即占的比例越大，<em>loss</em>值越小，结果越靠近0。<br>用一个样本简单模拟一下这个过程：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&gt;&gt;&gt; </span>loss = nn.CrossEntropyLoss()</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>input = torch.randn(<span class="number">1</span>, <span class="number">5</span>, requires_grad=<span class="literal">True</span>)</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>input</span><br><span class="line">tensor([[<span class="number">-1.4976</span>,  <span class="number">0.1278</span>,  <span class="number">1.6863</span>, <span class="number">-0.3295</span>,  <span class="number">1.4173</span>]], requires_grad=<span class="literal">True</span>)</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>target = torch.empty(<span class="number">1</span>, dtype=torch.long).random_(<span class="number">5</span>)</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>target</span><br><span class="line">tensor([<span class="number">3</span>])</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>loss(input, target)</span><br><span class="line">tensor(<span class="number">2.7809</span>, grad_fn=&lt;NllLossBackward&gt;)</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>i = input.detach().numpy()</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>i = i[<span class="number">0</span>]</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>i</span><br><span class="line">array([<span class="number">-1.4976473</span> ,  <span class="number">0.12782747</span>,  <span class="number">1.6863296</span> , <span class="number">-0.32949358</span>,  <span class="number">1.4173082</span> ],</span><br><span class="line">      dtype=float32)</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>np.log(np.sum(np.exp(i))/np.exp(i[<span class="number">3</span>]))</span><br><span class="line"><span class="number">2.7809231</span></span><br></pre></td></tr></table></figure>
+<p>文档中提到，对于多batch的情况，<em>The losses are averaged across observations for each minibatch.</em></p>
+<p>还有一句话，<em>This criterion combines nn.LogSoftmax() and nn.NLLLoss() in one single class.</em>所以上边给出的公式就是负的LogSoftmax，<em>负号把取值区间变成了(0,inf]，越靠近0，则结果越好，这样只需要最小化loss即可</em>，下面看一下CrossEntropyLoss源码，两者是怎么结合的：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">return</span> nll_loss(log_softmax(input, <span class="number">1</span>), target, weight, <span class="literal">None</span>, ignore_index, <span class="literal">None</span>, reduction)</span><br></pre></td></tr></table></figure>
+<p>先对它进行logsoftmax，然后再nllloss，默认的参数<code>reduction=&#39;mean&#39;</code>，所以出现了上边所说的，结果是各个minibatch的均值。下边进行一下多minibatch的实验，分别指定<code>reduction</code>为<code>mean</code>和<code>none</code>。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&gt;&gt;&gt; </span>input = torch.randn(<span class="number">3</span>, <span class="number">5</span>, requires_grad=<span class="literal">True</span>)</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>target = torch.empty(<span class="number">3</span>, dtype=torch.long).random_(<span class="number">5</span>)</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>loss = nn.CrossEntropyLoss(reduction=<span class="string">'none'</span>)</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>loss(input, target)</span><br><span class="line">tensor([<span class="number">1.2951</span>, <span class="number">1.9074</span>, <span class="number">1.6085</span>], grad_fn=&lt;NllLossBackward&gt;)</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>i = input.detach().numpy()</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>i</span><br><span class="line">array([[ <span class="number">1.7035984</span> , <span class="number">-0.8095179</span> , <span class="number">-0.22653757</span>, <span class="number">-0.19294807</span>,  <span class="number">1.0479178</span> ],</span><br><span class="line">       [ <span class="number">0.37498614</span>, <span class="number">-0.26111123</span>, <span class="number">-2.1978652</span> ,  <span class="number">0.80966765</span>, <span class="number">-0.5037327</span> ],</span><br><span class="line">       [ <span class="number">0.87008125</span>, <span class="number">-1.5282617</span> ,  <span class="number">0.25803488</span>, <span class="number">-1.0827187</span> ,  <span class="number">2.0395918</span> ]],</span><br><span class="line">      dtype=float32)</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>i=i[<span class="number">0</span>]</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>i</span><br><span class="line">array([ <span class="number">1.7035984</span> , <span class="number">-0.8095179</span> , <span class="number">-0.22653757</span>, <span class="number">-0.19294807</span>,  <span class="number">1.0479178</span> ],</span><br><span class="line">      dtype=float32)</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>target</span><br><span class="line">tensor([<span class="number">4</span>, <span class="number">1</span>, <span class="number">0</span>])</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>np.log(np.sum(np.exp(i))/np.exp(i[<span class="number">4</span>]))</span><br><span class="line"><span class="number">1.2950675</span></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>i = input.detach().numpy()[<span class="number">1</span>]</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>np.log(np.sum(np.exp(i))/np.exp(i[<span class="number">1</span>]))</span><br><span class="line"><span class="number">1.9073898</span></span><br></pre></td></tr></table></figure>
+<p>可以看到，已经计算出了<code>reduction</code>为<code>none</code>时的值，下边设为<code>mean</code>：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&gt;&gt;&gt; </span>loss_mean = nn.CrossEntropyLoss(reduction=<span class="string">'mean'</span>)</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>loss_mean(input, target)</span><br><span class="line">tensor(<span class="number">1.6037</span>, grad_fn=&lt;NllLossBackward&gt;)</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>(<span class="number">1.2951</span> + <span class="number">1.9074</span> + <span class="number">1.6085</span>)/<span class="number">3</span></span><br><span class="line"><span class="number">1.6036666666666666</span></span><br></pre></td></tr></table></figure>
+<h3 id="恍然大悟"><a href="#恍然大悟" class="headerlink" title="恍然大悟"></a>恍然大悟</h3><p>我一直有个问题，就是交叉熵的公式分明是<script type="math/tex">H(p, q)=-\sum_{x} p(x) \log q(x)</script>，但是怎么到了CrossEntropyLoss里边$p(x)$就不见了，<span class="exturl" data-url="aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl8zNzU2NzQ1MS9hcnRpY2xlL2RldGFpbHMvODA4OTUzMDk=" title="https://blog.csdn.net/weixin_37567451/article/details/80895309">《经典损失函数：交叉熵》<i class="fa fa-external-link"></i></span>这篇文章写的非常好，不仅解释了为什么交叉熵要和Softmax一起用，而且让我明白了$p(x)$去哪了。</p>
+<p>我直接看的是Pytorch的源码，这里给了我一点误解。这篇文章中提到，CrossEntropyLoss实际上应该是先计算Softmax，把分布转换到概率分布，得到$q(x)$，然后在计算交叉熵。在计算交叉熵的时候，$p(x)$是<strong>one-hot</strong>之后的编码，也就是说只有对应的类别的那个值是1，其他的都是0，也就得到了公式<script type="math/tex">H(p, q)=- \log q(x_y)</script>，消去了求和记号和$p(x)$，得到了Pytorch中给出的CrossEntropyLoss公式。但是Pytorch中不是这么组织这个过程的，它是使用了$LogSoftmax+NLLLoss$的形式，其实实现的相同的方法。<br>再次需要注意的是，NLLLoss中的<script type="math/tex">1/N</script>和<script type="math/tex">\sum</script>，是计算的不同样本之间结果，和交叉熵中的求和记号区分开。</p>
 
       
     </div>
@@ -658,7 +594,7 @@ a &= b + c \\
   <li class="post-copyright-link">
     <strong>Post link: </strong>
     
-    <a href="https://yichengsu.github.io/2019/07/Build-a-Hexo-Blog/" title="Build a Hexo Blog">https://yichengsu.github.io/2019/07/Build-a-Hexo-Blog/</a>
+    <a href="https://yichengsu.github.io/2019/08/CrossEntropyLoss之我见/" title="CrossEntropyLoss之我见">https://yichengsu.github.io/2019/08/CrossEntropyLoss之我见/</a>
   </li>
   <li class="post-copyright-license">
     <strong>Copyright Notice:  </strong>All articles in this blog are licensed under <span class="exturl" data-url="aHR0cHM6Ly9jcmVhdGl2ZWNvbW1vbnMub3JnL2xpY2Vuc2VzL2J5LW5jLXNhLzQuMC9lbg=="><i class="fa fa-fw fa-creative-commons"></i>BY-NC-SA</span> unless stating additionally.</li>
@@ -674,9 +610,9 @@ a &= b + c \\
         
         <div class="post-tags">
           
-            <a href="/tags/Hexo/" rel="tag"># Hexo</a>
+            <a href="/tags/Deep-Learning/" rel="tag"># Deep Learning</a>
           
-            <a href="/tags/Next7/" rel="tag"># Next7</a>
+            <a href="/tags/loss-function/" rel="tag"># loss function</a>
           
         </div>
       
@@ -689,15 +625,15 @@ a &= b + c \\
         <div class="post-nav">
           <div class="post-nav-next post-nav-item">
             
+              <a href="/2019/07/Next-7-X-添加背景/" rel="next" title="Next 7.X 添加背景">
+                <i class="fa fa-chevron-left"></i> Next 7.X 添加背景
+              </a>
+            
           </div>
 
           <span class="post-nav-divider"></span>
 
           <div class="post-nav-prev post-nav-item">
-            
-              <a href="/2019/07/Hexo-with-VSCode/" rel="prev" title="Hexo with VSCode">
-                Hexo with VSCode <i class="fa fa-chevron-right"></i>
-              </a>
             
           </div>
         </div>
@@ -871,7 +807,7 @@ a &= b + c \\
             
 
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#准备工作"><span class="nav-number">1.</span> <span class="nav-text">准备工作</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#Node-js"><span class="nav-number">1.1.</span> <span class="nav-text">Node.js</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#npm"><span class="nav-number">1.2.</span> <span class="nav-text">npm</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Hexo"><span class="nav-number">2.</span> <span class="nav-text">Hexo</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#命令"><span class="nav-number">2.1.</span> <span class="nav-text">命令</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#写作"><span class="nav-number">2.2.</span> <span class="nav-text">写作</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#布局"><span class="nav-number">2.2.1.</span> <span class="nav-text">布局</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#草稿"><span class="nav-number">2.2.2.</span> <span class="nav-text">草稿</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#分类"><span class="nav-number">2.2.3.</span> <span class="nav-text">分类</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#正文中的标签插件"><span class="nav-number">2.2.4.</span> <span class="nav-text">正文中的标签插件</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#引用块"><span class="nav-number">2.2.4.1.</span> <span class="nav-text">引用块</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#代码块"><span class="nav-number">2.2.4.2.</span> <span class="nav-text">代码块</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#图片"><span class="nav-number">2.2.4.3.</span> <span class="nav-text">图片</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Link"><span class="nav-number">2.2.4.4.</span> <span class="nav-text">Link</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#推送到Github"><span class="nav-number">2.3.</span> <span class="nav-text">推送到Github</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Tip"><span class="nav-number">2.3.1.</span> <span class="nav-text">Tip</span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#NexT"><span class="nav-number">3.</span> <span class="nav-text">NexT</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#Theme-Setting"><span class="nav-number">3.1.</span> <span class="nav-text">Theme Setting</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Math"><span class="nav-number">3.2.</span> <span class="nav-text">Math</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#标签插件"><span class="nav-number">3.3.</span> <span class="nav-text">标签插件</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#External-Libraries"><span class="nav-number">3.4.</span> <span class="nav-text">External Libraries</span></a></li></ol></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#Softmax"><span class="nav-number">1.</span> <span class="nav-text">Softmax</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#LogSoftmax"><span class="nav-number">2.</span> <span class="nav-text">LogSoftmax</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#NLLLoss"><span class="nav-number">3.</span> <span class="nav-text">NLLLoss</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#CrossEntropyLoss"><span class="nav-number">4.</span> <span class="nav-text">CrossEntropyLoss</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#恍然大悟"><span class="nav-number">4.1.</span> <span class="nav-text">恍然大悟</span></a></li></ol></li></ol></div>
             
 
           </div>
