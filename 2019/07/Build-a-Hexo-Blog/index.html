@@ -113,7 +113,7 @@
 <meta property="og:site_name" content="suyc&#39;s blog">
 <meta property="og:description" content="记录一下慢慢接触Hexo中学习到的知识吧，做一个梳理。 准备工作Node.js使用的是Nodejs 10，从官网下载的时候发现Nodejs 10的支持时间还很长，所以就用的这个，第一个接触这个东西，不是很懂。 受制于用啥软件都要用最新版的强迫症思想，去查了查怎么升级Nodejs，然后node版本如何升级中提到了一句话：               爬坑后的结论：window系统升级node只能到n">
 <meta property="og:locale" content="en">
-<meta property="og:updated_time" content="2019-08-10T13:17:55.615Z">
+<meta property="og:updated_time" content="2019-08-14T12:35:45.505Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Build a Hexo Blog">
 <meta name="twitter:description" content="记录一下慢慢接触Hexo中学习到的知识吧，做一个梳理。 准备工作Node.js使用的是Nodejs 10，从官网下载的时候发现Nodejs 10的支持时间还很长，所以就用的这个，第一个接触这个东西，不是很懂。 受制于用啥软件都要用最新版的强迫症思想，去查了查怎么升级Nodejs，然后node版本如何升级中提到了一句话：               爬坑后的结论：window系统升级node只能到n">
@@ -455,7 +455,7 @@
                 
                   <span class="post-meta-item-text">Edited on</span>
                 
-                <time title="Modified: 2019-08-10 21:17:55" itemprop="dateModified" datetime="2019-08-10T21:17:55+08:00">2019-08-10</time>
+                <time title="Modified: 2019-08-14 20:35:45" itemprop="dateModified" datetime="2019-08-14T20:35:45+08:00">2019-08-14</time>
               </span>
             
           
@@ -605,7 +605,7 @@ a &= b + c \\
 <span itemprop="image" itemscope itemtype="http://schema.org/ImageObject"><img itemprop="url image" class="full-image" alt="alt about img" title="Linux" style="max-width: none; width: 200px;" data-src="/images/Build-a-Hexo-Blog-linux.jpg"><meta itemprop="width" content="auto"><meta itemprop="height" content="auto"></span>
 <p>图片的表达好像差不多，就是这个标签不带边框。<br>note的表达更加多样性，还可以在note中使用<code>###</code>写入标题，<em>最多支持三级标题，使用四级标题的时候TOC解析会出问题</em>。对note进行如下设置：<code>style: modern</code>使用新式css，<code>icons: true</code>使用提示的图标。<br>label就是给这段文字加个<span class="label success">颜色</span>。class很通用，都是这几个类别。<br>使用了NexT后，无论哪种形式的Link都会在后边加一个小图标，很nice。<br>Tab和Button和PDF等不常用，没写~</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">&#123;% fi /url, [alt], [title], [size] %&#125;</span><br><span class="line"></span><br><span class="line">&#123;% note [class] [no-icon] %&#125;</span><br><span class="line">Any content (support inline tags too.io).</span><br><span class="line">&#123;% endnote %&#125;</span><br><span class="line">[class]   : default | primary | success | info | warning | danger.</span><br><span class="line">[no-icon] : Disable icon in note.</span><br><span class="line"></span><br><span class="line">&#123;% label [class]@Text %&#125;</span><br><span class="line">[class] : default | primary | success | info | warning | danger.</span><br><span class="line"></span><br><span class="line">&#123;% video url %&#125;</span><br></pre></td></tr></table></figure>
-<h2 id="External-Libraries"><a href="#External-Libraries" class="headerlink" title="External Libraries"></a>External Libraries</h2><p>全部使用cdn加速<br>Fancybox: 对图片进行jq优化，支持大图，可以点开图片后左右切换图片 ✔<br>bookmark: 支持记录当前阅读位置，在浏览器左上角显示一个小书签，下次阅读的时候可以继续看<br>reading_progress: 在浏览器顶端显示阅读位置<br>Progress bar: 载入时在顶部显示进度条，可以对Ajax请求优化 ✔<br>FastClick: 优化点击动作（7.3开始删除了这个）<br>Jquery Lazyload: 图片懒加载 ✔<br>Canvas Nest: 背景jq，点点点点点的这个背景 ✔<br>Canvas Ribbon: 炫酷的条带背景，每次点击鼠标就会换</p>
+<h2 id="External-Libraries"><a href="#External-Libraries" class="headerlink" title="External Libraries"></a>External Libraries</h2><p>全部使用cdn加速<br>Fancybox: 对图片进行jq优化，支持大图，可以点开图片后左右切换图片 ✔<br>bookmark: 支持记录当前阅读位置，在浏览器左上角显示一个小书签，下次阅读的时候可以继续看<br>reading_progress: 在浏览器顶端显示阅读位置<br>Progress bar: 载入时在顶部显示进度条，可以对Ajax请求优化 ✔ (这个pace的theme咋不能用啊，这里是<span class="exturl" data-url="aHR0cHM6Ly9naXRodWIuaHVic3BvdC5jb20vcGFjZS9kb2NzL3dlbGNvbWUv" title="https://github.hubspot.com/pace/docs/welcome/">官网<i class="fa fa-external-link"></i></span>)<br>FastClick: 优化点击动作（7.3开始删除了这个）<br>Jquery Lazyload: 图片懒加载 ✔<br>Canvas Nest: 背景jq，点点点点点的这个背景 ✔<br>Canvas Ribbon: 炫酷的条带背景，每次点击鼠标就会换</p>
 
       
     </div>
@@ -768,7 +768,7 @@ a &= b + c \\
                 
                   <a href="/archives/">
                 
-                    <span class="site-state-item-count">4</span>
+                    <span class="site-state-item-count">5</span>
                     <span class="site-state-item-name">posts</span>
                   </a>
                 </div>
@@ -814,7 +814,9 @@ a &= b + c \\
                     
                       
                     
-                    <span class="site-state-item-count">4</span>
+                      
+                    
+                    <span class="site-state-item-count">5</span>
                     <span class="site-state-item-name">tags</span>
                   </a>
                 </div>

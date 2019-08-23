@@ -397,6 +397,197 @@
   
   
   <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="https://yichengsu.github.io/2019/08/pytorch-with-big-dataset/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="suyc">
+      <meta itemprop="description" content="One meets its destiny on the road he takes to avoid it.">
+      <meta itemprop="image" content="/images/myavatar.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="suyc's blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h2 class="post-title" itemprop="name headline">
+                
+                
+                <a href="/2019/08/pytorch-with-big-dataset/" class="post-title-link" itemprop="url">pytorch读取数据入门</a>
+              
+            
+          </h2>
+        
+
+        <div class="post-meta">
+
+          
+          
+          
+
+          
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Posted on</span>
+              
+
+              
+                
+              
+
+              <time title="Created: 2019-08-22 21:00:00" itemprop="dateCreated datePublished" datetime="2019-08-22T21:00:00+08:00">2019-08-22</time>
+            </span>
+          
+
+          
+            
+
+            
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">Edited on</span>
+                
+                <time title="Modified: 2019-08-23 16:08:08" itemprop="dateModified" datetime="2019-08-23T16:08:08+08:00">2019-08-23</time>
+              </span>
+            
+          
+
+          
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">In</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/Deep-Learning/" itemprop="url" rel="index"><span itemprop="name">Deep Learning</span></a></span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <p>
+              本文主要涉及内容：Dataset、DataLoader、DatasetFloder等相关源码分析。看了网上众多的关于这方面的文章，详细解释道理的很少，所以写了这篇文章。忽略基础知识直接进入重点点击。本文基于Pytorch 1.1.0。
+基础知识可能需要导入的包
+from torch.utils.data.dataset import Datasetimport torch.utils.data a
+              ...
+            </p>
+          <!--noindex-->
+          
+            <div class="post-button text-center">
+              <a class="btn" href="/2019/08/pytorch-with-big-dataset/#more" rel="contents">
+                Read more &raquo;
+              </a>
+            </div>
+          
+          <!--/noindex-->
+        
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    
+
+    
+
+    
+    
+    
+
+    
+
+    
+      
+    
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
     <link itemprop="mainEntityOfPage" href="https://yichengsu.github.io/2019/08/CrossEntropyLoss之我见/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -457,7 +648,7 @@
                 
                   <span class="post-meta-item-text">Edited on</span>
                 
-                <time title="Modified: 2019-08-11 21:21:28" itemprop="dateModified" datetime="2019-08-11T21:21:28+08:00">2019-08-11</time>
+                <time title="Modified: 2019-08-12 10:54:18" itemprop="dateModified" datetime="2019-08-12T10:54:18+08:00">2019-08-12</time>
               </span>
             
           
@@ -514,10 +705,10 @@
         
           
             <p>
-              看了一天关于各种熵的解释，比较好的文章已经添加到了Bookmark
+              看了一天关于各种熵的解释，比较好的文章已经添加到了Bookmark。本文中的公式均来自Pytorch文档。
 Softmax把数据缩放到$[0,1]$，且和为$1$。对每个元素进行了操作，结果并不改变维数，即输入N维，输出还是N维。
 
-\operatorname{Softmax}\left(x_{i}\right)=\frac{\exp \left(x_{i}\right)}{\sum_{j} \exp \left(x_{j}\right
+\operatorname{Softmax}\left(x_{i}\right)=\frac{\exp \left(x_{i}\right)}{\sum_{j} \e
               ...
             </p>
           <!--noindex-->
@@ -1031,7 +1222,7 @@ Paste Image首先需要安装插件Paste Image，这个插件是用来粘贴图�
                 
                   <span class="post-meta-item-text">Edited on</span>
                 
-                <time title="Modified: 2019-08-10 21:17:55" itemprop="dateModified" datetime="2019-08-10T21:17:55+08:00">2019-08-10</time>
+                <time title="Modified: 2019-08-14 20:35:45" itemprop="dateModified" datetime="2019-08-14T20:35:45+08:00">2019-08-14</time>
               </span>
             
           
@@ -1192,7 +1383,7 @@ Paste Image首先需要安装插件Paste Image，这个插件是用来粘贴图�
                 
                   <a href="/archives/">
                 
-                    <span class="site-state-item-count">4</span>
+                    <span class="site-state-item-count">5</span>
                     <span class="site-state-item-name">posts</span>
                   </a>
                 </div>
@@ -1238,7 +1429,9 @@ Paste Image首先需要安装插件Paste Image，这个插件是用来粘贴图�
                     
                       
                     
-                    <span class="site-state-item-count">4</span>
+                      
+                    
+                    <span class="site-state-item-count">5</span>
                     <span class="site-state-item-name">tags</span>
                   </a>
                 </div>
@@ -1809,6 +2002,8 @@ Paste Image首先需要安装插件Paste Image，这个插件是用来粘贴图�
 
   
   
+    
+      
     
       
         
