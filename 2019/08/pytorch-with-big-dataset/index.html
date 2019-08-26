@@ -113,7 +113,7 @@
 <meta property="og:site_name" content="suyc&#39;s blog">
 <meta property="og:description" content="本文主要涉及内容：Dataset、DataLoader、DatasetFloder等相关源码分析。看了网上众多的关于这方面的文章，详细解释道理的很少，所以写了这篇文章。忽略基础知识直接进入重点点击。本文基于Pytorch 1.1.0。 基础知识可能需要导入的包 12345from torch.utils.data.dataset import Datasetimport torch.utils.d">
 <meta property="og:locale" content="en">
-<meta property="og:updated_time" content="2019-08-23T08:08:08.037Z">
+<meta property="og:updated_time" content="2019-08-24T05:21:47.955Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="pytorch读取数据入门">
 <meta name="twitter:description" content="本文主要涉及内容：Dataset、DataLoader、DatasetFloder等相关源码分析。看了网上众多的关于这方面的文章，详细解释道理的很少，所以写了这篇文章。忽略基础知识直接进入重点点击。本文基于Pytorch 1.1.0。 基础知识可能需要导入的包 12345from torch.utils.data.dataset import Datasetimport torch.utils.d">
@@ -455,7 +455,7 @@
                 
                   <span class="post-meta-item-text">Edited on</span>
                 
-                <time title="Modified: 2019-08-23 16:08:08" itemprop="dateModified" datetime="2019-08-23T16:08:08+08:00">2019-08-23</time>
+                <time title="Modified: 2019-08-24 13:21:47" itemprop="dateModified" datetime="2019-08-24T13:21:47+08:00">2019-08-24</time>
               </span>
             
           
@@ -574,6 +574,11 @@
 <li>在getitem时，会调用loader进行读取数据，在这里我们可以定义自己的loader。读取完后会对数据和label做transform。然后返回。如果我们自定义的loader读上来就是pkl，那么就不需要再定义transform了，非常简单。</li>
 </ol>
 <p><strong>三代目</strong>步骤：<br>这个类把我们在<a href="再改进">再改进</a>中的第2步骤都实现了有没有！而且还能配合上DataLoader的shuffle！现在<em>可能</em>只留下第1步需要我们做(如果不转pkl，那么什么也不用做，直接使用默认的loader即可)。或者我们提前把测试集和训练集划分开，然后定义两个DatasetFolder就行啦!</p>
+<h3 id="演示"><a href="#演示" class="headerlink" title="演示"></a>演示</h3><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">train_dataset = Datasets.ImageFolder(img_path, transform=transforms.ToTensor())</span><br><span class="line">train_dataset = Datasets.DatasetFolder(img_path, extensions=<span class="string">'pkl'</span>, loader=pklloder)</span><br></pre></td></tr></table></figure>
+<p>如果直接使用默认的图片后缀，如jpg、png等，可以直接使用ImageFolder即可，使用transform将读入的图片进行一些操作。因为我的图片都已经裁剪为<code>224*224</code>了，所以只需要totensor就行。如果像我一样使用了pkl，那么就需要自己写一个loader函数。</p>
+<p>如果不使用shuffle，那么读入的顺序就像这样：<br><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">./crops/<span class="number">1</span>/<span class="number">0044</span>_035.pkl</span><br><span class="line">./crops/<span class="number">1</span>/<span class="number">0044</span>_036.pkl</span><br><span class="line">./crops/<span class="number">1</span>/<span class="number">0044</span>_037.pkl</span><br><span class="line">./crops/<span class="number">1</span>/<span class="number">0044</span>_038.pkl</span><br><span class="line">./crops/<span class="number">1</span>/<span class="number">0044</span>_039.pkl</span><br><span class="line">./crops/<span class="number">1</span>/<span class="number">0044</span>_040.pkl</span><br><span class="line">./crops/<span class="number">1</span>/<span class="number">0044</span>_041.pkl</span><br><span class="line">./crops/<span class="number">1</span>/<span class="number">0044</span>_042.pkl</span><br><span class="line">./crops/<span class="number">1</span>/<span class="number">0044</span>_043.pkl</span><br></pre></td></tr></table></figure></p>
+<p>如果使用了shuffle，那么就变成了这样：<br><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">./crops/<span class="number">4</span>/<span class="number">0230</span>_509.pkl</span><br><span class="line">./crops/<span class="number">1</span>/<span class="number">1483</span>_064.pkl</span><br><span class="line">./crops/<span class="number">3</span>/<span class="number">1553</span>_005.pkl</span><br><span class="line">./crops/<span class="number">2</span>/<span class="number">1742</span>_005.pkl</span><br><span class="line">./crops/<span class="number">3</span>/<span class="number">1016</span>_002.pkl</span><br><span class="line">./crops/<span class="number">4</span>/<span class="number">0230</span>_564.pkl</span><br><span class="line">./crops/<span class="number">4</span>/<span class="number">2003</span>_036.pkl</span><br><span class="line">./crops/<span class="number">2</span>/<span class="number">2607</span>_008.pkl</span><br><span class="line">./crops/<span class="number">3</span>/<span class="number">0450</span>_004.pkl</span><br></pre></td></tr></table></figure></p>
+<p>使用scikit-learn进行分层的划分数据，即按照label的比例划分：<br><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">X_train, X_test, y_train, y_test = train_test_split(</span><br><span class="line">        X, y, test_size=<span class="number">0.1</span>, stratify=y, random_state=<span class="number">0</span>)</span><br></pre></td></tr></table></figure></p>
 <div class="note info">
             <p>一个<code>224*224*3</code>大小的图片，png要80~90kB，jpg格式的要10~30kB，而pkl的要588KB！</p>
           </div>
@@ -672,6 +677,10 @@
 
           <div class="post-nav-prev post-nav-item">
             
+              <a href="/2019/08/how-to-set-lr-in-pytorch/" rel="prev" title="如何设置Pytorch的动态学习率">
+                如何设置Pytorch的动态学习率 <i class="fa fa-chevron-right"></i>
+              </a>
+            
           </div>
         </div>
       
@@ -741,7 +750,7 @@
                 
                   <a href="/archives/">
                 
-                    <span class="site-state-item-count">5</span>
+                    <span class="site-state-item-count">6</span>
                     <span class="site-state-item-name">posts</span>
                   </a>
                 </div>
@@ -789,7 +798,9 @@
                     
                       
                     
-                    <span class="site-state-item-count">5</span>
+                      
+                    
+                    <span class="site-state-item-count">6</span>
                     <span class="site-state-item-name">tags</span>
                   </a>
                 </div>
@@ -846,7 +857,7 @@
             
 
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#基础知识"><span class="nav-number">1.</span> <span class="nav-text">基础知识</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#Dadaset基础类"><span class="nav-number">1.1.</span> <span class="nav-text">Dadaset基础类</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Transforms"><span class="nav-number">1.2.</span> <span class="nav-text">Transforms</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#结合Pandas读取图片"><span class="nav-number">1.3.</span> <span class="nav-text">结合Pandas读取图片</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Dataloader"><span class="nav-number">1.4.</span> <span class="nav-text">Dataloader</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#借鉴"><span class="nav-number">2.</span> <span class="nav-text">借鉴</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#我的想法"><span class="nav-number">3.</span> <span class="nav-text">我的想法</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#改进"><span class="nav-number">3.1.</span> <span class="nav-text">改进</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#再改进"><span class="nav-number">3.2.</span> <span class="nav-text">再改进</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#看源码"><span class="nav-number">3.3.</span> <span class="nav-text">看源码</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#DataLoader"><span class="nav-number">3.3.1.</span> <span class="nav-text">DataLoader</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#DataLoaderIter"><span class="nav-number">3.3.2.</span> <span class="nav-text">_DataLoaderIter</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#BatchSampler"><span class="nav-number">3.3.3.</span> <span class="nav-text">BatchSampler</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#思考"><span class="nav-number">3.3.4.</span> <span class="nav-text">思考</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#终极策略"><span class="nav-number">3.4.</span> <span class="nav-text">终极策略</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#reference"><span class="nav-number">4.</span> <span class="nav-text">reference</span></a></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#基础知识"><span class="nav-number">1.</span> <span class="nav-text">基础知识</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#Dadaset基础类"><span class="nav-number">1.1.</span> <span class="nav-text">Dadaset基础类</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Transforms"><span class="nav-number">1.2.</span> <span class="nav-text">Transforms</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#结合Pandas读取图片"><span class="nav-number">1.3.</span> <span class="nav-text">结合Pandas读取图片</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Dataloader"><span class="nav-number">1.4.</span> <span class="nav-text">Dataloader</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#借鉴"><span class="nav-number">2.</span> <span class="nav-text">借鉴</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#我的想法"><span class="nav-number">3.</span> <span class="nav-text">我的想法</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#改进"><span class="nav-number">3.1.</span> <span class="nav-text">改进</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#再改进"><span class="nav-number">3.2.</span> <span class="nav-text">再改进</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#看源码"><span class="nav-number">3.3.</span> <span class="nav-text">看源码</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#DataLoader"><span class="nav-number">3.3.1.</span> <span class="nav-text">DataLoader</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#DataLoaderIter"><span class="nav-number">3.3.2.</span> <span class="nav-text">_DataLoaderIter</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#BatchSampler"><span class="nav-number">3.3.3.</span> <span class="nav-text">BatchSampler</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#思考"><span class="nav-number">3.3.4.</span> <span class="nav-text">思考</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#终极策略"><span class="nav-number">3.4.</span> <span class="nav-text">终极策略</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#演示"><span class="nav-number">3.4.1.</span> <span class="nav-text">演示</span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#reference"><span class="nav-number">4.</span> <span class="nav-text">reference</span></a></li></ol></div>
             
 
           </div>

@@ -105,18 +105,18 @@
 
 
 
-  <meta name="description" content="Next 7.X 添加背景跟以前的版本有了很大的变化，网上很多方法都是旧版Next的，下边是我自己尝试出来的方法：路径：themes\next\source\css\_common\scaffolding\base.styl修改其中的body，把background字段覆盖：123456// background: $body-bg-color;background: url(/images/XX">
-<meta name="keywords" content="Hexo,Next7">
+  <meta name="description" content="本文主要涉及内容：Optimizer、_LRScheduler等源码分析。本文依旧基于Pytorch 1.1.0。 Pytorch提供了torch.optim.lr_scheduler来帮助用户改变学习率，下边将从Optimizer入手，看一下这个类是如何工作的。 Optimizer为什么从Optimizer入手，因为无论是Adam还是SGD，都是继承的这个类。同时，scheduler也是给所有的">
+<meta name="keywords" content="Deep Learning,Pytorch,learning rate">
 <meta property="og:type" content="article">
-<meta property="og:title" content="Next 7.X 添加背景">
-<meta property="og:url" content="https://yichengsu.github.io/2019/07/Next-7-X-添加背景/index.html">
+<meta property="og:title" content="如何设置Pytorch的动态学习率">
+<meta property="og:url" content="https://yichengsu.github.io/2019/08/how-to-set-lr-in-pytorch/index.html">
 <meta property="og:site_name" content="suyc&#39;s blog">
-<meta property="og:description" content="Next 7.X 添加背景跟以前的版本有了很大的变化，网上很多方法都是旧版Next的，下边是我自己尝试出来的方法：路径：themes\next\source\css\_common\scaffolding\base.styl修改其中的body，把background字段覆盖：123456// background: $body-bg-color;background: url(/images/XX">
+<meta property="og:description" content="本文主要涉及内容：Optimizer、_LRScheduler等源码分析。本文依旧基于Pytorch 1.1.0。 Pytorch提供了torch.optim.lr_scheduler来帮助用户改变学习率，下边将从Optimizer入手，看一下这个类是如何工作的。 Optimizer为什么从Optimizer入手，因为无论是Adam还是SGD，都是继承的这个类。同时，scheduler也是给所有的">
 <meta property="og:locale" content="en">
-<meta property="og:updated_time" content="2019-07-14T04:25:50.443Z">
+<meta property="og:updated_time" content="2019-08-26T13:50:35.827Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="Next 7.X 添加背景">
-<meta name="twitter:description" content="Next 7.X 添加背景跟以前的版本有了很大的变化，网上很多方法都是旧版Next的，下边是我自己尝试出来的方法：路径：themes\next\source\css\_common\scaffolding\base.styl修改其中的body，把background字段覆盖：123456// background: $body-bg-color;background: url(/images/XX">
+<meta name="twitter:title" content="如何设置Pytorch的动态学习率">
+<meta name="twitter:description" content="本文主要涉及内容：Optimizer、_LRScheduler等源码分析。本文依旧基于Pytorch 1.1.0。 Pytorch提供了torch.optim.lr_scheduler来帮助用户改变学习率，下边将从Optimizer入手，看一下这个类是如何工作的。 Optimizer为什么从Optimizer入手，因为无论是Adam还是SGD，都是继承的这个类。同时，scheduler也是给所有的">
 
 
 
@@ -124,7 +124,7 @@
 
   
   
-  <link rel="canonical" href="https://yichengsu.github.io/2019/07/Next-7-X-添加背景/">
+  <link rel="canonical" href="https://yichengsu.github.io/2019/08/how-to-set-lr-in-pytorch/">
 
 
 
@@ -134,7 +134,7 @@
   };
 </script>
 
-  <title>Next 7.X 添加背景 | suyc's blog</title>
+  <title>如何设置Pytorch的动态学习率 | suyc's blog</title>
   
 
 
@@ -397,7 +397,7 @@
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="https://yichengsu.github.io/2019/07/Next-7-X-添加背景/">
+    <link itemprop="mainEntityOfPage" href="https://yichengsu.github.io/2019/08/how-to-set-lr-in-pytorch/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="suyc">
@@ -414,7 +414,7 @@
 
         
         
-          <h2 class="post-title" itemprop="name headline">Next 7.X 添加背景
+          <h2 class="post-title" itemprop="name headline">如何设置Pytorch的动态学习率
 
               
             
@@ -440,23 +440,13 @@
                 
               
 
-              <time title="Created: 2019-07-13 19:46:37" itemprop="dateCreated datePublished" datetime="2019-07-13T19:46:37+08:00">2019-07-13</time>
+              <time title="Created: 2019-08-26 21:44:42 / Modified: 21:50:35" itemprop="dateCreated datePublished" datetime="2019-08-26T21:44:42+08:00">2019-08-26</time>
             </span>
           
 
           
             
 
-            
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-calendar-check-o"></i>
-                </span>
-                
-                  <span class="post-meta-item-text">Edited on</span>
-                
-                <time title="Modified: 2019-07-14 12:25:50" itemprop="dateModified" datetime="2019-07-14T12:25:50+08:00">2019-07-14</time>
-              </span>
             
           
 
@@ -469,7 +459,7 @@
                 <span class="post-meta-item-text">In</span>
               
               
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/Hexo/" itemprop="url" rel="index"><span itemprop="name">Hexo</span></a></span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/Deep-Learning/" itemprop="url" rel="index"><span itemprop="name">Deep Learning</span></a></span>
 
                 
                 
@@ -517,11 +507,30 @@
       
 
       
-        <p>Next 7.X 添加背景跟以前的版本有了很大的变化，网上很多方法都是旧版Next的，下边是我自己尝试出来的方法：<br>路径：<code>themes\next\source\css\_common\scaffolding\base.styl</code><br>修改其中的body，把background字段覆盖：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">// background: $body-bg-color;</span><br><span class="line">background: url(/images/XXX.jpg);</span><br><span class="line">background-size: cover;</span><br><span class="line">background-repeat: no-repeat;</span><br><span class="line">background-attachment: fixed;</span><br><span class="line">background-position: center;</span><br></pre></td></tr></table></figure></p>
-<p>然后如果想让前边的页面虚化一些可以在最后直接添加：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">.main-inner &#123;</span><br><span class="line">    opacity: 0.9;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
-<p>最后剩下的一部分就不要虚化了，因为会导致搜索框太浅，无法使用。</p>
-<p>如果不添加背景，可以直接给背景改个颜色，我这里最后还是采取了直接改颜色的办法，可以看到背景颜色是由<code>$body-bg-color</code>决定的，可以在当前主题中搜索这个关键词，例如我这个主题是Pisces，所以我的路径是在<code>themes\next\source\css\_variables\Pisces.styl</code>里，直接把这一项的颜色改一下就行，我改成了<code>#f2f3f4</code>，就是灰的颜色重了一点，可能也看不出啥变化~</p>
-
+        <p>本文主要涉及内容：<code>Optimizer</code>、<code>_LRScheduler</code>等源码分析。<br>本文依旧基于Pytorch 1.1.0。</p>
+<p>Pytorch提供了<code>torch.optim.lr_scheduler</code>来帮助用户改变学习率，下边将从<code>Optimizer</code>入手，看一下这个类是如何工作的。</p>
+<h1 id="Optimizer"><a href="#Optimizer" class="headerlink" title="Optimizer"></a>Optimizer</h1><p>为什么从Optimizer入手，因为无论是Adam还是SGD，都是继承的这个类。同时，scheduler也是给所有的Optimizer服务的，所以需要用的方法都会定义在这个基类里，直接看一下这个类的属性即可。给出Doc中的代码<span class="exturl" data-url="aHR0cHM6Ly9weXRvcmNoLm9yZy9kb2NzLzEuMS4wL19tb2R1bGVzL3RvcmNoL29wdGltL29wdGltaXplci5odG1sI09wdGltaXplcg==" title="https://pytorch.org/docs/1.1.0/_modules/torch/optim/optimizer.html#Optimizer">链接<i class="fa fa-external-link"></i></span>。</p>
+<p>首先是初始化方法<code>def __init__(self, params, defaults)</code>，这个方法的params参数，就是我们在初始化优化器的时候传入的网络的参数，如<code>Alexnet.parameters()</code>，而后边所有的参数都将合并成dict参数作为这个方法的defaults。<br>看一下<code>Alexnet.parameters()</code>中存的都是什么：<br><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">for</span> alex <span class="keyword">in</span> Alexnet.parameters():</span><br><span class="line">    print(alex.shape)</span><br></pre></td></tr></table></figure></p>
+<p>可以看到，这里边存的就是整个网络的参数。<br>有两种定义optimizer的方法：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">optimizer = optim.SGD(model.parameters(), lr=<span class="number">0.01</span>, momentum=<span class="number">0.9</span>)</span><br><span class="line">optimizer = optim.SGD([</span><br><span class="line">    &#123;<span class="string">'params'</span>: model.base.parameters()&#125;,</span><br><span class="line">    &#123;<span class="string">'params'</span>: model.classifier.parameters(), <span class="string">'lr'</span>: <span class="number">1e-3</span>&#125;</span><br><span class="line">], lr=<span class="number">1e-2</span>, momentum=<span class="number">0.9</span>)</span><br></pre></td></tr></table></figure>
+<p>如果是<strong>第一种</strong>定义的方法：在这个初始化方法中，会把这些参数先改造成<code>[{&#39;params&#39;: Alexnet.parameters()}]</code>这样的一个长度为1的list。然后对这个list进行加工，添加上defaults中的参数，如果我们使用Alexnet来做一个例子的话，就是下边这个样子：<br><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">optimizer = torch.optim.Adam(Alexnet.parameters(), lr=<span class="number">0.001</span>)</span><br><span class="line">print([group.keys() <span class="keyword">for</span> group <span class="keyword">in</span> optimizer.param_groups])</span><br><span class="line"><span class="comment"># [dict_keys(['params', 'lr', 'betas', 'eps', 'weight_decay', 'amsgrad'])]</span></span><br></pre></td></tr></table></figure></p>
+<p>如果是<strong>第二种</strong>定义的方法：因为传入的本身就是dict的形式，所以会继续对他进行加工，添加上后边的参数，我们直接看疗效：<br><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">optimizer = torch.optim.SGD([</span><br><span class="line">    &#123;<span class="string">'params'</span>: Alexnet.features.parameters()&#125;,</span><br><span class="line">    &#123;<span class="string">'params'</span>: Alexnet.classifier.parameters(), <span class="string">'lr'</span>: <span class="number">1e-3</span>&#125;</span><br><span class="line">], lr=<span class="number">1e-2</span>, momentum=<span class="number">0.9</span>)</span><br><span class="line">print([group.keys() <span class="keyword">for</span> group <span class="keyword">in</span> optimizer.param_groups])</span><br><span class="line"><span class="comment"># [dict_keys(['params', 'lr', 'momentum', 'dampening', 'weight_decay', 'nesterov']), dict_keys(['params', 'lr', 'momentum', 'dampening', 'weight_decay', 'nesterov'])]</span></span><br></pre></td></tr></table></figure></p>
+<p>这次的list变成了两个元素，而且每个元素的组成和使用Adam也不一样了，这很明显，因为不同的优化器需要的参数不同嘛~(关于不同层的lr不同的设置这里给出官网<span class="exturl" data-url="aHR0cHM6Ly9weXRvcmNoLm9yZy9kb2NzLzEuMS4wL29wdGltLmh0bWwjcGVyLXBhcmFtZXRlci1vcHRpb25z" title="https://pytorch.org/docs/1.1.0/optim.html#per-parameter-options">链接<i class="fa fa-external-link"></i></span>)</p>
+<p>但是两者是相似的，就是每个元素都有params和lr，这就够了。</p>
+<h1 id="LRScheduler"><a href="#LRScheduler" class="headerlink" title="_LRScheduler"></a>_LRScheduler</h1><p>所有的动态修改lr的类，都是继承的这个类，所以我们看一下这个类包含什么方法。源码<span class="exturl" data-url="aHR0cHM6Ly9weXRvcmNoLm9yZy9kb2NzLzEuMS4wL19tb2R1bGVzL3RvcmNoL29wdGltL2xyX3NjaGVkdWxlci5odG1sI0V4cG9uZW50aWFsTFI=" title="https://pytorch.org/docs/1.1.0/_modules/torch/optim/lr_scheduler.html#ExponentialLR">链接<i class="fa fa-external-link"></i></span>。</p>
+<p>在初始化方法中<code>def __init__(self, optimizer, last_epoch=-1)</code>，包含两个参数，第一个参数就是我们上边提到的optimizer的任何一个子类。第二个参数的意思是<strong>当前执行到了哪个epoch</strong>。我们不指定它的时候，虽然默认是-1，但是init中会调用一次step并设置为0。</p>
+<div class="note danger">
+            <p>一定要注意Pytorch的版本！我的windows上用的是1.0.1，服务器用的是1.1.0，就闹了很多问题。就拿这个类来说，在1.0.1中是先<code>setp()</code>再训练，而1.1.0进行了更新，先训练，然后再<code>step()</code>。</p>
+          </div>
+<p>当我们调用了初始化后，会给optimizer增加一个字段，看一下：<br><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">scheduler = torch.optim.lr_scheduler.StepLR(optimizer, step_size=<span class="number">5</span>, gamma=<span class="number">0.1</span>)</span><br><span class="line">print([group.keys() <span class="keyword">for</span> group <span class="keyword">in</span> optimizer.param_groups])</span><br><span class="line"><span class="comment"># [dict_keys(['params', 'lr', 'betas', 'eps', 'weight_decay', 'amsgrad', 'initial_lr'])]</span></span><br></pre></td></tr></table></figure></p>
+<p>新增加的<code>initial_lr</code>字段就是原始的lr。</p>
+<p>在<code>def step(self, epoch=None)</code>方法中，通常情况下我们<strong>不需要</strong>指定这个参数epoch，因为每次调用他都会增加1。在这个函数中会调用一个需要重载的方法<code>get_lr()</code>，每次调用都会从这个方法中提取改变后的lr，赋值给optimizer。</p>
+<div class="note info">
+            <p>这里其实我一直有个疑问的，就是scheduler的step和optimizer的step是一个什么关系，其实通过源码，看到这里，这俩函数没啥关系！scheduler的step只会修改lr，两者都需要执行！</p>
+          </div>
+<p>下边看一下两个scheduler的<code>get_lr()</code>对比一下。先看一下SetpLR：<br><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">get_lr</span><span class="params">(self)</span>:</span></span><br><span class="line">    <span class="keyword">if</span> (self.last_epoch == <span class="number">0</span>) <span class="keyword">or</span> (self.last_epoch % self.step_size != <span class="number">0</span>):</span><br><span class="line">        <span class="keyword">return</span> [group[<span class="string">'lr'</span>] <span class="keyword">for</span> group <span class="keyword">in</span> self.optimizer.param_groups]</span><br><span class="line">    <span class="keyword">return</span> [group[<span class="string">'lr'</span>] * self.gamma</span><br><span class="line">            <span class="keyword">for</span> group <span class="keyword">in</span> self.optimizer.param_groups]</span><br></pre></td></tr></table></figure></p>
+<p>这个会在设置的步长的整倍数的时候将lr*gamma。<br>而ExponentialLR则会在每轮结束的时候都进行乘gamma的操作，这个减小也真的是指数倍的。<br><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">get_lr</span><span class="params">(self)</span>:</span></span><br><span class="line">    <span class="keyword">if</span> self.last_epoch == <span class="number">0</span>:</span><br><span class="line">        <span class="keyword">return</span> self.base_lrs</span><br><span class="line">    <span class="keyword">return</span> [group[<span class="string">'lr'</span>] * self.gamma</span><br><span class="line">            <span class="keyword">for</span> group <span class="keyword">in</span> self.optimizer.param_groups]</span><br></pre></td></tr></table></figure></p>
+<h1 id="Demo"><a href="#Demo" class="headerlink" title="Demo"></a>Demo</h1><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">scheduler = StepLR(optimizer, step_size=<span class="number">30</span>, gamma=<span class="number">0.1</span>)</span><br><span class="line">train_loader = Data.DataLoader(</span><br><span class="line">        dataset=train_dataset, batch_size=BATCH_SIZE, shuffle=<span class="literal">True</span>, pin_memory=<span class="literal">True</span>)</span><br><span class="line"><span class="keyword">for</span> epoch <span class="keyword">in</span> range(<span class="number">100</span>):</span><br><span class="line">    <span class="keyword">for</span> X, y <span class="keyword">in</span> train_loader:</span><br><span class="line">        ...</span><br><span class="line">        optimizer.zero_grad()</span><br><span class="line">        loss.backward()</span><br><span class="line">        optimizer.step()</span><br><span class="line">    scheduler.step()</span><br></pre></td></tr></table></figure>
       
     </div>
 
@@ -573,7 +582,7 @@
   <li class="post-copyright-link">
     <strong>Post link: </strong>
     
-    <a href="https://yichengsu.github.io/2019/07/Next-7-X-添加背景/" title="Next 7.X 添加背景">https://yichengsu.github.io/2019/07/Next-7-X-添加背景/</a>
+    <a href="https://yichengsu.github.io/2019/08/how-to-set-lr-in-pytorch/" title="如何设置Pytorch的动态学习率">https://yichengsu.github.io/2019/08/how-to-set-lr-in-pytorch/</a>
   </li>
   <li class="post-copyright-license">
     <strong>Copyright Notice:  </strong>All articles in this blog are licensed under <span class="exturl" data-url="aHR0cHM6Ly9jcmVhdGl2ZWNvbW1vbnMub3JnL2xpY2Vuc2VzL2J5LW5jLXNhLzQuMC9lbg=="><i class="fa fa-fw fa-creative-commons"></i>BY-NC-SA</span> unless stating additionally.</li>
@@ -589,9 +598,11 @@
         
         <div class="post-tags">
           
-            <a href="/tags/Hexo/" rel="tag"># Hexo</a>
+            <a href="/tags/Deep-Learning/" rel="tag"># Deep Learning</a>
           
-            <a href="/tags/Next7/" rel="tag"># Next7</a>
+            <a href="/tags/Pytorch/" rel="tag"># Pytorch</a>
+          
+            <a href="/tags/learning-rate/" rel="tag"># learning rate</a>
           
         </div>
       
@@ -604,8 +615,8 @@
         <div class="post-nav">
           <div class="post-nav-next post-nav-item">
             
-              <a href="/2019/07/Hexo-with-VSCode/" rel="next" title="Hexo with VSCode">
-                <i class="fa fa-chevron-left"></i> Hexo with VSCode
+              <a href="/2019/08/pytorch-with-big-dataset/" rel="next" title="pytorch读取数据入门">
+                <i class="fa fa-chevron-left"></i> pytorch读取数据入门
               </a>
             
           </div>
@@ -613,10 +624,6 @@
           <span class="post-nav-divider"></span>
 
           <div class="post-nav-prev post-nav-item">
-            
-              <a href="/2019/08/CrossEntropyLoss之我见/" rel="prev" title="CrossEntropyLoss之我见">
-                CrossEntropyLoss之我见 <i class="fa fa-chevron-right"></i>
-              </a>
             
           </div>
         </div>
@@ -660,8 +667,17 @@
       
 
       
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            Table of Contents
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            Overview
+          </li>
+        </ul>
+      
 
-      <div class="site-overview-wrap sidebar-panel sidebar-panel-active">
+      <div class="site-overview-wrap sidebar-panel">
         <div class="site-overview">
           <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
             
@@ -774,6 +790,23 @@
         </div>
       </div>
 
+      
+      <!--noindex-->
+        <div class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+            
+            
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#Optimizer"><span class="nav-number">1.</span> <span class="nav-text">Optimizer</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#LRScheduler"><span class="nav-number">2.</span> <span class="nav-text">_LRScheduler</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Demo"><span class="nav-number">3.</span> <span class="nav-text">Demo</span></a></li></ol></div>
+            
+
+          </div>
+        </div>
+      <!--/noindex-->
       
 
       
