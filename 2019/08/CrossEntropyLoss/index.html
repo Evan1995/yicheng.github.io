@@ -47,15 +47,15 @@
   };
 </script>
 
-  <meta name="description" content="看了一天关于各种熵的解释，比较好的文章已经添加到了Bookmark。本文中的公式均来自Pytorch文档。 Softmax把数据缩放到$[0,1]$，且和为$1$。对每个元素进行了操作，结果并不改变维数，即输入N维，输出还是N维。  \operatorname{Softmax}\left(x_{i}\right)=\frac{\exp \left(x_{i}\right)}{\sum_{j} \e">
-<meta name="keywords" content="Deep Learning,loss function">
+  <meta name="description" content="看了一天关于各种熵的解释，比较好的文章已经添加到了Bookmark。本文中的公式均来自PyTorch文档。 Softmax把数据缩放到$[0,1]$，且和为$1$。对每个元素进行了操作，结果并不改变维数，即输入N维，输出还是N维。  \operatorname{Softmax}\left(x_{i}\right)=\frac{\exp \left(x_{i}\right)}{\sum_{j} \e">
+<meta name="keywords" content="Deep Learning,loss function,知其所以然,PyTorch">
 <meta property="og:type" content="article">
 <meta property="og:title" content="CrossEntropyLoss之我见">
 <meta property="og:url" content="https:&#x2F;&#x2F;yichengsu.github.io&#x2F;2019&#x2F;08&#x2F;CrossEntropyLoss&#x2F;index.html">
 <meta property="og:site_name" content="suyc&#39;s blog">
-<meta property="og:description" content="看了一天关于各种熵的解释，比较好的文章已经添加到了Bookmark。本文中的公式均来自Pytorch文档。 Softmax把数据缩放到$[0,1]$，且和为$1$。对每个元素进行了操作，结果并不改变维数，即输入N维，输出还是N维。  \operatorname{Softmax}\left(x_{i}\right)=\frac{\exp \left(x_{i}\right)}{\sum_{j} \e">
+<meta property="og:description" content="看了一天关于各种熵的解释，比较好的文章已经添加到了Bookmark。本文中的公式均来自PyTorch文档。 Softmax把数据缩放到$[0,1]$，且和为$1$。对每个元素进行了操作，结果并不改变维数，即输入N维，输出还是N维。  \operatorname{Softmax}\left(x_{i}\right)=\frac{\exp \left(x_{i}\right)}{\sum_{j} \e">
 <meta property="og:locale" content="en">
-<meta property="og:updated_time" content="2019-11-24T03:34:18.352Z">
+<meta property="og:updated_time" content="2019-12-11T04:41:35.313Z">
 <meta name="twitter:card" content="summary">
 
 <link rel="canonical" href="https://yichengsu.github.io/2019/08/CrossEntropyLoss/">
@@ -253,7 +253,7 @@
                   <i class="fa fa-calendar-check-o"></i>
                 </span>
                 <span class="post-meta-item-text">Edited on</span>
-                <time title="Modified: 2019-11-24 11:34:18" itemprop="dateModified" datetime="2019-11-24T11:34:18+08:00">2019-11-24</time>
+                <time title="Modified: 2019-12-11 12:41:35" itemprop="dateModified" datetime="2019-12-11T12:41:35+08:00">2019-12-11</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -285,7 +285,7 @@
     <div class="post-body" itemprop="articleBody">
 
       
-        <p>看了一天关于各种熵的解释，比较好的文章已经添加到了<a href="/bookmark/">Bookmark</a>。本文中的公式均来自<span class="exturl" data-url="aHR0cHM6Ly9weXRvcmNoLm9yZy9kb2NzL3N0YWJsZS9ubi5mdW5jdGlvbmFsLmh0bWw=" title="https://pytorch.org/docs/stable/nn.functional.html">Pytorch文档<i class="fa fa-external-link"></i></span>。</p>
+        <p>看了一天关于各种熵的解释，比较好的文章已经添加到了<a href="/bookmark/">Bookmark</a>。本文中的公式均来自<span class="exturl" data-url="aHR0cHM6Ly9weXRvcmNoLm9yZy9kb2NzL3N0YWJsZS9ubi5mdW5jdGlvbmFsLmh0bWw=" title="https://pytorch.org/docs/stable/nn.functional.html">PyTorch文档<i class="fa fa-external-link"></i></span>。</p>
 <h2 id="Softmax"><a href="#Softmax" class="headerlink" title="Softmax"></a>Softmax</h2><p>把数据缩放到$[0,1]$，且和为$1$。对每个元素进行了操作，结果并不改变维数，即输入N维，输出还是N维。</p>
 <script type="math/tex; mode=display">
 \operatorname{Softmax}\left(x_{i}\right)=\frac{\exp \left(x_{i}\right)}{\sum_{j} \exp \left(x_{j}\right)}</script><h2 id="LogSoftmax"><a href="#LogSoftmax" class="headerlink" title="LogSoftmax"></a>LogSoftmax</h2><p>结果似乎比Softmax更加稳定，结果的范围为$[-inf,0)$。结果维数依然不变。</p>
@@ -298,7 +298,7 @@
       {\{l_{1}, \dots, l_{N}\},} & {\text{if reduction}=\text{'none';}} \\
       {\sum_{n=1}^{N} l_{n},} & {\text{if reduction}=\text {'sum';}} \\
       {\sum_{n=1}^{N} \frac{1}{\sum_{n=1}^{N} w_{y_n}} l_{n},} & {\text{if reduction}=\text{'mean'.}} \\
-      \end{array}\right.</script><h2 id="CrossEntropyLoss"><a href="#CrossEntropyLoss" class="headerlink" title="CrossEntropyLoss"></a>CrossEntropyLoss</h2><p>关于Pytorch<span class="exturl" data-url="aHR0cHM6Ly9weXRvcmNoLm9yZy9kb2NzL3N0YWJsZS9ubi5odG1sI2Nyb3NzZW50cm9weWxvc3M=" title="https://pytorch.org/docs/stable/nn.html#crossentropyloss">官网<i class="fa fa-external-link"></i></span>的CrossEntropyLoss补充了几组小实验。<br>文档中给出的CrossEntropyLoss的公式如下(以下讨论的均不带<em>weight</em>)：</p>
+      \end{array}\right.</script><h2 id="CrossEntropyLoss"><a href="#CrossEntropyLoss" class="headerlink" title="CrossEntropyLoss"></a>CrossEntropyLoss</h2><p>关于PyTorch<span class="exturl" data-url="aHR0cHM6Ly9weXRvcmNoLm9yZy9kb2NzL3N0YWJsZS9ubi5odG1sI2Nyb3NzZW50cm9weWxvc3M=" title="https://pytorch.org/docs/stable/nn.html#crossentropyloss">官网<i class="fa fa-external-link"></i></span>的CrossEntropyLoss补充了几组小实验。<br>文档中给出的CrossEntropyLoss的公式如下(以下讨论的均不带<em>weight</em>)：</p>
 <script type="math/tex; mode=display">
 \operatorname{loss}(x, class)=-\log \left(\frac{\exp (x[class])}{\sum_{j} \exp (x[j])}\right)</script><p>其中的<script type="math/tex">\exp (x[class])</script>越大，就是说当这个类别对应的值越大，即占的比例越大，<em>loss</em>值越小，结果越靠近0。<br>用一个样本简单模拟一下这个过程：</p>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&gt;&gt;&gt; </span>loss = nn.CrossEntropyLoss()</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>input = torch.randn(<span class="number">1</span>, <span class="number">5</span>, requires_grad=<span class="literal">True</span>)</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>input</span><br><span class="line">tensor([[<span class="number">-1.4976</span>,  <span class="number">0.1278</span>,  <span class="number">1.6863</span>, <span class="number">-0.3295</span>,  <span class="number">1.4173</span>]], requires_grad=<span class="literal">True</span>)</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>target = torch.empty(<span class="number">1</span>, dtype=torch.long).random_(<span class="number">5</span>)</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>target</span><br><span class="line">tensor([<span class="number">3</span>])</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>loss(input, target)</span><br><span class="line">tensor(<span class="number">2.7809</span>, grad_fn=&lt;NllLossBackward&gt;)</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>i = input.detach().numpy()</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>i = i[<span class="number">0</span>]</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>i</span><br><span class="line">array([<span class="number">-1.4976473</span> ,  <span class="number">0.12782747</span>,  <span class="number">1.6863296</span> , <span class="number">-0.32949358</span>,  <span class="number">1.4173082</span> ],</span><br><span class="line">      dtype=float32)</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>np.log(np.sum(np.exp(i))/np.exp(i[<span class="number">3</span>]))</span><br><span class="line"><span class="number">2.7809231</span></span><br></pre></td></tr></table></figure>
@@ -310,7 +310,7 @@
 <p>可以看到，已经计算出了<code>reduction</code>为<code>none</code>时的值，下边设为<code>mean</code>：</p>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&gt;&gt;&gt; </span>loss_mean = nn.CrossEntropyLoss(reduction=<span class="string">'mean'</span>)</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>loss_mean(input, target)</span><br><span class="line">tensor(<span class="number">1.6037</span>, grad_fn=&lt;NllLossBackward&gt;)</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>(<span class="number">1.2951</span> + <span class="number">1.9074</span> + <span class="number">1.6085</span>)/<span class="number">3</span></span><br><span class="line"><span class="number">1.6036666666666666</span></span><br></pre></td></tr></table></figure>
 <h3 id="恍然大悟"><a href="#恍然大悟" class="headerlink" title="恍然大悟"></a>恍然大悟</h3><p>我一直有个问题，就是交叉熵的公式分明是<script type="math/tex">H(p, q)=-\sum_{x} p(x) \log q(x)</script>，但是怎么到了CrossEntropyLoss里边$p(x)$就不见了，<span class="exturl" data-url="aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl8zNzU2NzQ1MS9hcnRpY2xlL2RldGFpbHMvODA4OTUzMDk=" title="https://blog.csdn.net/weixin_37567451/article/details/80895309">《经典损失函数：交叉熵》<i class="fa fa-external-link"></i></span>这篇文章写的非常好，不仅解释了为什么交叉熵要和Softmax一起用，而且让我明白了$p(x)$去哪了。</p>
-<p>我直接看的是Pytorch的源码，这里给了我一点误解。这篇文章中提到，CrossEntropyLoss实际上应该是先计算Softmax，把分布转换到概率分布，得到$q(x)$，然后在计算交叉熵。在计算交叉熵的时候，$p(x)$是<strong>one-hot</strong>之后的编码，也就是说只有对应的类别的那个值是1，其他的都是0，也就得到了公式<script type="math/tex">H(p, q)=- \log q(x_{class})</script>，消去了求和记号和$p(x)$，再把<script type="math/tex">q(x_{class})</script>替换成对应的Softmax公式，即可得到了Pytorch中给出的CrossEntropyLoss公式。但是Pytorch中不是这么组织这个过程的，它是使用了$LogSoftmax+NLLLoss$的形式，其实实现的相同的方法。<br>再次需要注意的是，NLLLoss中的<script type="math/tex">1/N</script>和<script type="math/tex">\sum</script>，是计算的不同样本之间结果，和交叉熵中的求和记号区分开。</p>
+<p>我直接看的是PyTorch的源码，这里给了我一点误解。这篇文章中提到，CrossEntropyLoss实际上应该是先计算Softmax，把分布转换到概率分布，得到$q(x)$，然后在计算交叉熵。在计算交叉熵的时候，$p(x)$是<strong>one-hot</strong>之后的编码，也就是说只有对应的类别的那个值是1，其他的都是0，也就得到了公式<script type="math/tex">H(p, q)=- \log q(x_{class})</script>，消去了求和记号和$p(x)$，再把<script type="math/tex">q(x_{class})</script>替换成对应的Softmax公式，即可得到了PyTorch中给出的CrossEntropyLoss公式。但是PyTorch中不是这么组织这个过程的，它是使用了$LogSoftmax+NLLLoss$的形式，其实实现的相同的方法。<br>再次需要注意的是，NLLLoss中的<script type="math/tex">1/N</script>和<script type="math/tex">\sum</script>，是计算的不同样本之间结果，和交叉熵中的求和记号区分开。</p>
 
     </div>
 
@@ -321,10 +321,16 @@
   <div class="popular-posts-header">Related Posts</div>
   <ul class="popular-posts">
     <li class="popular-posts-item">
-      <div class="popular-posts-title"><a href="\2019\08\how-to-set-lr-in-pytorch\" rel="bookmark">如何设置Pytorch的动态学习率</a></div>
+      <div class="popular-posts-title"><a href="\2019\08\how-to-set-lr-in-pytorch\" rel="bookmark">如何设置PyTorch的动态学习率</a></div>
     </li>
     <li class="popular-posts-item">
-      <div class="popular-posts-title"><a href="\2019\08\pytorch-with-big-dataset\" rel="bookmark">Pytorch读取数据入门</a></div>
+      <div class="popular-posts-title"><a href="\2019\12\pytorch-batchnorm-freeze\" rel="bookmark">BatchNorm究竟是怎么回事？</a></div>
+    </li>
+    <li class="popular-posts-item">
+      <div class="popular-posts-title"><a href="\2019\08\pytorch-with-big-dataset\" rel="bookmark">PyTorch读取数据入门</a></div>
+    </li>
+    <li class="popular-posts-item">
+      <div class="popular-posts-title"><a href="\2019\09\pytorch-backward-parameter\" rel="bookmark">PyTorch backward 参数解读</a></div>
     </li>
   </ul>
 
@@ -350,6 +356,8 @@
           <div class="post-tags">
               <a href="/tags/Deep-Learning/" rel="tag"># Deep Learning</a>
               <a href="/tags/loss-function/" rel="tag"># loss function</a>
+              <a href="/tags/%E7%9F%A5%E5%85%B6%E6%89%80%E4%BB%A5%E7%84%B6/" rel="tag"># 知其所以然</a>
+              <a href="/tags/PyTorch/" rel="tag"># PyTorch</a>
           </div>
 
         
@@ -362,8 +370,8 @@
       <i class="fa fa-chevron-left"></i> Next 7.X 添加背景
     </a></div>
       <div class="post-nav-item">
-    <a href="/2019/08/pytorch-with-big-dataset/" rel="next" title="Pytorch读取数据入门">
-      Pytorch读取数据入门 <i class="fa fa-chevron-right"></i>
+    <a href="/2019/08/pytorch-with-big-dataset/" rel="next" title="PyTorch读取数据入门">
+      PyTorch读取数据入门 <i class="fa fa-chevron-right"></i>
     </a></div>
     </div>
       </footer>
@@ -418,20 +426,20 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">8</span>
+          <span class="site-state-item-count">9</span>
           <span class="site-state-item-name">posts</span>
         </a>
       </div>
       <div class="site-state-item site-state-categories">
             <a href="/categories/">
           
-        <span class="site-state-item-count">3</span>
+        <span class="site-state-item-count">2</span>
         <span class="site-state-item-name">categories</span></a>
       </div>
       <div class="site-state-item site-state-tags">
             <a href="/tags/">
           
-        <span class="site-state-item-count">9</span>
+        <span class="site-state-item-count">12</span>
         <span class="site-state-item-name">tags</span></a>
       </div>
   </nav>

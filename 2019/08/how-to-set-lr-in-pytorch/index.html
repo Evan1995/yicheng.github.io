@@ -47,15 +47,15 @@
   };
 </script>
 
-  <meta name="description" content="本文主要涉及内容：Optimizer、_LRScheduler等源码分析。本文依旧基于Pytorch 1.1.0。">
-<meta name="keywords" content="Deep Learning,Pytorch,learning rate">
+  <meta name="description" content="本文主要涉及内容：Optimizer、_LRScheduler等源码分析。本文依旧基于PyTorch 1.1.0。">
+<meta name="keywords" content="Deep Learning,知其所以然,PyTorch,learning rate">
 <meta property="og:type" content="article">
-<meta property="og:title" content="如何设置Pytorch的动态学习率">
+<meta property="og:title" content="如何设置PyTorch的动态学习率">
 <meta property="og:url" content="https:&#x2F;&#x2F;yichengsu.github.io&#x2F;2019&#x2F;08&#x2F;how-to-set-lr-in-pytorch&#x2F;index.html">
 <meta property="og:site_name" content="suyc&#39;s blog">
-<meta property="og:description" content="本文主要涉及内容：Optimizer、_LRScheduler等源码分析。本文依旧基于Pytorch 1.1.0。">
+<meta property="og:description" content="本文主要涉及内容：Optimizer、_LRScheduler等源码分析。本文依旧基于PyTorch 1.1.0。">
 <meta property="og:locale" content="en">
-<meta property="og:updated_time" content="2019-11-24T03:27:21.635Z">
+<meta property="og:updated_time" content="2019-12-11T04:42:31.243Z">
 <meta name="twitter:card" content="summary">
 
 <link rel="canonical" href="https://yichengsu.github.io/2019/08/how-to-set-lr-in-pytorch/">
@@ -72,7 +72,7 @@
   };
 </script>
 
-  <title>如何设置Pytorch的动态学习率 | suyc's blog</title>
+  <title>如何设置PyTorch的动态学习率 | suyc's blog</title>
   
 
 
@@ -236,7 +236,7 @@
     </span>
       <header class="post-header">
         <h2 class="post-title" itemprop="name headline">
-          如何设置Pytorch的动态学习率
+          如何设置PyTorch的动态学习率
         </h2>
 
         <div class="post-meta">
@@ -253,7 +253,7 @@
                   <i class="fa fa-calendar-check-o"></i>
                 </span>
                 <span class="post-meta-item-text">Edited on</span>
-                <time title="Modified: 2019-11-24 11:27:21" itemprop="dateModified" datetime="2019-11-24T11:27:21+08:00">2019-11-24</time>
+                <time title="Modified: 2019-12-11 12:42:31" itemprop="dateModified" datetime="2019-12-11T12:42:31+08:00">2019-12-11</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -285,9 +285,9 @@
     <div class="post-body" itemprop="articleBody">
 
       
-        <p>本文主要涉及内容：<code>Optimizer</code>、<code>_LRScheduler</code>等源码分析。<br>本文依旧基于Pytorch 1.1.0。</p>
+        <p>本文主要涉及内容：<code>Optimizer</code>、<code>_LRScheduler</code>等源码分析。<br>本文依旧基于PyTorch 1.1.0。</p>
 <a id="more"></a>
-<h1 id="Optimizer"><a href="#Optimizer" class="headerlink" title="Optimizer"></a>Optimizer</h1><p>Pytorch提供了<code>torch.optim.lr_scheduler</code>来帮助用户改变学习率，下边将从<code>Optimizer</code>入手，看一下这个类是如何工作的。</p>
+<h1 id="Optimizer"><a href="#Optimizer" class="headerlink" title="Optimizer"></a>Optimizer</h1><p>PyTorch提供了<code>torch.optim.lr_scheduler</code>来帮助用户改变学习率，下边将从<code>Optimizer</code>入手，看一下这个类是如何工作的。</p>
 <p>为什么从Optimizer入手，因为无论是Adam还是SGD，都是继承的这个类。同时，scheduler也是给所有的Optimizer服务的，所以需要用的方法都会定义在这个基类里，直接看一下这个类的属性即可。给出Doc中的代码<span class="exturl" data-url="aHR0cHM6Ly9weXRvcmNoLm9yZy9kb2NzLzEuMS4wL19tb2R1bGVzL3RvcmNoL29wdGltL29wdGltaXplci5odG1sI09wdGltaXplcg==" title="https://pytorch.org/docs/1.1.0/_modules/torch/optim/optimizer.html#Optimizer">链接<i class="fa fa-external-link"></i></span>。</p>
 <p>首先是初始化方法<code>def __init__(self, params, defaults)</code>，这个方法的params参数，就是我们在初始化优化器的时候传入的网络的参数，如<code>Alexnet.parameters()</code>，而后边所有的参数都将合并成dict参数作为这个方法的defaults。<br>看一下<code>Alexnet.parameters()</code>中存的都是什么：<br><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">for</span> alex <span class="keyword">in</span> Alexnet.parameters():</span><br><span class="line">    print(alex.shape)</span><br></pre></td></tr></table></figure><br>可以看到，这里边存的就是整个网络的参数。<br>有两种定义optimizer的方法：</p>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">optimizer = optim.SGD(model.parameters(), lr=<span class="number">0.01</span>, momentum=<span class="number">0.9</span>)</span><br><span class="line">optimizer = optim.SGD([</span><br><span class="line">    &#123;<span class="string">'params'</span>: model.base.parameters()&#125;,</span><br><span class="line">    &#123;<span class="string">'params'</span>: model.classifier.parameters(), <span class="string">'lr'</span>: <span class="number">1e-3</span>&#125;</span><br><span class="line">], lr=<span class="number">1e-2</span>, momentum=<span class="number">0.9</span>)</span><br></pre></td></tr></table></figure>
@@ -296,7 +296,7 @@
 <h1 id="LRScheduler"><a href="#LRScheduler" class="headerlink" title="_LRScheduler"></a>_LRScheduler</h1><p>所有的动态修改lr的类，都是继承的这个类，所以我们看一下这个类包含什么方法。源码<span class="exturl" data-url="aHR0cHM6Ly9weXRvcmNoLm9yZy9kb2NzLzEuMS4wL19tb2R1bGVzL3RvcmNoL29wdGltL2xyX3NjaGVkdWxlci5odG1sI0V4cG9uZW50aWFsTFI=" title="https://pytorch.org/docs/1.1.0/_modules/torch/optim/lr_scheduler.html#ExponentialLR">链接<i class="fa fa-external-link"></i></span>。</p>
 <p>在初始化方法中<code>def __init__(self, optimizer, last_epoch=-1)</code>，包含两个参数，第一个参数就是我们上边提到的optimizer的任何一个子类。第二个参数的意思是<strong>当前执行到了哪个epoch</strong>。我们不指定它的时候，虽然默认是-1，但是init中会调用一次step并设置为0。</p>
 <div class="note danger">
-            <p>一定要注意Pytorch的版本！我的windows上用的是1.0.1，服务器用的是1.1.0，就闹了很多问题。就拿这个类来说，在1.0.1中是先<code>setp()</code>再训练，而1.1.0进行了更新，先训练，然后再<code>step()</code>。</p>
+            <p>一定要注意PyTorch的版本！我的windows上用的是1.0.1，服务器用的是1.1.0，就闹了很多问题。就拿这个类来说，在1.0.1中是先<code>setp()</code>再训练，而1.1.0进行了更新，先训练，然后再<code>step()</code>。</p>
           </div>
 <p>当我们调用了初始化后，会给optimizer增加一个字段，看一下：<br><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">scheduler = torch.optim.lr_scheduler.StepLR(optimizer, step_size=<span class="number">5</span>, gamma=<span class="number">0.1</span>)</span><br><span class="line">print([group.keys() <span class="keyword">for</span> group <span class="keyword">in</span> optimizer.param_groups])</span><br><span class="line"><span class="comment"># [dict_keys(['params', 'lr', 'betas', 'eps', 'weight_decay', 'amsgrad', 'initial_lr'])]</span></span><br></pre></td></tr></table></figure><br>新增加的<code>initial_lr</code>字段就是原始的lr。</p>
 <p>在<code>def step(self, epoch=None)</code>方法中，通常情况下我们<strong>不需要</strong>指定这个参数epoch，因为每次调用他都会增加1。在这个函数中会调用一个需要重载的方法<code>get_lr()</code>，每次调用都会从这个方法中提取改变后的lr，赋值给optimizer。</p>
@@ -314,13 +314,16 @@
   <div class="popular-posts-header">Related Posts</div>
   <ul class="popular-posts">
     <li class="popular-posts-item">
-      <div class="popular-posts-title"><a href="\2019\08\pytorch-with-big-dataset\" rel="bookmark">Pytorch读取数据入门</a></div>
-    </li>
-    <li class="popular-posts-item">
       <div class="popular-posts-title"><a href="\2019\08\CrossEntropyLoss\" rel="bookmark">CrossEntropyLoss之我见</a></div>
     </li>
     <li class="popular-posts-item">
-      <div class="popular-posts-title"><a href="\2019\09\pytorch-backward-parameter\" rel="bookmark">Pytorch backward 参数解读</a></div>
+      <div class="popular-posts-title"><a href="\2019\12\pytorch-batchnorm-freeze\" rel="bookmark">BatchNorm究竟是怎么回事？</a></div>
+    </li>
+    <li class="popular-posts-item">
+      <div class="popular-posts-title"><a href="\2019\08\pytorch-with-big-dataset\" rel="bookmark">PyTorch读取数据入门</a></div>
+    </li>
+    <li class="popular-posts-item">
+      <div class="popular-posts-title"><a href="\2019\09\pytorch-backward-parameter\" rel="bookmark">PyTorch backward 参数解读</a></div>
     </li>
   </ul>
 
@@ -333,7 +336,7 @@
   </li>
   <li class="post-copyright-link">
     <strong>Post link: </strong>
-    <a href="https://yichengsu.github.io/2019/08/how-to-set-lr-in-pytorch/" title="如何设置Pytorch的动态学习率">https://yichengsu.github.io/2019/08/how-to-set-lr-in-pytorch/</a>
+    <a href="https://yichengsu.github.io/2019/08/how-to-set-lr-in-pytorch/" title="如何设置PyTorch的动态学习率">https://yichengsu.github.io/2019/08/how-to-set-lr-in-pytorch/</a>
   </li>
   <li class="post-copyright-license">
     <strong>Copyright Notice:  </strong>All articles in this blog are licensed under <span class="exturl" data-url="aHR0cHM6Ly9jcmVhdGl2ZWNvbW1vbnMub3JnL2xpY2Vuc2VzL2J5LW5jLXNhLzQuMC9lbg=="><i class="fa fa-fw fa-creative-commons"></i>BY-NC-SA</span> unless stating additionally.
@@ -345,7 +348,8 @@
       <footer class="post-footer">
           <div class="post-tags">
               <a href="/tags/Deep-Learning/" rel="tag"># Deep Learning</a>
-              <a href="/tags/Pytorch/" rel="tag"># Pytorch</a>
+              <a href="/tags/%E7%9F%A5%E5%85%B6%E6%89%80%E4%BB%A5%E7%84%B6/" rel="tag"># 知其所以然</a>
+              <a href="/tags/PyTorch/" rel="tag"># PyTorch</a>
               <a href="/tags/learning-rate/" rel="tag"># learning rate</a>
           </div>
 
@@ -355,12 +359,12 @@
         
     <div class="post-nav">
       <div class="post-nav-item">
-    <a href="/2019/08/pytorch-with-big-dataset/" rel="prev" title="Pytorch读取数据入门">
-      <i class="fa fa-chevron-left"></i> Pytorch读取数据入门
+    <a href="/2019/08/pytorch-with-big-dataset/" rel="prev" title="PyTorch读取数据入门">
+      <i class="fa fa-chevron-left"></i> PyTorch读取数据入门
     </a></div>
       <div class="post-nav-item">
-    <a href="/2019/09/pytorch-backward-parameter/" rel="next" title="Pytorch backward 参数解读">
-      Pytorch backward 参数解读 <i class="fa fa-chevron-right"></i>
+    <a href="/2019/09/pytorch-backward-parameter/" rel="next" title="PyTorch backward 参数解读">
+      PyTorch backward 参数解读 <i class="fa fa-chevron-right"></i>
     </a></div>
     </div>
       </footer>
@@ -415,20 +419,20 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">8</span>
+          <span class="site-state-item-count">9</span>
           <span class="site-state-item-name">posts</span>
         </a>
       </div>
       <div class="site-state-item site-state-categories">
             <a href="/categories/">
           
-        <span class="site-state-item-count">3</span>
+        <span class="site-state-item-count">2</span>
         <span class="site-state-item-name">categories</span></a>
       </div>
       <div class="site-state-item site-state-tags">
             <a href="/tags/">
           
-        <span class="site-state-item-count">9</span>
+        <span class="site-state-item-count">12</span>
         <span class="site-state-item-name">tags</span></a>
       </div>
   </nav>

@@ -48,14 +48,14 @@
 </script>
 
   <meta name="description" content="官网Doc链接：link 1backward(gradient=None, retain_graph=None, create_graph=False) 看一下第一个参数的意思是什么。其实不管Tensor中是几个变量，都可以传入参数，但是一般情况下，我们的out都是只有一个标量的tensor，可以不传入参数。 举个例子，通常我们在求导的时候都是对一个变量求导，例如  F=H+G所以当我们对F求导的">
-<meta name="keywords" content="Pytorch,backward">
+<meta name="keywords" content="知其所以然,PyTorch,backward">
 <meta property="og:type" content="article">
-<meta property="og:title" content="Pytorch backward 参数解读">
+<meta property="og:title" content="PyTorch backward 参数解读">
 <meta property="og:url" content="https:&#x2F;&#x2F;yichengsu.github.io&#x2F;2019&#x2F;09&#x2F;pytorch-backward-parameter&#x2F;index.html">
 <meta property="og:site_name" content="suyc&#39;s blog">
 <meta property="og:description" content="官网Doc链接：link 1backward(gradient=None, retain_graph=None, create_graph=False) 看一下第一个参数的意思是什么。其实不管Tensor中是几个变量，都可以传入参数，但是一般情况下，我们的out都是只有一个标量的tensor，可以不传入参数。 举个例子，通常我们在求导的时候都是对一个变量求导，例如  F=H+G所以当我们对F求导的">
 <meta property="og:locale" content="en">
-<meta property="og:updated_time" content="2019-11-24T03:32:56.110Z">
+<meta property="og:updated_time" content="2019-12-11T04:42:27.234Z">
 <meta name="twitter:card" content="summary">
 
 <link rel="canonical" href="https://yichengsu.github.io/2019/09/pytorch-backward-parameter/">
@@ -72,7 +72,7 @@
   };
 </script>
 
-  <title>Pytorch backward 参数解读 | suyc's blog</title>
+  <title>PyTorch backward 参数解读 | suyc's blog</title>
   
 
 
@@ -236,7 +236,7 @@
     </span>
       <header class="post-header">
         <h2 class="post-title" itemprop="name headline">
-          Pytorch backward 参数解读
+          PyTorch backward 参数解读
         </h2>
 
         <div class="post-meta">
@@ -253,7 +253,7 @@
                   <i class="fa fa-calendar-check-o"></i>
                 </span>
                 <span class="post-meta-item-text">Edited on</span>
-                <time title="Modified: 2019-11-24 11:32:56" itemprop="dateModified" datetime="2019-11-24T11:32:56+08:00">2019-11-24</time>
+                <time title="Modified: 2019-12-11 12:42:27" itemprop="dateModified" datetime="2019-12-11T12:42:27+08:00">2019-12-11</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -313,10 +313,16 @@ F=H+G</script><p>所以当我们对<script type="math/tex">F</script>求导的�
   <div class="popular-posts-header">Related Posts</div>
   <ul class="popular-posts">
     <li class="popular-posts-item">
-      <div class="popular-posts-title"><a href="\2019\08\how-to-set-lr-in-pytorch\" rel="bookmark">如何设置Pytorch的动态学习率</a></div>
+      <div class="popular-posts-title"><a href="\2019\08\CrossEntropyLoss\" rel="bookmark">CrossEntropyLoss之我见</a></div>
     </li>
     <li class="popular-posts-item">
-      <div class="popular-posts-title"><a href="\2019\08\pytorch-with-big-dataset\" rel="bookmark">Pytorch读取数据入门</a></div>
+      <div class="popular-posts-title"><a href="\2019\08\how-to-set-lr-in-pytorch\" rel="bookmark">如何设置PyTorch的动态学习率</a></div>
+    </li>
+    <li class="popular-posts-item">
+      <div class="popular-posts-title"><a href="\2019\12\pytorch-batchnorm-freeze\" rel="bookmark">BatchNorm究竟是怎么回事？</a></div>
+    </li>
+    <li class="popular-posts-item">
+      <div class="popular-posts-title"><a href="\2019\08\pytorch-with-big-dataset\" rel="bookmark">PyTorch读取数据入门</a></div>
     </li>
   </ul>
 
@@ -329,7 +335,7 @@ F=H+G</script><p>所以当我们对<script type="math/tex">F</script>求导的�
   </li>
   <li class="post-copyright-link">
     <strong>Post link: </strong>
-    <a href="https://yichengsu.github.io/2019/09/pytorch-backward-parameter/" title="Pytorch backward 参数解读">https://yichengsu.github.io/2019/09/pytorch-backward-parameter/</a>
+    <a href="https://yichengsu.github.io/2019/09/pytorch-backward-parameter/" title="PyTorch backward 参数解读">https://yichengsu.github.io/2019/09/pytorch-backward-parameter/</a>
   </li>
   <li class="post-copyright-license">
     <strong>Copyright Notice:  </strong>All articles in this blog are licensed under <span class="exturl" data-url="aHR0cHM6Ly9jcmVhdGl2ZWNvbW1vbnMub3JnL2xpY2Vuc2VzL2J5LW5jLXNhLzQuMC9lbg=="><i class="fa fa-fw fa-creative-commons"></i>BY-NC-SA</span> unless stating additionally.
@@ -340,7 +346,8 @@ F=H+G</script><p>所以当我们对<script type="math/tex">F</script>求导的�
 
       <footer class="post-footer">
           <div class="post-tags">
-              <a href="/tags/Pytorch/" rel="tag"># Pytorch</a>
+              <a href="/tags/%E7%9F%A5%E5%85%B6%E6%89%80%E4%BB%A5%E7%84%B6/" rel="tag"># 知其所以然</a>
+              <a href="/tags/PyTorch/" rel="tag"># PyTorch</a>
               <a href="/tags/backward/" rel="tag"># backward</a>
           </div>
 
@@ -350,8 +357,8 @@ F=H+G</script><p>所以当我们对<script type="math/tex">F</script>求导的�
         
     <div class="post-nav">
       <div class="post-nav-item">
-    <a href="/2019/08/how-to-set-lr-in-pytorch/" rel="prev" title="如何设置Pytorch的动态学习率">
-      <i class="fa fa-chevron-left"></i> 如何设置Pytorch的动态学习率
+    <a href="/2019/08/how-to-set-lr-in-pytorch/" rel="prev" title="如何设置PyTorch的动态学习率">
+      <i class="fa fa-chevron-left"></i> 如何设置PyTorch的动态学习率
     </a></div>
       <div class="post-nav-item">
     <a href="/2019/11/update-to-4-0/" rel="next" title="Hexo、NexT升级与写作分支同步">
@@ -409,20 +416,20 @@ F=H+G</script><p>所以当我们对<script type="math/tex">F</script>求导的�
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">8</span>
+          <span class="site-state-item-count">9</span>
           <span class="site-state-item-name">posts</span>
         </a>
       </div>
       <div class="site-state-item site-state-categories">
             <a href="/categories/">
           
-        <span class="site-state-item-count">3</span>
+        <span class="site-state-item-count">2</span>
         <span class="site-state-item-name">categories</span></a>
       </div>
       <div class="site-state-item site-state-tags">
             <a href="/tags/">
           
-        <span class="site-state-item-count">9</span>
+        <span class="site-state-item-count">12</span>
         <span class="site-state-item-name">tags</span></a>
       </div>
   </nav>

@@ -55,7 +55,7 @@
 <meta property="og:site_name" content="suyc&#39;s blog">
 <meta property="og:description" content="最近一直比较忙，今天闲下来把博客升级到Hexo(4.0.0)和NexT(7.5.0)，然后把NexT的配置文件移动到Hexo的配置文件中，这样以后NexT的升级就不用总是改配置文件了。顺便把Hexo的写作分支push到Github，这个放了好久了，今天也要做一下。">
 <meta property="og:locale" content="en">
-<meta property="og:updated_time" content="2019-11-25T02:51:45.545Z">
+<meta property="og:updated_time" content="2019-11-25T06:43:14.575Z">
 <meta name="twitter:card" content="summary">
 
 <link rel="canonical" href="https://yichengsu.github.io/2019/11/update-to-4-0/">
@@ -253,7 +253,7 @@
                   <i class="fa fa-calendar-check-o"></i>
                 </span>
                 <span class="post-meta-item-text">Edited on</span>
-                <time title="Modified: 2019-11-25 10:51:45" itemprop="dateModified" datetime="2019-11-25T10:51:45+08:00">2019-11-25</time>
+                <time title="Modified: 2019-11-25 14:43:14" itemprop="dateModified" datetime="2019-11-25T14:43:14+08:00">2019-11-25</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -309,6 +309,7 @@
 <li><code>cd Hexo-Blog-Backup\</code>然后<code>npm install</code>。只要之前所有的npm在安装时都用上了<code>-save</code>，那么所有的依赖都会写在<code>package.json</code>中，使用这个指令就会自动安装</li>
 <li><code>git clone https://github.com/theme-next/hexo-theme-next themes/next</code>把模板拿回来<br>可以看到，这和执行<code>hexo init</code>经过了同样的过程。安装好后的目录结构和原来也是完全一样。然后运行一下看看效果，没有发现BUG~</li>
 </ul>
+<p>最后一个问题是，这样同步了以后，会丢失<code>.deploy_git</code>文件夹，这里边存着之前提交到github的记录<code>.git</code>文件，我的建议是可以完成这几步以后，把部署分支clone下来，改名叫做<code>.deploy_git</code>放到刚才新生成的文件夹中。(我还没试过…)</p>
 
     </div>
 
@@ -319,10 +320,10 @@
   <div class="popular-posts-header">Related Posts</div>
   <ul class="popular-posts">
     <li class="popular-posts-item">
-      <div class="popular-posts-title"><a href="\2019\07\Hexo-with-VSCode\" rel="bookmark">Hexo with VSCode</a></div>
+      <div class="popular-posts-title"><a href="\2019\07\Next-7-X-Background\" rel="bookmark">Next 7.X 添加背景</a></div>
     </li>
     <li class="popular-posts-item">
-      <div class="popular-posts-title"><a href="\2019\07\Next-7-X-Background\" rel="bookmark">Next 7.X 添加背景</a></div>
+      <div class="popular-posts-title"><a href="\2019\07\Hexo-with-VSCode\" rel="bookmark">Hexo with VSCode</a></div>
     </li>
     <li class="popular-posts-item">
       <div class="popular-posts-title"><a href="\2019\07\Build-a-Hexo-Blog\" rel="bookmark">Build a Hexo Blog</a></div>
@@ -361,10 +362,13 @@
         
     <div class="post-nav">
       <div class="post-nav-item">
-    <a href="/2019/09/pytorch-backward-parameter/" rel="prev" title="Pytorch backward 参数解读">
-      <i class="fa fa-chevron-left"></i> Pytorch backward 参数解读
+    <a href="/2019/09/pytorch-backward-parameter/" rel="prev" title="PyTorch backward 参数解读">
+      <i class="fa fa-chevron-left"></i> PyTorch backward 参数解读
     </a></div>
-      <div class="post-nav-item"></div>
+      <div class="post-nav-item">
+    <a href="/2019/12/pytorch-batchnorm-freeze/" rel="next" title="BatchNorm究竟是怎么回事？">
+      BatchNorm究竟是怎么回事？ <i class="fa fa-chevron-right"></i>
+    </a></div>
     </div>
       </footer>
     
@@ -418,20 +422,20 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">8</span>
+          <span class="site-state-item-count">9</span>
           <span class="site-state-item-name">posts</span>
         </a>
       </div>
       <div class="site-state-item site-state-categories">
             <a href="/categories/">
           
-        <span class="site-state-item-count">3</span>
+        <span class="site-state-item-count">2</span>
         <span class="site-state-item-name">categories</span></a>
       </div>
       <div class="site-state-item site-state-tags">
             <a href="/tags/">
           
-        <span class="site-state-item-count">9</span>
+        <span class="site-state-item-count">12</span>
         <span class="site-state-item-name">tags</span></a>
       </div>
   </nav>
