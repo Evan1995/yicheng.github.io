@@ -55,7 +55,7 @@
 <meta property="og:site_name" content="suyc&#39;s blog">
 <meta property="og:description" content="本文主要涉及内容：Dataset、DataLoader、DatasetFloder等相关源码分析。看了网上众多的关于这方面的文章，详细解释道理的很少，看完之后我依然很迷惑。所以我在看过看过网上一些教程和PyTorch的部分源码以后写了一些总结，基本上也是我自己在学习这部分内容时的一个经过。文章前边可能有些地方不可避免地走了弯路，但是我也希望如果你是初学者，建议看一看，思考一下，和最后的方法作对比。">
 <meta property="og:locale" content="en">
-<meta property="og:updated_time" content="2019-12-11T04:45:55.569Z">
+<meta property="og:updated_time" content="2019-12-25T08:15:34.951Z">
 <meta name="twitter:card" content="summary">
 
 <link rel="canonical" href="https://yichengsu.github.io/2019/08/pytorch-with-big-dataset/">
@@ -253,7 +253,7 @@
                   <i class="fa fa-calendar-check-o"></i>
                 </span>
                 <span class="post-meta-item-text">Edited on</span>
-                <time title="Modified: 2019-12-11 12:45:55" itemprop="dateModified" datetime="2019-12-11T12:45:55+08:00">2019-12-11</time>
+                <time title="Modified: 2019-12-25 16:15:34" itemprop="dateModified" datetime="2019-12-25T16:15:34+08:00">2019-12-25</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -326,7 +326,7 @@
 <h2 id="DataLoaderIter"><a href="#DataLoaderIter" class="headerlink" title="_DataLoaderIter"></a>_DataLoaderIter</h2><p>可以看到，这个方法实际是我们在使用for循环的时候扮演者重要角色的大BOSS。这个方法的注释中写了大量的内容，包括数据流、多线程遇到的问题，这部分不多赘述。先看一下单线程的方法，即<code>num_workers=0</code>的情况(TODO:补充多线程)：<br><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">__next__</span><span class="params">(self)</span>:</span></span><br><span class="line">    <span class="keyword">if</span> self.num_workers == <span class="number">0</span>:  <span class="comment"># same-process loading</span></span><br><span class="line">        <span class="comment"># 前提 self.sample_iter = iter(self.batch_sampler)</span></span><br><span class="line">        indices = next(self.sample_iter)  <span class="comment"># may raise StopIteration</span></span><br><span class="line">        batch = self.collate_fn([self.dataset[i] <span class="keyword">for</span> i <span class="keyword">in</span> indices])</span><br><span class="line">        <span class="keyword">return</span> batch</span><br></pre></td></tr></table></figure><br>可以看到，它又通过<code>batch_sampler</code>的迭代获取序号的列表生成器，然后根据<strong>序号集合indices</strong>进行读取数据，再组合成一个batch。<code>StopIteration</code>这个用法真是绝了，廖雪峰老师也提到过，用for循环调用generator时，是拿到不到返回的值的，所以当报错的时候即为for循环结束的地方，也就是完成了一次epoch的训练。<br><code>collate_fn</code>是一个callable的函数，如果不传入自定义的函数，则调用默认的。如果你的合并操作需要一些特殊的操作，可以自己定义这个函数，那么可以参考官方文档，那里给出了一个例子。如果使用默认的，则直接贴出源码<span class="exturl" data-url="aHR0cHM6Ly9naXRodWIuY29tL3B5dG9yY2gvcHl0b3JjaC9ibG9iL21hc3Rlci90b3JjaC91dGlscy9kYXRhL191dGlscy9jb2xsYXRlLnB5I0w0Mw==" title="https://github.com/pytorch/pytorch/blob/master/torch/utils/data/_utils/collate.py#L43">链接<i class="fa fa-external-link"></i></span>。可以看到这个默认的函数非常之强大，精通各种合并。总之，合并后的数据集是一个batch。<br>这里是唯一一次用到<code>__getitem__</code>方法。下文会有分析。</p>
 <h2 id="BatchSampler"><a href="#BatchSampler" class="headerlink" title="BatchSampler"></a>BatchSampler</h2><p>BatchSampler是对其他的Sampler进行了封装，代码非常简单。<br>有意思的的关于Batchs长度的计算，用全部数据除以batch size(单纯的觉得这里很有意思)。</p>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">for</span> idx <span class="keyword">in</span> self.sampler:</span><br><span class="line">    batch.append(idx)</span><br><span class="line">    <span class="keyword">if</span> len(batch) == self.batch_size:</span><br><span class="line">        <span class="keyword">yield</span> batch</span><br><span class="line">        batch = []</span><br></pre></td></tr></table></figure>
-<p>这段代码表示，每次从sampler中获取的都是一个<strong>序号</strong>，把这个序号组合到batch size的大小，然后yield。</p>
+<p>这段代码表示，每次从sampler中获取的都是一个<strong>序号</strong>，把这个序号组合到batch size的大小，然后yield。关于yield在这里的用法，新更新了文章，进行了详细解释<a href="/2019/12/Iterator-and-Iterable/">link</a>。</p>
 <p>关于使用到的这两个Sampler。SquentialSampler就不多说了，顺序直接迭代，返回一二三四五六七。RandomSampler则是对序号打乱顺序，这里多说一点，按照这个程序中的调用，返回的是<code>torch.randperm(n)</code>，即n个数，没有重复的。</p>
 <p>这里的n，就是<code>n = len(self.data_source)</code>，<strong>也就是我们一开始重载的<code>__len__</code></strong>，直到这里才起作用。</p>
 <p>此外，这个Random还支持一个叫做replacement的参数，即可以有重复的取样。这个函数还有更厉害的组合拳，可以去看源码。</p>
@@ -469,20 +469,20 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">9</span>
+          <span class="site-state-item-count">10</span>
           <span class="site-state-item-name">posts</span>
         </a>
       </div>
       <div class="site-state-item site-state-categories">
             <a href="/categories/">
           
-        <span class="site-state-item-count">2</span>
+        <span class="site-state-item-count">3</span>
         <span class="site-state-item-name">categories</span></a>
       </div>
       <div class="site-state-item site-state-tags">
             <a href="/tags/">
           
-        <span class="site-state-item-count">12</span>
+        <span class="site-state-item-count">15</span>
         <span class="site-state-item-name">tags</span></a>
       </div>
   </nav>
