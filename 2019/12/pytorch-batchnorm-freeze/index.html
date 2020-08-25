@@ -4,71 +4,52 @@
   <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
 <meta name="theme-color" content="#222">
-<meta name="generator" content="Hexo 4.0.0">
+<meta name="generator" content="Hexo 5.1.1">
   <link rel="icon" type="image/png" sizes="32x32" href="/images/bug_32.png">
   <link rel="icon" type="image/png" sizes="16x16" href="/images/bug_16.png">
 
 <link rel="stylesheet" href="/css/main.css">
 
 
-<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css">
-  <link rel="stylesheet" href="//cdn.jsdelivr.net/gh/fancyapps/fancybox@3/dist/jquery.fancybox.min.css">
-  <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/pace-js@1/themes/blue/pace-theme-minimal.css">
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+  
+  <link rel="stylesheet" href="/lib/animate-css/animate.min.css">
+  <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/@fancyapps/fancybox@3/dist/jquery.fancybox.min.css">
+  <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/pace-js@1/themes/blue/pace-theme-center-radar.min.css">
   <script src="//cdn.jsdelivr.net/npm/pace-js@1/pace.min.js"></script>
 
+<script class="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"yichengsu.github.io","root":"/","scheme":"Pisces","version":"8.0.0-rc.5","exturl":true,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":false,"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":true,"mediumzoom":false,"lazyload":true,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"path":"search.xml","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false}};
+  </script>
 
-<script id="hexo-configurations">
-  var NexT = window.NexT || {};
-  var CONFIG = {
-    hostname: new URL('https://yichengsu.github.io').hostname,
-    root: '/',
-    scheme: 'Pisces',
-    version: '7.5.0',
-    exturl: true,
-    sidebar: {"position":"left","display":"post","offset":12,"onmobile":false},
-    copycode: {"enable":false,"show_result":false,"style":null},
-    back2top: {"enable":true,"sidebar":true,"scrollpercent":true},
-    bookmark: {"enable":false,"color":"#222","save":"auto"},
-    fancybox: true,
-    mediumzoom: false,
-    lazyload: true,
-    pangu: false,
-    algolia: {
-      appID: '',
-      apiKey: '',
-      indexName: '',
-      hits: {"per_page":10},
-      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
-    },
-    localsearch: {"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},
-    path: 'search.xml',
-    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
-    sidebarPadding: 40
-  };
-</script>
-
-  <meta name="description" content="先贴上PyTorch官网上的关于BatchNorm的公式：  y=\frac{x-\mathrm{E}[x]}{\sqrt{\operatorname{Var}[x]+\epsilon}} * \gamma+\beta这个BatchNorm到底怎么freeze？这个函数究竟是如何成为广大网友心中的大坑的？看了好几天源码和相关的博客，我似乎有点明白了。本文主要内容是_BatchNorm相关的源码简介">
-<meta name="keywords" content="Deep Learning,知其所以然,PyTorch,BatchNorm,freeze">
+  <meta name="description" content="先贴上PyTorch官网上的关于BatchNorm的公式：  y&#x3D;\frac{x-\mathrm{E}[x]}{\sqrt{\operatorname{Var}[x]+\epsilon}} * \gamma+\beta这个BatchNorm到底怎么freeze？这个函数究竟是如何成为广大网友心中的大坑的？看了好几天源码和相关的博客，我似乎有点明白了。本文主要内容是_BatchNorm相关的源码简介">
 <meta property="og:type" content="article">
 <meta property="og:title" content="BatchNorm究竟是怎么回事？">
-<meta property="og:url" content="https:&#x2F;&#x2F;yichengsu.github.io&#x2F;2019&#x2F;12&#x2F;pytorch-batchnorm-freeze&#x2F;index.html">
+<meta property="og:url" content="https://yichengsu.github.io/2019/12/pytorch-batchnorm-freeze/index.html">
 <meta property="og:site_name" content="suyc&#39;s blog">
-<meta property="og:description" content="先贴上PyTorch官网上的关于BatchNorm的公式：  y=\frac{x-\mathrm{E}[x]}{\sqrt{\operatorname{Var}[x]+\epsilon}} * \gamma+\beta这个BatchNorm到底怎么freeze？这个函数究竟是如何成为广大网友心中的大坑的？看了好几天源码和相关的博客，我似乎有点明白了。本文主要内容是_BatchNorm相关的源码简介">
-<meta property="og:locale" content="en">
-<meta property="og:updated_time" content="2019-12-11T10:08:35.573Z">
+<meta property="og:description" content="先贴上PyTorch官网上的关于BatchNorm的公式：  y&#x3D;\frac{x-\mathrm{E}[x]}{\sqrt{\operatorname{Var}[x]+\epsilon}} * \gamma+\beta这个BatchNorm到底怎么freeze？这个函数究竟是如何成为广大网友心中的大坑的？看了好几天源码和相关的博客，我似乎有点明白了。本文主要内容是_BatchNorm相关的源码简介">
+<meta property="og:locale" content="en_US">
+<meta property="article:published_time" content="2019-12-11T02:02:40.000Z">
+<meta property="article:modified_time" content="2019-12-11T10:08:35.573Z">
+<meta property="article:author" content="suyc">
+<meta property="article:tag" content="Deep Learning">
+<meta property="article:tag" content="知其所以然">
+<meta property="article:tag" content="PyTorch">
+<meta property="article:tag" content="BatchNorm">
+<meta property="article:tag" content="freeze">
 <meta name="twitter:card" content="summary">
 
 <link rel="canonical" href="https://yichengsu.github.io/2019/12/pytorch-batchnorm-freeze/">
 
 
-<script id="page-configurations">
+<script class="page-configurations">
   // https://hexo.io/docs/variables.html
   CONFIG.page = {
     sidebar: "",
-    isHome: false,
-    isPost: true,
-    isPage: false,
-    isArchive: false
+    isHome : false,
+    isPost : true,
+    lang   : 'en'
   };
 </script>
 
@@ -91,24 +72,36 @@
 
   <noscript>
   <style>
-  .use-motion .brand,
+  body { margin-top: 2rem; }
+
   .use-motion .menu-item,
-  .sidebar-inner,
+  .use-motion .sidebar,
   .use-motion .post-block,
   .use-motion .pagination,
   .use-motion .comments,
   .use-motion .post-header,
   .use-motion .post-body,
-  .use-motion .collection-header { opacity: initial; }
+  .use-motion .collection-header {
+    visibility: visible;
+  }
+
+  .use-motion .header,
+  .use-motion .site-brand-container .toggle,
+  .use-motion .footer { opacity: initial; }
 
   .use-motion .site-title,
-  .use-motion .site-subtitle {
+  .use-motion .site-subtitle,
+  .use-motion .custom-logo-image {
     opacity: initial;
     top: initial;
   }
 
-  .use-motion .logo-line-before i { left: initial; }
-  .use-motion .logo-line-after i { right: initial; }
+  .use-motion .logo-line {
+    transform: scaleX(1);
+  }
+
+  .search-pop-overlay, .sidebar-nav { display: none; }
+  .sidebar-panel { display: block; }
   </style>
 </noscript>
 
@@ -118,62 +111,66 @@
   <div class="container use-motion">
     <div class="headband"></div>
 
-    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
-      <div class="header-inner"><div class="site-brand-container">
-  <div class="site-meta">
-
-    <div>
-      <a href="/" class="brand" rel="start">
-        <span class="logo-line-before"><i></i></span>
-        <span class="site-title">suyc's blog</span>
-        <span class="logo-line-after"><i></i></span>
-      </a>
-    </div>
-        <h1 class="site-subtitle" itemprop="description">哎，什么时候才能把英语学好啊🙇‍~</h1>
-      
-  </div>
-
+    <main class="main">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+        <div class="header-inner"><div class="site-brand-container">
   <div class="site-nav-toggle">
     <div class="toggle" aria-label="Toggle navigation bar">
-      <span class="toggle-line toggle-line-first"></span>
-      <span class="toggle-line toggle-line-middle"></span>
-      <span class="toggle-line toggle-line-last"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <h1 class="site-title">suyc's blog</h1>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">哎，什么时候才能把英语学好啊🙇‍~</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
     </div>
   </div>
 </div>
 
 
+
 <nav class="site-nav">
-  
-  <ul id="menu" class="menu">
+  <ul id="menu" class="main-menu menu">
         <li class="menu-item menu-item-home">
 
-    <a href="/" rel="section"><i class="fa fa-fw fa-home"></i>Home</a>
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>Home</a>
 
   </li>
         <li class="menu-item menu-item-tags">
 
-    <a href="/tags/" rel="section"><i class="fa fa-fw fa-tags"></i>Tags</a>
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>Tags</a>
 
   </li>
         <li class="menu-item menu-item-categories">
 
-    <a href="/categories/" rel="section"><i class="fa fa-fw fa-th"></i>Categories</a>
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>Categories</a>
 
   </li>
         <li class="menu-item menu-item-archives">
 
-    <a href="/archives/" rel="section"><i class="fa fa-fw fa-archive"></i>Archives</a>
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>Archives</a>
 
   </li>
         <li class="menu-item menu-item-bookmark">
 
-    <a href="/bookmark/" rel="section"><i class="fa fa-fw fa-bookmark"></i>Bookmark</a>
+    <a href="/bookmark/" rel="section"><i class="fas fa-bookmark fa-fw"></i>Bookmark</a>
 
   </li>
         <li class="menu-item menu-item-about">
 
-    <a href="/about/" rel="section"><i class="fa fa-fw fa-user"></i>About</a>
+    <a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>About</a>
 
   </li>
       <li class="menu-item menu-item-search">
@@ -181,48 +178,134 @@
         </a>
       </li>
   </ul>
-
 </nav>
-  <div class="site-search">
+
+
+
+  <div class="search-pop-overlay">
     <div class="popup search-popup">
-    <div class="search-header">
+        <div class="search-header">
   <span class="search-icon">
     <i class="fa fa-search"></i>
   </span>
   <div class="search-input-container">
-    <input autocomplete="off" autocorrect="off" autocapitalize="none"
+    <input autocomplete="off" autocapitalize="off" maxlength="80"
            placeholder="Searching..." spellcheck="false"
-           type="text" id="search-input">
+           type="search" class="search-input">
   </div>
   <span class="popup-btn-close">
     <i class="fa fa-times-circle"></i>
   </span>
 </div>
-<div id="search-result"></div>
-
-</div>
-<div class="search-pop-overlay"></div>
-
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x"></i>
   </div>
 </div>
-    </header>
 
-    
+    </div>
+  </div>
+
+</div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <section class="post-toc-wrap sidebar-panel">
+          <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%8F%82%E6%95%B0"><span class="nav-number">1.</span> <span class="nav-text">参数</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#affine"><span class="nav-number">2.</span> <span class="nav-text">affine</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#track-running-stats"><span class="nav-number">3.</span> <span class="nav-text">track_running_stats</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#condition-1"><span class="nav-number">3.1.</span> <span class="nav-text">condition 1</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#condition-2"><span class="nav-number">3.2.</span> <span class="nav-text">condition 2</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#condition-3"><span class="nav-number">3.3.</span> <span class="nav-text">condition 3</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#condition-4"><span class="nav-number">3.4.</span> <span class="nav-text">condition 4</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#freeze"><span class="nav-number">4.</span> <span class="nav-text">freeze</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#reference"><span class="nav-number">5.</span> <span class="nav-text">reference</span></a></li></ol></div>
+      </section>
+      <!--/noindex-->
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="suyc"
+      src="/images/myavatar.jpg">
+  <p class="site-author-name" itemprop="name">suyc</p>
+  <div class="site-description" itemprop="description">One meets its destiny on the road he takes to avoid it.</div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">11</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">4</span>
+        <span class="site-state-item-name">categories</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">17</span>
+        <span class="site-state-item-name">tags</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author animated">
+      <span class="links-of-author-item">
+        <span class="exturl" data-url="aHR0cHM6Ly9naXRodWIuY29tL3lpY2hlbmdzdQ==" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;yichengsu"><i class="fab fa-github fa-fw"></i></span>
+      </span>
+      <span class="links-of-author-item">
+        <span class="exturl" data-url="bWFpbHRvOnN1eWljaGVuZzE5OTVAZ21haWwuY29t" title="E-Mail → mailto:suyicheng1995@gmail.com"><i class="fa fa-envelope fa-fw"></i></span>
+      </span>
+  </div>
+  <div class="cc-license animated" itemprop="license">
+    <span class="exturl cc-opacity" data-url="aHR0cHM6Ly9jcmVhdGl2ZWNvbW1vbnMub3JnL2xpY2Vuc2VzL2J5LW5jLXNhLzQuMC9lbg=="><img src="/images/cc-by-nc-sa.svg" alt="Creative Commons"></span>
+  </div>
 
 
-    <main class="main">
+
+      </section>
+        <div class="back-to-top animated">
+          <i class="fa fa-arrow-up"></i>
+          <span>0%</span>
+        </div>
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </header>
+
+      
+
+<noscript>
+  <div id="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
       <div class="main-inner">
-        <div class="content-wrap">
+        
+
+        <div class="content post posts-expand">
           
 
-          <div class="content">
-            
-
-  <div class="posts-expand">
-      
+    
   
   
-  <article itemscope itemtype="http://schema.org/Article" class="post-block " lang="en">
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="en">
     <link itemprop="mainEntityOfPage" href="https://yichengsu.github.io/2019/12/pytorch-batchnorm-freeze/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -234,15 +317,17 @@
     <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
       <meta itemprop="name" content="suyc's blog">
     </span>
+
+    
       <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
+        <h1 class="post-title" itemprop="name headline">
           BatchNorm究竟是怎么回事？
-        </h2>
+        </h1>
 
         <div class="post-meta">
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
+                <i class="far fa-calendar"></i>
               </span>
               <span class="post-meta-item-text">Posted on</span>
               
@@ -251,13 +336,11 @@
             </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
+                <i class="far fa-folder"></i>
               </span>
               <span class="post-meta-item-text">In</span>
                 <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/Deep-Learning/" itemprop="url" rel="index">
-                    <span itemprop="name">Deep Learning</span>
-                  </a>
+                  <a href="/categories/Deep-Learning/" itemprop="url" rel="index"><span itemprop="name">Deep Learning</span></a>
                 </span>
             </span>
 
@@ -277,16 +360,14 @@
     
     
     <div class="post-body" itemprop="articleBody">
-
-      
         <p>先贴上PyTorch官网上的关于BatchNorm的公式：</p>
 <script type="math/tex; mode=display">
 y=\frac{x-\mathrm{E}[x]}{\sqrt{\operatorname{Var}[x]+\epsilon}} * \gamma+\beta</script><p>这个BatchNorm到底怎么freeze？这个函数究竟是如何成为广大网友心中的大坑的？看了好几天源码和相关的博客，我似乎有点明白了。<br>本文主要内容是<code>_BatchNorm</code>相关的源码简介。同样基于PyTorch 1.1.0。</p>
 <a id="more"></a>
-<h1 id="参数"><a href="#参数" class="headerlink" title="参数"></a>参数</h1><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">__init__</span><span class="params">(self, </span></span></span><br><span class="line"><span class="function"><span class="params">             num_features, </span></span></span><br><span class="line"><span class="function"><span class="params">             eps=<span class="number">1e-5</span>, </span></span></span><br><span class="line"><span class="function"><span class="params">             momentum=<span class="number">0.1</span>, </span></span></span><br><span class="line"><span class="function"><span class="params">             affine=True, </span></span></span><br><span class="line"><span class="function"><span class="params">             track_running_stats=True)</span></span></span><br></pre></td></tr></table></figure>
-<p>这是<code>_BatchNorm</code>的初始化的参数，无论是1d2d3d的BatchNorm都是继承自这个类，所以只需要看这个就可以了。<span class="exturl" data-url="aHR0cHM6Ly9weXRvcmNoLm9yZy9kb2NzLzEuMS4wL19tb2R1bGVzL3RvcmNoL25uL21vZHVsZXMvYmF0Y2hub3JtLmh0bWw=" title="https://pytorch.org/docs/1.1.0/_modules/torch/nn/modules/batchnorm.html">Doc<i class="fa fa-external-link"></i></span></p>
+<h1 id="参数"><a href="#参数" class="headerlink" title="参数"></a>参数</h1><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">__init__</span>(<span class="params">self, </span></span></span><br><span class="line"><span class="function"><span class="params">             num_features, </span></span></span><br><span class="line"><span class="function"><span class="params">             eps=<span class="number">1e-5</span>, </span></span></span><br><span class="line"><span class="function"><span class="params">             momentum=<span class="number">0.1</span>, </span></span></span><br><span class="line"><span class="function"><span class="params">             affine=True, </span></span></span><br><span class="line"><span class="function"><span class="params">             track_running_stats=True</span>)</span></span><br></pre></td></tr></table></figure>
+<p>这是<code>_BatchNorm</code>的初始化的参数，无论是1d2d3d的BatchNorm都是继承自这个类，所以只需要看这个就可以了。<span class="exturl" data-url="aHR0cHM6Ly9weXRvcmNoLm9yZy9kb2NzLzEuMS4wL19tb2R1bGVzL3RvcmNoL25uL21vZHVsZXMvYmF0Y2hub3JtLmh0bWw=">Doc<i class="fa fa-external-link-alt"></i></span></p>
 <p>这里边很重要的两个参数就是<code>affine</code>和<code>track_running_stats</code>了。<br>跟这两个相关的代码如下：</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">if</span> self.affine:</span><br><span class="line">    self.weight = Parameter(torch.Tensor(num_features))</span><br><span class="line">    self.bias = Parameter(torch.Tensor(num_features))</span><br><span class="line"><span class="keyword">else</span>:</span><br><span class="line">    ...</span><br><span class="line"><span class="keyword">if</span> self.track_running_stats:</span><br><span class="line">    self.register_buffer(<span class="string">'running_mean'</span>, torch.zeros(num_features))</span><br><span class="line">    self.register_buffer(<span class="string">'running_var'</span>, torch.ones(num_features))</span><br><span class="line">    self.register_buffer(<span class="string">'num_batches_tracked'</span>, torch.tensor(<span class="number">0</span>, dtype=torch.long))</span><br><span class="line"><span class="keyword">else</span>:</span><br><span class="line">    ...</span><br></pre></td></tr></table></figure>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">if</span> self.affine:</span><br><span class="line">    self.weight = Parameter(torch.Tensor(num_features))</span><br><span class="line">    self.bias = Parameter(torch.Tensor(num_features))</span><br><span class="line"><span class="keyword">else</span>:</span><br><span class="line">    ...</span><br><span class="line"><span class="keyword">if</span> self.track_running_stats:</span><br><span class="line">    self.register_buffer(<span class="string">&#x27;running_mean&#x27;</span>, torch.zeros(num_features))</span><br><span class="line">    self.register_buffer(<span class="string">&#x27;running_var&#x27;</span>, torch.ones(num_features))</span><br><span class="line">    self.register_buffer(<span class="string">&#x27;num_batches_tracked&#x27;</span>, torch.tensor(<span class="number">0</span>, dtype=torch.long))</span><br><span class="line"><span class="keyword">else</span>:</span><br><span class="line">    ...</span><br></pre></td></tr></table></figure>
 <p>可以看到的是，<code>affine</code>是和weight和bias相关的，也就是公式中的$\gamma$和$\beta$。<br>而<code>track_running_stats</code>是和运行时的均值和方差有关的。</p>
 <h1 id="affine"><a href="#affine" class="headerlink" title="affine"></a>affine</h1><p>这个参数和公式中的$\gamma$和$\beta$相关，是学习到的变量，也就是说，是通过<strong>反向传播</strong>学习到的。这里有一个小例子看一下：</p>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">norm = nn.BatchNorm1d(<span class="number">5</span>)</span><br><span class="line">print_norm(norm) <span class="comment"># 第一次输出</span></span><br><span class="line"></span><br><span class="line">a = torch.randn(<span class="number">2</span>, <span class="number">5</span>)</span><br><span class="line">b = norm(a).sum()</span><br><span class="line">b.backward()</span><br><span class="line">print_norm(norm) <span class="comment"># 第二次输出</span></span><br><span class="line"></span><br><span class="line">optimizer = torch.optim.SGD(norm.parameters(), lr=<span class="number">1e5</span>)</span><br><span class="line">optimizer.step()</span><br><span class="line">print_norm(norm) <span class="comment"># 第三次输出</span></span><br></pre></td></tr></table></figure>
@@ -298,8 +379,8 @@ y=\frac{x-\mathrm{E}[x]}{\sqrt{\operatorname{Var}[x]+\epsilon}} * \gamma+\beta</
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">optimizer = torch.optim.SGD(filter(<span class="keyword">lambda</span> p: p.requires_grad, model.parameters()),</span><br><span class="line">                                    lr=<span class="number">0.01</span>, momentum=<span class="number">0.9</span>, weight_decay=<span class="number">1e-4</span>)</span><br></pre></td></tr></table></figure>
 <p>这些方法百度里都可以找到。</p>
 <p>在这里得到一个小结论，也就是<code>requires_grad</code>、<code>affine</code>、<code>weight</code>、<code>bias</code>这几个概念是一组相关的概念。</p>
-<h1 id="track-running-stats"><a href="#track-running-stats" class="headerlink" title="track_running_stats"></a>track_running_stats</h1><p>这个参数在这里是比较<span class="label info">迷</span>的，因为这个参数是运行时的统计信息，不是反向传播学到的。<br>这个参数通常和traing是联系在一起的。通常情况下，大家说的<code>model.eval()</code>会不使用BatchNorm和Dropout，这是怎么回事？看一下源码：</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@weak_script_method</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">forward</span><span class="params">(self, input)</span>:</span></span><br><span class="line">    self._check_input_dim(input)</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">if</span> self.momentum <span class="keyword">is</span> <span class="literal">None</span>:</span><br><span class="line">        exponential_average_factor = <span class="number">0.0</span></span><br><span class="line">    <span class="keyword">else</span>:</span><br><span class="line">        exponential_average_factor = self.momentum</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> self.training <span class="keyword">and</span> self.track_running_stats:</span><br><span class="line">        <span class="keyword">if</span> self.num_batches_tracked <span class="keyword">is</span> <span class="keyword">not</span> <span class="literal">None</span>:</span><br><span class="line">            self.num_batches_tracked += <span class="number">1</span></span><br><span class="line">            <span class="keyword">if</span> self.momentum <span class="keyword">is</span> <span class="literal">None</span>:  <span class="comment"># use cumulative moving average</span></span><br><span class="line">                exponential_average_factor = <span class="number">1.0</span> / float(self.num_batches_tracked)</span><br><span class="line">            <span class="keyword">else</span>:  <span class="comment"># use exponential moving average</span></span><br><span class="line">                exponential_average_factor = self.momentum</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> F.batch_norm(</span><br><span class="line">        input, self.running_mean, self.running_var, self.weight, self.bias,</span><br><span class="line">        self.training <span class="keyword">or</span> <span class="keyword">not</span> self.track_running_stats,</span><br><span class="line">        exponential_average_factor, self.eps)</span><br></pre></td></tr></table></figure>
+<h1 id="track-running-stats"><a href="#track-running-stats" class="headerlink" title="track_running_stats"></a>track_running_stats</h1><p>这个参数在这里是比较<mark class="label info">迷</mark>的，因为这个参数是运行时的统计信息，不是反向传播学到的。<br>这个参数通常和traing是联系在一起的。通常情况下，大家说的<code>model.eval()</code>会不使用BatchNorm和Dropout，这是怎么回事？看一下源码：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@weak_script_method</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">forward</span>(<span class="params">self, input</span>):</span></span><br><span class="line">    self._check_input_dim(input)</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">if</span> self.momentum <span class="keyword">is</span> <span class="literal">None</span>:</span><br><span class="line">        exponential_average_factor = <span class="number">0.0</span></span><br><span class="line">    <span class="keyword">else</span>:</span><br><span class="line">        exponential_average_factor = self.momentum</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> self.training <span class="keyword">and</span> self.track_running_stats:</span><br><span class="line">        <span class="keyword">if</span> self.num_batches_tracked <span class="keyword">is</span> <span class="keyword">not</span> <span class="literal">None</span>:</span><br><span class="line">            self.num_batches_tracked += <span class="number">1</span></span><br><span class="line">            <span class="keyword">if</span> self.momentum <span class="keyword">is</span> <span class="literal">None</span>:  <span class="comment"># use cumulative moving average</span></span><br><span class="line">                exponential_average_factor = <span class="number">1.0</span> / float(self.num_batches_tracked)</span><br><span class="line">            <span class="keyword">else</span>:  <span class="comment"># use exponential moving average</span></span><br><span class="line">                exponential_average_factor = self.momentum</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> F.batch_norm(</span><br><span class="line">        input, self.running_mean, self.running_var, self.weight, self.bias,</span><br><span class="line">        self.training <span class="keyword">or</span> <span class="keyword">not</span> self.track_running_stats,</span><br><span class="line">        exponential_average_factor, self.eps)</span><br></pre></td></tr></table></figure>
 <p>这里是完整的forward代码，我没有做截取。截止到PyTorch 1.3.1这个函数还是这个样子。可以看到，这两个参数相关的地方就是<code>self.training and self.track_running_stats</code>和<code>self.training or not self.track_running_stats</code>两处。<br>先看第一处，它是对更新时的参数的系数做了一个计算。</p>
 <p>第二处可能也是一个比较重要的，在传递到下一个函数进行处理时，它竟然直接把两个参数合并了?<strong>难怪这个函数成为广大网友心中的大坑</strong>。<br>文章[1]对这两个参数做了一些探究，写的不错，他其中引用了一个[2]中的内容，我也直接引用一下：</p>
 <blockquote>
@@ -318,20 +399,19 @@ y=\frac{x-\mathrm{E}[x]}{\sqrt{\operatorname{Var}[x]+\epsilon}} * \gamma+\beta</
 <p>结果显而易见，它学到了当前这个batch的均值和方差，这也是最基本的情况：</p>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">norm mean tensor([0., 0., 0., 0.])</span><br><span class="line">norm var tensor([1., 1., 1., 1.])</span><br><span class="line">********************</span><br><span class="line">norm mean tensor([0.1500, 0.8500, 0.6500, 0.3500])</span><br><span class="line">norm var tensor([0.9500, 0.9500, 0.9500, 0.9500])</span><br><span class="line">********************</span><br></pre></td></tr></table></figure>
 <h2 id="condition-2"><a href="#condition-2" class="headerlink" title="condition 2"></a>condition 2</h2><p>把上述代码的第一行改成<code>norm = nn.BatchNorm1d(4, track_running_stats=False)</code>时，输出的全部都是None，因为初始化的时候这部分值就已经设置成了None。即便初始化以后再执行<code>norm.track_running_stats = True</code>，结果也还是None，显然当这两个参数为None时后续也不会有什么操作会更改mean和var。</p>
-<span class="label danger">但是！</span>
+<mark class="label danger">但是！</mark>
 <p>如果程序运行起来再改成False，那么结果会怎么样？</p>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">norm = nn.BatchNorm1d(<span class="number">4</span>, track_running_stats=<span class="literal">True</span>)</span><br><span class="line">print_norm_mean_var(norm) <span class="comment">#第一次输出</span></span><br><span class="line"></span><br><span class="line">norm.track_running_stats = <span class="literal">False</span></span><br><span class="line">norm(a)</span><br><span class="line">print_norm_mean_var(norm)</span><br></pre></td></tr></table></figure>
 <p>结果如下：</p>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">norm mean tensor([0., 0., 0., 0.])</span><br><span class="line">norm var tensor([1., 1., 1., 1.])</span><br><span class="line">********************</span><br><span class="line">norm mean tensor([0.1500, 0.8500, 0.6500, 0.3500])</span><br><span class="line">norm var tensor([0.9500, 0.9500, 0.9500, 0.9500])</span><br><span class="line">********************</span><br></pre></td></tr></table></figure>
 <p>它还是学到了！因为传入到<code>F.batch_nrom</code>的参数肯定是True，<strong>看起来，唯一能决定它学不学的，应该就是mean和var是不是None</strong>。</p>
 <h2 id="condition-3"><a href="#condition-3" class="headerlink" title="condition 3"></a>condition 3</h2><p>到这个情况时，问题就复杂多了！</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">print_norm_mean_var(norm) <span class="comment">#第一次输出</span></span><br><span class="line"></span><br><span class="line">b = norm(a)</span><br><span class="line">print(<span class="string">'b ='</span>,b)</span><br><span class="line">print_norm_mean_var(norm) <span class="comment">#第二次输出</span></span><br><span class="line"></span><br><span class="line">norm.eval()</span><br><span class="line">b = norm(a)</span><br><span class="line">print(<span class="string">'b ='</span>,b)</span><br><span class="line">print_norm_mean_var(norm) <span class="comment">#第三次输出</span></span><br><span class="line"></span><br><span class="line">norm.train()</span><br><span class="line">b = norm(a)</span><br><span class="line">print(<span class="string">'b ='</span>,b)</span><br><span class="line">print_norm_mean_var(norm) <span class="comment">#第四次输出</span></span><br></pre></td></tr></table></figure>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">print_norm_mean_var(norm) <span class="comment">#第一次输出</span></span><br><span class="line"></span><br><span class="line">b = norm(a)</span><br><span class="line">print(<span class="string">&#x27;b =&#x27;</span>,b)</span><br><span class="line">print_norm_mean_var(norm) <span class="comment">#第二次输出</span></span><br><span class="line"></span><br><span class="line">norm.eval()</span><br><span class="line">b = norm(a)</span><br><span class="line">print(<span class="string">&#x27;b =&#x27;</span>,b)</span><br><span class="line">print_norm_mean_var(norm) <span class="comment">#第三次输出</span></span><br><span class="line"></span><br><span class="line">norm.train()</span><br><span class="line">b = norm(a)</span><br><span class="line">print(<span class="string">&#x27;b =&#x27;</span>,b)</span><br><span class="line">print_norm_mean_var(norm) <span class="comment">#第四次输出</span></span><br></pre></td></tr></table></figure>
 <p>看一下结果：</p>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">norm mean tensor([0., 0., 0., 0.])</span><br><span class="line">norm var tensor([1., 1., 1., 1.])</span><br><span class="line">********************</span><br><span class="line">b = tensor([[-0.8000,  0.6000,  0.5000, -0.4000], [ 0.8000, -0.6000, -0.5000,  0.4000]], grad_fn=&lt;NativeBatchNormBackward&gt;)</span><br><span class="line">norm mean tensor([0.1500, 0.8500, 0.6500, 0.3500])</span><br><span class="line">norm var tensor([0.9500, 0.9500, 0.9500, 0.9500])</span><br><span class="line">********************</span><br><span class="line">b = tensor([[0.6977, 5.0170, 3.2575, 1.0875], [1.5184, 4.4014, 2.7445, 1.4979]], grad_fn=&lt;NativeBatchNormBackward&gt;)</span><br><span class="line">norm mean tensor([0.1500, 0.8500, 0.6500, 0.3500])</span><br><span class="line">norm var tensor([0.9500, 0.9500, 0.9500, 0.9500])</span><br><span class="line">********************</span><br><span class="line">b = tensor([[-0.8000,  0.6000,  0.5000, -0.4000], [ 0.8000, -0.6000, -0.5000,  0.4000]], grad_fn=&lt;NativeBatchNormBackward&gt;)</span><br><span class="line">norm mean tensor([0.2850, 1.6150, 1.2350, 0.6650])</span><br><span class="line">norm var tensor([0.9050, 0.9050, 0.9050, 0.9050])</span><br><span class="line">********************</span><br></pre></td></tr></table></figure>
 <p>第一次输出的时候是默认的。<br>第二次输出的是condition 1的情况，即学到了当前这个batch的mean和var，b也被batchnorm了。<br>第三次的结果是<code>traning=False</code>时，很明显，这一次它没有继续学习，因为这是condition 3的情况，也就是<code>self.training or not self.track_running_stats == False</code>。b被batchnorm后的结果发生了变化，是因为这一次用的是上一次学到的mean和var，而不是当前batch的，所以结果发生了变化。<br>第四次的结果是最让我意外的，因为开启了train，所以它肯定会继续学习，又回到condition 1的情况，但是，b的值似乎和第二次输出又变的一样了？</p>
-<div class="note info">
-            <p>在我看来，batchnrom在train模式下总是使用<strong>当前的batch的mean和var</strong>进行batchnorm，然后<strong>学习</strong>当前batch的分布，用于更新<code>running_mean</code>和<code>running_var</code>。当切换到eval模式的时候，即使用学习到的<code>running_mean</code>和<code>running_var</code>进行batchnorm。所以我们的batchsize应该大一些，且每次取到的batch尽量随机，这样才能不断地学习到整个数据集的分布。</p>
-          </div>
+<div class="note info"><p>在我看来，batchnrom在train模式下总是使用<strong>当前的batch的mean和var</strong>进行batchnorm，然后<strong>学习</strong>当前batch的分布，用于更新<code>running_mean</code>和<code>running_var</code>。当切换到eval模式的时候，即使用学习到的<code>running_mean</code>和<code>running_var</code>进行batchnorm。所以我们的batchsize应该大一些，且每次取到的batch尽量随机，这样才能不断地学习到整个数据集的分布。</p>
+</div>
 <h2 id="condition-4"><a href="#condition-4" class="headerlink" title="condition 4"></a>condition 4</h2><p>如果初始化就把<code>track_running_stats = False</code>，<strong>那么无论是train还是eval，<code>running_mean</code>和<code>running_var</code>都是None，且每次只是用当前batch的mean和var</strong>。这里也就是[2]中所说的为什么这个同condition 2。</p>
 <p>但是如果开始时true，改成False呢？<br>因为代码和condition 3完全相同，只是添加了一行<code>norm.track_running_stats = False</code>，看一下结果的神奇之处：</p>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line">norm mean tensor([0., 0., 0., 0.])</span><br><span class="line">norm var tensor([1., 1., 1., 1.])</span><br><span class="line">********************</span><br><span class="line">b = tensor([[-0.8000,  0.6000,  0.5000, -0.4000],</span><br><span class="line">        [ 0.8000, -0.6000, -0.5000,  0.4000]],</span><br><span class="line">       grad_fn=&lt;NativeBatchNormBackward&gt;)</span><br><span class="line">norm mean tensor([0.1500, 0.8500, 0.6500, 0.3500])</span><br><span class="line">norm var tensor([0.9500, 0.9500, 0.9500, 0.9500])</span><br><span class="line">********************</span><br><span class="line">b = tensor([[-0.8000,  0.6000,  0.5000, -0.4000],</span><br><span class="line">        [ 0.8000, -0.6000, -0.5000,  0.4000]],</span><br><span class="line">       grad_fn=&lt;NativeBatchNormBackward&gt;)</span><br><span class="line">norm mean tensor([0.2850, 1.6150, 1.2350, 0.6650])</span><br><span class="line">norm var tensor([0.9050, 0.9050, 0.9050, 0.9050])</span><br><span class="line">********************</span><br><span class="line">b = tensor([[-0.8000,  0.6000,  0.5000, -0.4000],</span><br><span class="line">        [ 0.8000, -0.6000, -0.5000,  0.4000]],</span><br><span class="line">       grad_fn=&lt;NativeBatchNormBackward&gt;)</span><br><span class="line">norm mean tensor([0.4065, 2.3035, 1.7615, 0.9485])</span><br><span class="line">norm var tensor([0.8645, 0.8645, 0.8645, 0.8645])</span><br><span class="line">********************</span><br></pre></td></tr></table></figure>
@@ -340,7 +420,7 @@ y=\frac{x-\mathrm{E}[x]}{\sqrt{\operatorname{Var}[x]+\epsilon}} * \gamma+\beta</
 <p>在freeze的时候我看到了两种不同的说法，有一种是直接设<code>momentum = 0</code>或为<code>None</code>，这个方法看上去使得它不会学习新的分布了，但是似乎存在一点小问题，就是在fine tune的时候，他依然使用的是当前batch的mean和var，而到了测试集的时候，它却使用的是预训练数据集的mean和var，显得有一些诡异。</p>
 <p>另外一个方法就是使用eval固定，这个方法可能看起来是最稳妥的，即是condition 3，直接使用从预训练的数据集上训练好的mean和var，[3]已经给出了比较详细的答案，在这里就不多做赘述。我想说的是，如果需要固定的部分没有dropout的话，似乎不需要使用apply去遍历，因为本身在执行eval的时候就会遍历这个结点的所有children，这和apply几乎是相似的。</p>
 <p>当然，上述两种方法对与一个模型究竟有什么影响，甚至是否需要单独freeze batchnorm层，都应该具体问题具体分析，还是那句话，应该要清楚需要什么，才能选择适合的方法。<br>我也是初学者，如果有什么问题或者错误的地方，欢迎联系我~</p>
-<h1 id="reference"><a href="#reference" class="headerlink" title="reference"></a>reference</h1><p>[1] <span class="exturl" data-url="aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L0xvc2VJblZhaW4vYXJ0aWNsZS9kZXRhaWxzLzg2NDc2MDEw" title="https://blog.csdn.net/LoseInVain/article/details/86476010">Pytorch的BatchNorm层使用中容易出现的问题<i class="fa fa-external-link"></i></span><br>[2] <span class="exturl" data-url="aHR0cHM6Ly93d3cuemhpaHUuY29tL3F1ZXN0aW9uLzI4MjY3MjU0Ny9hbnN3ZXIvNTI5MTU0NTY3" title="https://www.zhihu.com/question/282672547/answer/529154567">BatchNorm2d增加的参数track_running_stats如何理解? - 李韶华的回答 - 知乎<i class="fa fa-external-link"></i></span><br>[3] <span class="exturl" data-url="aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3hpYW9qaWFqaWEwMDcvYXJ0aWNsZS9kZXRhaWxzLzkwMTE1MTc0" title="https://blog.csdn.net/xiaojiajia007/article/details/90115174">Pytorch中的Batch Normalization layer踩坑<i class="fa fa-external-link"></i></span></p>
+<h1 id="reference"><a href="#reference" class="headerlink" title="reference"></a>reference</h1><p>[1] <span class="exturl" data-url="aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L0xvc2VJblZhaW4vYXJ0aWNsZS9kZXRhaWxzLzg2NDc2MDEw">Pytorch的BatchNorm层使用中容易出现的问题<i class="fa fa-external-link-alt"></i></span><br>[2] <span class="exturl" data-url="aHR0cHM6Ly93d3cuemhpaHUuY29tL3F1ZXN0aW9uLzI4MjY3MjU0Ny9hbnN3ZXIvNTI5MTU0NTY3">BatchNorm2d增加的参数track_running_stats如何理解? - 李韶华的回答 - 知乎<i class="fa fa-external-link-alt"></i></span><br>[3] <span class="exturl" data-url="aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3hpYW9qaWFqaWEwMDcvYXJ0aWNsZS9kZXRhaWxzLzkwMTE1MTc0">Pytorch中的Batch Normalization layer踩坑<i class="fa fa-external-link-alt"></i></span></p>
 
     </div>
 
@@ -376,7 +456,7 @@ y=\frac{x-\mathrm{E}[x]}{\sqrt{\operatorname{Var}[x]+\epsilon}} * \gamma+\beta</
     <a href="https://yichengsu.github.io/2019/12/pytorch-batchnorm-freeze/" title="BatchNorm究竟是怎么回事？">https://yichengsu.github.io/2019/12/pytorch-batchnorm-freeze/</a>
   </li>
   <li class="post-copyright-license">
-    <strong>Copyright Notice:  </strong>All articles in this blog are licensed under <span class="exturl" data-url="aHR0cHM6Ly9jcmVhdGl2ZWNvbW1vbnMub3JnL2xpY2Vuc2VzL2J5LW5jLXNhLzQuMC9lbg=="><i class="fa fa-fw fa-creative-commons"></i>BY-NC-SA</span> unless stating additionally.
+    <strong>Copyright Notice:  </strong>All articles in this blog are licensed under <span class="exturl" data-url="aHR0cHM6Ly9jcmVhdGl2ZWNvbW1vbnMub3JnL2xpY2Vuc2VzL2J5LW5jLXNhLzQuMC9lbg=="><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</span> unless stating additionally.
   </li>
 </ul>
 </div>
@@ -412,93 +492,32 @@ y=\frac{x-\mathrm{E}[x]}{\sqrt{\operatorname{Var}[x]+\epsilon}} * \gamma+\beta</
   
   
 
-  </div>
 
-
-          </div>
-          
 
         </div>
-          
-  
-  <div class="toggle sidebar-toggle">
-    <span class="toggle-line toggle-line-first"></span>
-    <span class="toggle-line toggle-line-middle"></span>
-    <span class="toggle-line toggle-line-last"></span>
-  </div>
-
-  <aside class="sidebar">
-    <div class="sidebar-inner">
-
-      <ul class="sidebar-nav motion-element">
-        <li class="sidebar-nav-toc">
-          Table of Contents
-        </li>
-        <li class="sidebar-nav-overview">
-          Overview
-        </li>
-      </ul>
-
-      <!--noindex-->
-      <div class="post-toc-wrap sidebar-panel">
-          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#参数"><span class="nav-number">1.</span> <span class="nav-text">参数</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#affine"><span class="nav-number">2.</span> <span class="nav-text">affine</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#track-running-stats"><span class="nav-number">3.</span> <span class="nav-text">track_running_stats</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#condition-1"><span class="nav-number">3.1.</span> <span class="nav-text">condition 1</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#condition-2"><span class="nav-number">3.2.</span> <span class="nav-text">condition 2</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#condition-3"><span class="nav-number">3.3.</span> <span class="nav-text">condition 3</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#condition-4"><span class="nav-number">3.4.</span> <span class="nav-text">condition 4</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#freeze"><span class="nav-number">4.</span> <span class="nav-text">freeze</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#reference"><span class="nav-number">5.</span> <span class="nav-text">reference</span></a></li></ol></div>
-      </div>
-      <!--/noindex-->
-
-      <div class="site-overview-wrap sidebar-panel">
-        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
-    <img class="site-author-image" itemprop="image" alt="suyc"
-      src="/images/myavatar.jpg">
-  <p class="site-author-name" itemprop="name">suyc</p>
-  <div class="site-description" itemprop="description">One meets its destiny on the road he takes to avoid it.</div>
-</div>
-<div class="site-state-wrap motion-element">
-  <nav class="site-state">
-      <div class="site-state-item site-state-posts">
-          <a href="/archives/">
         
-          <span class="site-state-item-count">10</span>
-          <span class="site-state-item-name">posts</span>
-        </a>
-      </div>
-      <div class="site-state-item site-state-categories">
-            <a href="/categories/">
-          
-        <span class="site-state-item-count">3</span>
-        <span class="site-state-item-name">categories</span></a>
-      </div>
-      <div class="site-state-item site-state-tags">
-            <a href="/tags/">
-          
-        <span class="site-state-item-count">15</span>
-        <span class="site-state-item-name">tags</span></a>
-      </div>
-  </nav>
-</div>
-  <div class="links-of-author motion-element">
-      <span class="links-of-author-item">
-        <span class="exturl" data-url="aHR0cHM6Ly9naXRodWIuY29tL3lpY2hlbmdzdQ==" title="GitHub → https://github.com/yichengsu"><i class="fa fa-fw fa-github"></i></span>
-      </span>
-      <span class="links-of-author-item">
-        <span class="exturl" data-url="bWFpbHRvOnN1eWljaGVuZzE5OTVAZ21haWwuY29t" title="E-Mail → mailto:suyicheng1995@gmail.com"><i class="fa fa-fw fa-envelope"></i></span>
-      </span>
-  </div>
-  <div class="cc-license motion-element" itemprop="license">
-    <span class="exturl cc-opacity" data-url="aHR0cHM6Ly9jcmVhdGl2ZWNvbW1vbnMub3JnL2xpY2Vuc2VzL2J5LW5jLXNhLzQuMC9lbg=="><img src="/images/cc-by-nc-sa.svg" alt="Creative Commons"></span>
-  </div>
 
-
-
-      </div>
-        <div class="back-to-top motion-element">
-          <i class="fa fa-arrow-up"></i>
-          <span>0%</span>
-        </div>
-
-    </div>
-  </aside>
-  <div id="sidebar-dimmer"></div>
-
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
 
       </div>
     </main>
@@ -507,19 +526,18 @@ y=\frac{x-\mathrm{E}[x]}{\sqrt{\operatorname{Var}[x]+\epsilon}} * \gamma+\beta</
       <div class="footer-inner">
         
 
+        
+
 <div class="copyright">
   
-  &copy; 
-  <span itemprop="copyrightYear">2019</span>
+  &copy; 2019 – 
+  <span itemprop="copyrightYear">2020</span>
   <span class="with-love">
-    <i class="fa fa-bug"></i>
+    <i class="fas fa-bug"></i>
   </span>
   <span class="author" itemprop="copyrightHolder">suyc</span>
 </div>
-  <div class="powered-by">Powered by <span class="exturl theme-link" data-url="aHR0cHM6Ly9oZXhvLmlv">Hexo</span> v4.0.0
-  </div>
-  <span class="post-meta-divider">|</span>
-  <div class="theme-info">Theme – <span class="exturl theme-link" data-url="aHR0cHM6Ly9waXNjZXMudGhlbWUtbmV4dC5vcmc=">NexT.Pisces</span> v7.5.0
+  <div class="powered-by">Powered by <span class="exturl theme-link" data-url="aHR0cHM6Ly9oZXhvLmlv">Hexo</span> & <span class="exturl theme-link" data-url="aHR0cHM6Ly90aGVtZS1uZXh0LmpzLm9yZy9waXNjZXMv">NexT.Pisces</span>
   </div>
 
         
@@ -551,24 +569,22 @@ y=\frac{x-\mathrm{E}[x]}{\sqrt{\operatorname{Var}[x]+\epsilon}} * \gamma+\beta</
 
 
 
-        
       </div>
     </footer>
   </div>
 
   
-  
-  <script color='207, 216, 220' opacity='0.5' zIndex='-1' count='99' src="//cdn.jsdelivr.net/gh/theme-next/theme-next-canvas-nest@1/canvas-nest.min.js"></script>
   <script src="/lib/anime.min.js"></script>
   <script src="//cdn.jsdelivr.net/npm/jquery@3/dist/jquery.min.js"></script>
-  <script src="//cdn.jsdelivr.net/gh/fancyapps/fancybox@3/dist/jquery.fancybox.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/@fancyapps/fancybox@3/dist/jquery.fancybox.min.js"></script>
   <script src="//cdn.jsdelivr.net/npm/lozad@1/dist/lozad.min.js"></script>
-  <script src="/lib/velocity/velocity.min.js"></script>
-  <script src="/lib/velocity/velocity.ui.min.js"></script>
-<script src="/js/utils.js"></script><script src="/js/motion.js"></script>
-<script src="/js/schemes/pisces.js"></script>
-<script src="/js/next-boot.js"></script>
 
+<script src="//cdn.jsdelivr.net/npm/hexo-theme-next@8.0.0-rc.5/source/js/utils.js"></script>
+
+<script src="//cdn.jsdelivr.net/npm/hexo-theme-next@8.0.0-rc.5/source/js/motion.js"></script>
+
+
+<script src="//cdn.jsdelivr.net/npm/hexo-theme-next@8.0.0-rc.5/source/js/next-boot.js"></script>
 
 
   
@@ -585,7 +601,8 @@ y=\frac{x-\mathrm{E}[x]}{\sqrt{\operatorname{Var}[x]+\epsilon}} * \gamma+\beta</
 
 
 
-  <script src="/js/local-search.js"></script>
+  
+<script src="//cdn.jsdelivr.net/npm/hexo-theme-next@8.0.0-rc.5/source/js/local-search.js"></script>
 
 
 
@@ -603,50 +620,55 @@ y=\frac{x-\mathrm{E}[x]}{\sqrt{\operatorname{Var}[x]+\epsilon}} * \gamma+\beta</
 
   
       
-<script type="text/x-mathjax-config">
 
-  MathJax.Hub.Config({
-    tex2jax: {
-      inlineMath: [ ['$', '$'], ['\\(', '\\)'] ],
-      processEscapes: true,
-      skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
-    },
-    TeX: {
-      equationNumbers: {
-        autoNumber: 'AMS'
-      }
-    }
-  });
-
-  MathJax.Hub.Register.StartupHook('TeX Jax Ready', function() {
-    MathJax.InputJax.TeX.prefilterHooks.Add(function(data) {
-      if (data.display) {
-        var next = data.script.nextSibling;
-        while (next && next.nodeName.toLowerCase() === '#text') {
-          next = next.nextSibling;
-        }
-        if (next && next.nodeName.toLowerCase() === 'br') {
-          next.parentNode.removeChild(next);
-        }
-      }
-    });
-  });
-
-  MathJax.Hub.Queue(function() {
-    var all = MathJax.Hub.getAllJax(), i;
-    for (i = 0; i < all.length; i += 1) {
-      element = document.getElementById(all[i].inputID + '-Frame').parentNode;
-      if (element.nodeName.toLowerCase() == 'li') {
-        element = element.parentNode;
-      }
-      element.classList.add('has-jax');
-    }
-  });
-</script>
 <script>
-  NexT.utils.getScript('//cdn.jsdelivr.net/npm/mathjax@2/MathJax.js?config=TeX-AMS-MML_HTMLorMML', () => {
-    MathJax.Hub.Typeset();
-  }, window.MathJax);
+  if (typeof MathJax === 'undefined') {
+    window.MathJax = {
+      loader: {
+        source: {
+          '[tex]/amsCd': '[tex]/amscd',
+          '[tex]/AMScd': '[tex]/amscd'
+        }
+      },
+      tex: {
+        inlineMath: {'[+]': [['$', '$']]},
+        tags: 'ams'
+      },
+      options: {
+        renderActions: {
+          findScript: [10, doc => {
+            document.querySelectorAll('script[type^="math/tex"]').forEach(node => {
+              const display = !!node.type.match(/; *mode=display/);
+              const math = new doc.options.MathItem(node.textContent, doc.inputJax[0], display);
+              const text = document.createTextNode('');
+              node.parentNode.replaceChild(text, node);
+              math.start = {node: text, delim: '', n: 0};
+              math.end = {node: text, delim: '', n: 0};
+              doc.math.push(math);
+            });
+          }, '', false],
+          insertedScript: [200, () => {
+            document.querySelectorAll('mjx-container').forEach(node => {
+              let target = node.parentNode;
+              if (target.nodeName.toLowerCase() === 'li') {
+                target.parentNode.classList.add('has-jax');
+              }
+            });
+          }, '', false]
+        }
+      }
+    };
+    (function () {
+      const script = document.createElement('script');
+      script.src = '//cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js';
+      script.defer = true;
+      document.head.appendChild(script);
+    })();
+  } else {
+    MathJax.startup.document.state(0);
+    MathJax.texReset();
+    MathJax.typeset();
+  }
 </script>
 
     

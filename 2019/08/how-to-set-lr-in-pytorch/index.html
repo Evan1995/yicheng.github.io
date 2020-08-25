@@ -4,71 +4,51 @@
   <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
 <meta name="theme-color" content="#222">
-<meta name="generator" content="Hexo 4.0.0">
+<meta name="generator" content="Hexo 5.1.1">
   <link rel="icon" type="image/png" sizes="32x32" href="/images/bug_32.png">
   <link rel="icon" type="image/png" sizes="16x16" href="/images/bug_16.png">
 
 <link rel="stylesheet" href="/css/main.css">
 
 
-<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css">
-  <link rel="stylesheet" href="//cdn.jsdelivr.net/gh/fancyapps/fancybox@3/dist/jquery.fancybox.min.css">
-  <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/pace-js@1/themes/blue/pace-theme-minimal.css">
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+  
+  <link rel="stylesheet" href="/lib/animate-css/animate.min.css">
+  <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/@fancyapps/fancybox@3/dist/jquery.fancybox.min.css">
+  <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/pace-js@1/themes/blue/pace-theme-center-radar.min.css">
   <script src="//cdn.jsdelivr.net/npm/pace-js@1/pace.min.js"></script>
 
-
-<script id="hexo-configurations">
-  var NexT = window.NexT || {};
-  var CONFIG = {
-    hostname: new URL('https://yichengsu.github.io').hostname,
-    root: '/',
-    scheme: 'Pisces',
-    version: '7.5.0',
-    exturl: true,
-    sidebar: {"position":"left","display":"post","offset":12,"onmobile":false},
-    copycode: {"enable":false,"show_result":false,"style":null},
-    back2top: {"enable":true,"sidebar":true,"scrollpercent":true},
-    bookmark: {"enable":false,"color":"#222","save":"auto"},
-    fancybox: true,
-    mediumzoom: false,
-    lazyload: true,
-    pangu: false,
-    algolia: {
-      appID: '',
-      apiKey: '',
-      indexName: '',
-      hits: {"per_page":10},
-      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
-    },
-    localsearch: {"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},
-    path: 'search.xml',
-    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
-    sidebarPadding: 40
-  };
-</script>
+<script class="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"yichengsu.github.io","root":"/","scheme":"Pisces","version":"8.0.0-rc.5","exturl":true,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":false,"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":true,"mediumzoom":false,"lazyload":true,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"path":"search.xml","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false}};
+  </script>
 
   <meta name="description" content="本文主要涉及内容：Optimizer、_LRScheduler等源码分析。本文依旧基于PyTorch 1.1.0。">
-<meta name="keywords" content="Deep Learning,知其所以然,PyTorch,learning rate">
 <meta property="og:type" content="article">
 <meta property="og:title" content="如何设置PyTorch的动态学习率">
-<meta property="og:url" content="https:&#x2F;&#x2F;yichengsu.github.io&#x2F;2019&#x2F;08&#x2F;how-to-set-lr-in-pytorch&#x2F;index.html">
+<meta property="og:url" content="https://yichengsu.github.io/2019/08/how-to-set-lr-in-pytorch/index.html">
 <meta property="og:site_name" content="suyc&#39;s blog">
 <meta property="og:description" content="本文主要涉及内容：Optimizer、_LRScheduler等源码分析。本文依旧基于PyTorch 1.1.0。">
-<meta property="og:locale" content="en">
-<meta property="og:updated_time" content="2019-12-11T04:42:31.243Z">
+<meta property="og:locale" content="en_US">
+<meta property="article:published_time" content="2019-08-26T13:44:42.000Z">
+<meta property="article:modified_time" content="2019-12-11T04:42:31.243Z">
+<meta property="article:author" content="suyc">
+<meta property="article:tag" content="Deep Learning">
+<meta property="article:tag" content="知其所以然">
+<meta property="article:tag" content="PyTorch">
+<meta property="article:tag" content="learning rate">
 <meta name="twitter:card" content="summary">
 
 <link rel="canonical" href="https://yichengsu.github.io/2019/08/how-to-set-lr-in-pytorch/">
 
 
-<script id="page-configurations">
+<script class="page-configurations">
   // https://hexo.io/docs/variables.html
   CONFIG.page = {
     sidebar: "",
-    isHome: false,
-    isPost: true,
-    isPage: false,
-    isArchive: false
+    isHome : false,
+    isPost : true,
+    lang   : 'en'
   };
 </script>
 
@@ -91,24 +71,36 @@
 
   <noscript>
   <style>
-  .use-motion .brand,
+  body { margin-top: 2rem; }
+
   .use-motion .menu-item,
-  .sidebar-inner,
+  .use-motion .sidebar,
   .use-motion .post-block,
   .use-motion .pagination,
   .use-motion .comments,
   .use-motion .post-header,
   .use-motion .post-body,
-  .use-motion .collection-header { opacity: initial; }
+  .use-motion .collection-header {
+    visibility: visible;
+  }
+
+  .use-motion .header,
+  .use-motion .site-brand-container .toggle,
+  .use-motion .footer { opacity: initial; }
 
   .use-motion .site-title,
-  .use-motion .site-subtitle {
+  .use-motion .site-subtitle,
+  .use-motion .custom-logo-image {
     opacity: initial;
     top: initial;
   }
 
-  .use-motion .logo-line-before i { left: initial; }
-  .use-motion .logo-line-after i { right: initial; }
+  .use-motion .logo-line {
+    transform: scaleX(1);
+  }
+
+  .search-pop-overlay, .sidebar-nav { display: none; }
+  .sidebar-panel { display: block; }
   </style>
 </noscript>
 
@@ -118,62 +110,66 @@
   <div class="container use-motion">
     <div class="headband"></div>
 
-    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
-      <div class="header-inner"><div class="site-brand-container">
-  <div class="site-meta">
-
-    <div>
-      <a href="/" class="brand" rel="start">
-        <span class="logo-line-before"><i></i></span>
-        <span class="site-title">suyc's blog</span>
-        <span class="logo-line-after"><i></i></span>
-      </a>
-    </div>
-        <h1 class="site-subtitle" itemprop="description">哎，什么时候才能把英语学好啊🙇‍~</h1>
-      
-  </div>
-
+    <main class="main">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+        <div class="header-inner"><div class="site-brand-container">
   <div class="site-nav-toggle">
     <div class="toggle" aria-label="Toggle navigation bar">
-      <span class="toggle-line toggle-line-first"></span>
-      <span class="toggle-line toggle-line-middle"></span>
-      <span class="toggle-line toggle-line-last"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <h1 class="site-title">suyc's blog</h1>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">哎，什么时候才能把英语学好啊🙇‍~</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
     </div>
   </div>
 </div>
 
 
+
 <nav class="site-nav">
-  
-  <ul id="menu" class="menu">
+  <ul id="menu" class="main-menu menu">
         <li class="menu-item menu-item-home">
 
-    <a href="/" rel="section"><i class="fa fa-fw fa-home"></i>Home</a>
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>Home</a>
 
   </li>
         <li class="menu-item menu-item-tags">
 
-    <a href="/tags/" rel="section"><i class="fa fa-fw fa-tags"></i>Tags</a>
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>Tags</a>
 
   </li>
         <li class="menu-item menu-item-categories">
 
-    <a href="/categories/" rel="section"><i class="fa fa-fw fa-th"></i>Categories</a>
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>Categories</a>
 
   </li>
         <li class="menu-item menu-item-archives">
 
-    <a href="/archives/" rel="section"><i class="fa fa-fw fa-archive"></i>Archives</a>
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>Archives</a>
 
   </li>
         <li class="menu-item menu-item-bookmark">
 
-    <a href="/bookmark/" rel="section"><i class="fa fa-fw fa-bookmark"></i>Bookmark</a>
+    <a href="/bookmark/" rel="section"><i class="fas fa-bookmark fa-fw"></i>Bookmark</a>
 
   </li>
         <li class="menu-item menu-item-about">
 
-    <a href="/about/" rel="section"><i class="fa fa-fw fa-user"></i>About</a>
+    <a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>About</a>
 
   </li>
       <li class="menu-item menu-item-search">
@@ -181,48 +177,134 @@
         </a>
       </li>
   </ul>
-
 </nav>
-  <div class="site-search">
+
+
+
+  <div class="search-pop-overlay">
     <div class="popup search-popup">
-    <div class="search-header">
+        <div class="search-header">
   <span class="search-icon">
     <i class="fa fa-search"></i>
   </span>
   <div class="search-input-container">
-    <input autocomplete="off" autocorrect="off" autocapitalize="none"
+    <input autocomplete="off" autocapitalize="off" maxlength="80"
            placeholder="Searching..." spellcheck="false"
-           type="text" id="search-input">
+           type="search" class="search-input">
   </div>
   <span class="popup-btn-close">
     <i class="fa fa-times-circle"></i>
   </span>
 </div>
-<div id="search-result"></div>
-
-</div>
-<div class="search-pop-overlay"></div>
-
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x"></i>
   </div>
 </div>
-    </header>
 
-    
+    </div>
+  </div>
+
+</div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <section class="post-toc-wrap sidebar-panel">
+          <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#Optimizer"><span class="nav-number">1.</span> <span class="nav-text">Optimizer</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#LRScheduler"><span class="nav-number">2.</span> <span class="nav-text">_LRScheduler</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Demo"><span class="nav-number">3.</span> <span class="nav-text">Demo</span></a></li></ol></div>
+      </section>
+      <!--/noindex-->
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="suyc"
+      src="/images/myavatar.jpg">
+  <p class="site-author-name" itemprop="name">suyc</p>
+  <div class="site-description" itemprop="description">One meets its destiny on the road he takes to avoid it.</div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">11</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">4</span>
+        <span class="site-state-item-name">categories</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">17</span>
+        <span class="site-state-item-name">tags</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author animated">
+      <span class="links-of-author-item">
+        <span class="exturl" data-url="aHR0cHM6Ly9naXRodWIuY29tL3lpY2hlbmdzdQ==" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;yichengsu"><i class="fab fa-github fa-fw"></i></span>
+      </span>
+      <span class="links-of-author-item">
+        <span class="exturl" data-url="bWFpbHRvOnN1eWljaGVuZzE5OTVAZ21haWwuY29t" title="E-Mail → mailto:suyicheng1995@gmail.com"><i class="fa fa-envelope fa-fw"></i></span>
+      </span>
+  </div>
+  <div class="cc-license animated" itemprop="license">
+    <span class="exturl cc-opacity" data-url="aHR0cHM6Ly9jcmVhdGl2ZWNvbW1vbnMub3JnL2xpY2Vuc2VzL2J5LW5jLXNhLzQuMC9lbg=="><img src="/images/cc-by-nc-sa.svg" alt="Creative Commons"></span>
+  </div>
 
 
-    <main class="main">
+
+      </section>
+        <div class="back-to-top animated">
+          <i class="fa fa-arrow-up"></i>
+          <span>0%</span>
+        </div>
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </header>
+
+      
+
+<noscript>
+  <div id="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
       <div class="main-inner">
-        <div class="content-wrap">
+        
+
+        <div class="content post posts-expand">
           
 
-          <div class="content">
-            
-
-  <div class="posts-expand">
-      
+    
   
   
-  <article itemscope itemtype="http://schema.org/Article" class="post-block " lang="en">
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="en">
     <link itemprop="mainEntityOfPage" href="https://yichengsu.github.io/2019/08/how-to-set-lr-in-pytorch/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -234,15 +316,17 @@
     <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
       <meta itemprop="name" content="suyc's blog">
     </span>
+
+    
       <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
+        <h1 class="post-title" itemprop="name headline">
           如何设置PyTorch的动态学习率
-        </h2>
+        </h1>
 
         <div class="post-meta">
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
+                <i class="far fa-calendar"></i>
               </span>
               <span class="post-meta-item-text">Posted on</span>
 
@@ -250,20 +334,18 @@
             </span>
               <span class="post-meta-item">
                 <span class="post-meta-item-icon">
-                  <i class="fa fa-calendar-check-o"></i>
+                  <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">Edited on</span>
                 <time title="Modified: 2019-12-11 12:42:31" itemprop="dateModified" datetime="2019-12-11T12:42:31+08:00">2019-12-11</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
+                <i class="far fa-folder"></i>
               </span>
               <span class="post-meta-item-text">In</span>
                 <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/Deep-Learning/" itemprop="url" rel="index">
-                    <span itemprop="name">Deep Learning</span>
-                  </a>
+                  <a href="/categories/Deep-Learning/" itemprop="url" rel="index"><span itemprop="name">Deep Learning</span></a>
                 </span>
             </span>
 
@@ -283,27 +365,23 @@
     
     
     <div class="post-body" itemprop="articleBody">
-
-      
         <p>本文主要涉及内容：<code>Optimizer</code>、<code>_LRScheduler</code>等源码分析。<br>本文依旧基于PyTorch 1.1.0。</p>
 <a id="more"></a>
 <h1 id="Optimizer"><a href="#Optimizer" class="headerlink" title="Optimizer"></a>Optimizer</h1><p>PyTorch提供了<code>torch.optim.lr_scheduler</code>来帮助用户改变学习率，下边将从<code>Optimizer</code>入手，看一下这个类是如何工作的。</p>
-<p>为什么从Optimizer入手，因为无论是Adam还是SGD，都是继承的这个类。同时，scheduler也是给所有的Optimizer服务的，所以需要用的方法都会定义在这个基类里，直接看一下这个类的属性即可。给出Doc中的代码<span class="exturl" data-url="aHR0cHM6Ly9weXRvcmNoLm9yZy9kb2NzLzEuMS4wL19tb2R1bGVzL3RvcmNoL29wdGltL29wdGltaXplci5odG1sI09wdGltaXplcg==" title="https://pytorch.org/docs/1.1.0/_modules/torch/optim/optimizer.html#Optimizer">链接<i class="fa fa-external-link"></i></span>。</p>
+<p>为什么从Optimizer入手，因为无论是Adam还是SGD，都是继承的这个类。同时，scheduler也是给所有的Optimizer服务的，所以需要用的方法都会定义在这个基类里，直接看一下这个类的属性即可。给出Doc中的代码<span class="exturl" data-url="aHR0cHM6Ly9weXRvcmNoLm9yZy9kb2NzLzEuMS4wL19tb2R1bGVzL3RvcmNoL29wdGltL29wdGltaXplci5odG1sI09wdGltaXplcg==">链接<i class="fa fa-external-link-alt"></i></span>。</p>
 <p>首先是初始化方法<code>def __init__(self, params, defaults)</code>，这个方法的params参数，就是我们在初始化优化器的时候传入的网络的参数，如<code>Alexnet.parameters()</code>，而后边所有的参数都将合并成dict参数作为这个方法的defaults。<br>看一下<code>Alexnet.parameters()</code>中存的都是什么：<br><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">for</span> alex <span class="keyword">in</span> Alexnet.parameters():</span><br><span class="line">    print(alex.shape)</span><br></pre></td></tr></table></figure><br>可以看到，这里边存的就是整个网络的参数。<br>有两种定义optimizer的方法：</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">optimizer = optim.SGD(model.parameters(), lr=<span class="number">0.01</span>, momentum=<span class="number">0.9</span>)</span><br><span class="line">optimizer = optim.SGD([</span><br><span class="line">    &#123;<span class="string">'params'</span>: model.base.parameters()&#125;,</span><br><span class="line">    &#123;<span class="string">'params'</span>: model.classifier.parameters(), <span class="string">'lr'</span>: <span class="number">1e-3</span>&#125;</span><br><span class="line">], lr=<span class="number">1e-2</span>, momentum=<span class="number">0.9</span>)</span><br></pre></td></tr></table></figure>
-<p>如果是<strong>第一种</strong>定义的方法：在这个初始化方法中，会把这些参数先改造成<code>[{&#39;params&#39;: Alexnet.parameters()}]</code>这样的一个长度为1的list。然后对这个list进行加工，添加上defaults中的参数，如果我们使用Alexnet来做一个例子的话，就是下边这个样子：<br><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">optimizer = torch.optim.Adam(Alexnet.parameters(), lr=<span class="number">0.001</span>)</span><br><span class="line">print([group.keys() <span class="keyword">for</span> group <span class="keyword">in</span> optimizer.param_groups])</span><br><span class="line"><span class="comment"># [dict_keys(['params', 'lr', 'betas', 'eps', 'weight_decay', 'amsgrad'])]</span></span><br></pre></td></tr></table></figure><br>如果是<strong>第二种</strong>定义的方法：因为传入的本身就是dict的形式，所以会继续对他进行加工，添加上后边的参数，我们直接看疗效：<br><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">optimizer = torch.optim.SGD([</span><br><span class="line">    &#123;<span class="string">'params'</span>: Alexnet.features.parameters()&#125;,</span><br><span class="line">    &#123;<span class="string">'params'</span>: Alexnet.classifier.parameters(), <span class="string">'lr'</span>: <span class="number">1e-3</span>&#125;</span><br><span class="line">], lr=<span class="number">1e-2</span>, momentum=<span class="number">0.9</span>)</span><br><span class="line">print([group.keys() <span class="keyword">for</span> group <span class="keyword">in</span> optimizer.param_groups])</span><br><span class="line"><span class="comment"># [dict_keys(['params', 'lr', 'momentum', 'dampening', 'weight_decay', 'nesterov']), dict_keys(['params', 'lr', 'momentum', 'dampening', 'weight_decay', 'nesterov'])]</span></span><br></pre></td></tr></table></figure><br>这次的list变成了两个元素，而且每个元素的组成和使用Adam也不一样了，这很明显，因为不同的优化器需要的参数不同嘛~(关于不同层的lr不同的设置这里给出官网<span class="exturl" data-url="aHR0cHM6Ly9weXRvcmNoLm9yZy9kb2NzLzEuMS4wL29wdGltLmh0bWwjcGVyLXBhcmFtZXRlci1vcHRpb25z" title="https://pytorch.org/docs/1.1.0/optim.html#per-parameter-options">链接<i class="fa fa-external-link"></i></span>)</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">optimizer = optim.SGD(model.parameters(), lr=<span class="number">0.01</span>, momentum=<span class="number">0.9</span>)</span><br><span class="line">optimizer = optim.SGD([</span><br><span class="line">    &#123;<span class="string">&#x27;params&#x27;</span>: model.base.parameters()&#125;,</span><br><span class="line">    &#123;<span class="string">&#x27;params&#x27;</span>: model.classifier.parameters(), <span class="string">&#x27;lr&#x27;</span>: <span class="number">1e-3</span>&#125;</span><br><span class="line">], lr=<span class="number">1e-2</span>, momentum=<span class="number">0.9</span>)</span><br></pre></td></tr></table></figure>
+<p>如果是<strong>第一种</strong>定义的方法：在这个初始化方法中，会把这些参数先改造成<code>[&#123;&#39;params&#39;: Alexnet.parameters()&#125;]</code>这样的一个长度为1的list。然后对这个list进行加工，添加上defaults中的参数，如果我们使用Alexnet来做一个例子的话，就是下边这个样子：<br><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">optimizer = torch.optim.Adam(Alexnet.parameters(), lr=<span class="number">0.001</span>)</span><br><span class="line">print([group.keys() <span class="keyword">for</span> group <span class="keyword">in</span> optimizer.param_groups])</span><br><span class="line"><span class="comment"># [dict_keys([&#x27;params&#x27;, &#x27;lr&#x27;, &#x27;betas&#x27;, &#x27;eps&#x27;, &#x27;weight_decay&#x27;, &#x27;amsgrad&#x27;])]</span></span><br></pre></td></tr></table></figure><br>如果是<strong>第二种</strong>定义的方法：因为传入的本身就是dict的形式，所以会继续对他进行加工，添加上后边的参数，我们直接看疗效：<br><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">optimizer = torch.optim.SGD([</span><br><span class="line">    &#123;<span class="string">&#x27;params&#x27;</span>: Alexnet.features.parameters()&#125;,</span><br><span class="line">    &#123;<span class="string">&#x27;params&#x27;</span>: Alexnet.classifier.parameters(), <span class="string">&#x27;lr&#x27;</span>: <span class="number">1e-3</span>&#125;</span><br><span class="line">], lr=<span class="number">1e-2</span>, momentum=<span class="number">0.9</span>)</span><br><span class="line">print([group.keys() <span class="keyword">for</span> group <span class="keyword">in</span> optimizer.param_groups])</span><br><span class="line"><span class="comment"># [dict_keys([&#x27;params&#x27;, &#x27;lr&#x27;, &#x27;momentum&#x27;, &#x27;dampening&#x27;, &#x27;weight_decay&#x27;, &#x27;nesterov&#x27;]), dict_keys([&#x27;params&#x27;, &#x27;lr&#x27;, &#x27;momentum&#x27;, &#x27;dampening&#x27;, &#x27;weight_decay&#x27;, &#x27;nesterov&#x27;])]</span></span><br></pre></td></tr></table></figure><br>这次的list变成了两个元素，而且每个元素的组成和使用Adam也不一样了，这很明显，因为不同的优化器需要的参数不同嘛~(关于不同层的lr不同的设置这里给出官网<span class="exturl" data-url="aHR0cHM6Ly9weXRvcmNoLm9yZy9kb2NzLzEuMS4wL29wdGltLmh0bWwjcGVyLXBhcmFtZXRlci1vcHRpb25z">链接<i class="fa fa-external-link-alt"></i></span>)</p>
 <p>但是两者是相似的，就是每个元素都有params和lr，这就够了。</p>
-<h1 id="LRScheduler"><a href="#LRScheduler" class="headerlink" title="_LRScheduler"></a>_LRScheduler</h1><p>所有的动态修改lr的类，都是继承的这个类，所以我们看一下这个类包含什么方法。源码<span class="exturl" data-url="aHR0cHM6Ly9weXRvcmNoLm9yZy9kb2NzLzEuMS4wL19tb2R1bGVzL3RvcmNoL29wdGltL2xyX3NjaGVkdWxlci5odG1sI0V4cG9uZW50aWFsTFI=" title="https://pytorch.org/docs/1.1.0/_modules/torch/optim/lr_scheduler.html#ExponentialLR">链接<i class="fa fa-external-link"></i></span>。</p>
+<h1 id="LRScheduler"><a href="#LRScheduler" class="headerlink" title="_LRScheduler"></a>_LRScheduler</h1><p>所有的动态修改lr的类，都是继承的这个类，所以我们看一下这个类包含什么方法。源码<span class="exturl" data-url="aHR0cHM6Ly9weXRvcmNoLm9yZy9kb2NzLzEuMS4wL19tb2R1bGVzL3RvcmNoL29wdGltL2xyX3NjaGVkdWxlci5odG1sI0V4cG9uZW50aWFsTFI=">链接<i class="fa fa-external-link-alt"></i></span>。</p>
 <p>在初始化方法中<code>def __init__(self, optimizer, last_epoch=-1)</code>，包含两个参数，第一个参数就是我们上边提到的optimizer的任何一个子类。第二个参数的意思是<strong>当前执行到了哪个epoch</strong>。我们不指定它的时候，虽然默认是-1，但是init中会调用一次step并设置为0。</p>
-<div class="note danger">
-            <p>一定要注意PyTorch的版本！我的windows上用的是1.0.1，服务器用的是1.1.0，就闹了很多问题。就拿这个类来说，在1.0.1中是先<code>setp()</code>再训练，而1.1.0进行了更新，先训练，然后再<code>step()</code>。</p>
-          </div>
-<p>当我们调用了初始化后，会给optimizer增加一个字段，看一下：<br><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">scheduler = torch.optim.lr_scheduler.StepLR(optimizer, step_size=<span class="number">5</span>, gamma=<span class="number">0.1</span>)</span><br><span class="line">print([group.keys() <span class="keyword">for</span> group <span class="keyword">in</span> optimizer.param_groups])</span><br><span class="line"><span class="comment"># [dict_keys(['params', 'lr', 'betas', 'eps', 'weight_decay', 'amsgrad', 'initial_lr'])]</span></span><br></pre></td></tr></table></figure><br>新增加的<code>initial_lr</code>字段就是原始的lr。</p>
+<div class="note danger"><p>一定要注意PyTorch的版本！我的windows上用的是1.0.1，服务器用的是1.1.0，就闹了很多问题。就拿这个类来说，在1.0.1中是先<code>setp()</code>再训练，而1.1.0进行了更新，先训练，然后再<code>step()</code>。</p>
+</div>
+<p>当我们调用了初始化后，会给optimizer增加一个字段，看一下：<br><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">scheduler = torch.optim.lr_scheduler.StepLR(optimizer, step_size=<span class="number">5</span>, gamma=<span class="number">0.1</span>)</span><br><span class="line">print([group.keys() <span class="keyword">for</span> group <span class="keyword">in</span> optimizer.param_groups])</span><br><span class="line"><span class="comment"># [dict_keys([&#x27;params&#x27;, &#x27;lr&#x27;, &#x27;betas&#x27;, &#x27;eps&#x27;, &#x27;weight_decay&#x27;, &#x27;amsgrad&#x27;, &#x27;initial_lr&#x27;])]</span></span><br></pre></td></tr></table></figure><br>新增加的<code>initial_lr</code>字段就是原始的lr。</p>
 <p>在<code>def step(self, epoch=None)</code>方法中，通常情况下我们<strong>不需要</strong>指定这个参数epoch，因为每次调用他都会增加1。在这个函数中会调用一个需要重载的方法<code>get_lr()</code>，每次调用都会从这个方法中提取改变后的lr，赋值给optimizer。</p>
-<div class="note info">
-            <p>这里其实我一直有个疑问的，就是scheduler的step和optimizer的step是一个什么关系，其实通过源码，看到这里，这俩函数没啥关系！scheduler的step只会修改lr，两者都需要执行！</p>
-          </div>
-<p>下边看一下两个scheduler的<code>get_lr()</code>对比一下。先看一下SetpLR：<br><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">get_lr</span><span class="params">(self)</span>:</span></span><br><span class="line">    <span class="keyword">if</span> (self.last_epoch == <span class="number">0</span>) <span class="keyword">or</span> (self.last_epoch % self.step_size != <span class="number">0</span>):</span><br><span class="line">        <span class="keyword">return</span> [group[<span class="string">'lr'</span>] <span class="keyword">for</span> group <span class="keyword">in</span> self.optimizer.param_groups]</span><br><span class="line">    <span class="keyword">return</span> [group[<span class="string">'lr'</span>] * self.gamma</span><br><span class="line">            <span class="keyword">for</span> group <span class="keyword">in</span> self.optimizer.param_groups]</span><br></pre></td></tr></table></figure><br>这个会在设置的步长的整倍数的时候将lr*gamma。<br>而ExponentialLR则会在每轮结束的时候都进行乘gamma的操作，这个减小也真的是指数倍的。<br><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">get_lr</span><span class="params">(self)</span>:</span></span><br><span class="line">    <span class="keyword">if</span> self.last_epoch == <span class="number">0</span>:</span><br><span class="line">        <span class="keyword">return</span> self.base_lrs</span><br><span class="line">    <span class="keyword">return</span> [group[<span class="string">'lr'</span>] * self.gamma</span><br><span class="line">            <span class="keyword">for</span> group <span class="keyword">in</span> self.optimizer.param_groups]</span><br></pre></td></tr></table></figure></p>
+<div class="note info"><p>这里其实我一直有个疑问的，就是scheduler的step和optimizer的step是一个什么关系，其实通过源码，看到这里，这俩函数没啥关系！scheduler的step只会修改lr，两者都需要执行！</p>
+</div>
+<p>下边看一下两个scheduler的<code>get_lr()</code>对比一下。先看一下SetpLR：<br><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">get_lr</span>(<span class="params">self</span>):</span></span><br><span class="line">    <span class="keyword">if</span> (self.last_epoch == <span class="number">0</span>) <span class="keyword">or</span> (self.last_epoch % self.step_size != <span class="number">0</span>):</span><br><span class="line">        <span class="keyword">return</span> [group[<span class="string">&#x27;lr&#x27;</span>] <span class="keyword">for</span> group <span class="keyword">in</span> self.optimizer.param_groups]</span><br><span class="line">    <span class="keyword">return</span> [group[<span class="string">&#x27;lr&#x27;</span>] * self.gamma</span><br><span class="line">            <span class="keyword">for</span> group <span class="keyword">in</span> self.optimizer.param_groups]</span><br></pre></td></tr></table></figure><br>这个会在设置的步长的整倍数的时候将lr*gamma。<br>而ExponentialLR则会在每轮结束的时候都进行乘gamma的操作，这个减小也真的是指数倍的。<br><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">get_lr</span>(<span class="params">self</span>):</span></span><br><span class="line">    <span class="keyword">if</span> self.last_epoch == <span class="number">0</span>:</span><br><span class="line">        <span class="keyword">return</span> self.base_lrs</span><br><span class="line">    <span class="keyword">return</span> [group[<span class="string">&#x27;lr&#x27;</span>] * self.gamma</span><br><span class="line">            <span class="keyword">for</span> group <span class="keyword">in</span> self.optimizer.param_groups]</span><br></pre></td></tr></table></figure></p>
 <h1 id="Demo"><a href="#Demo" class="headerlink" title="Demo"></a>Demo</h1><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">scheduler = StepLR(optimizer, step_size=<span class="number">30</span>, gamma=<span class="number">0.1</span>)</span><br><span class="line">train_loader = Data.DataLoader(</span><br><span class="line">        dataset=train_dataset, batch_size=BATCH_SIZE, shuffle=<span class="literal">True</span>, pin_memory=<span class="literal">True</span>)</span><br><span class="line"><span class="keyword">for</span> epoch <span class="keyword">in</span> range(<span class="number">100</span>):</span><br><span class="line">    <span class="keyword">for</span> X, y <span class="keyword">in</span> train_loader:</span><br><span class="line">        ...</span><br><span class="line">        optimizer.zero_grad()</span><br><span class="line">        loss.backward()</span><br><span class="line">        optimizer.step()</span><br><span class="line">    scheduler.step()</span><br></pre></td></tr></table></figure>
     </div>
 
@@ -339,7 +417,7 @@
     <a href="https://yichengsu.github.io/2019/08/how-to-set-lr-in-pytorch/" title="如何设置PyTorch的动态学习率">https://yichengsu.github.io/2019/08/how-to-set-lr-in-pytorch/</a>
   </li>
   <li class="post-copyright-license">
-    <strong>Copyright Notice:  </strong>All articles in this blog are licensed under <span class="exturl" data-url="aHR0cHM6Ly9jcmVhdGl2ZWNvbW1vbnMub3JnL2xpY2Vuc2VzL2J5LW5jLXNhLzQuMC9lbg=="><i class="fa fa-fw fa-creative-commons"></i>BY-NC-SA</span> unless stating additionally.
+    <strong>Copyright Notice:  </strong>All articles in this blog are licensed under <span class="exturl" data-url="aHR0cHM6Ly9jcmVhdGl2ZWNvbW1vbnMub3JnL2xpY2Vuc2VzL2J5LW5jLXNhLzQuMC9lbg=="><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</span> unless stating additionally.
   </li>
 </ul>
 </div>
@@ -374,93 +452,32 @@
   
   
 
-  </div>
 
-
-          </div>
-          
 
         </div>
-          
-  
-  <div class="toggle sidebar-toggle">
-    <span class="toggle-line toggle-line-first"></span>
-    <span class="toggle-line toggle-line-middle"></span>
-    <span class="toggle-line toggle-line-last"></span>
-  </div>
-
-  <aside class="sidebar">
-    <div class="sidebar-inner">
-
-      <ul class="sidebar-nav motion-element">
-        <li class="sidebar-nav-toc">
-          Table of Contents
-        </li>
-        <li class="sidebar-nav-overview">
-          Overview
-        </li>
-      </ul>
-
-      <!--noindex-->
-      <div class="post-toc-wrap sidebar-panel">
-          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#Optimizer"><span class="nav-number">1.</span> <span class="nav-text">Optimizer</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#LRScheduler"><span class="nav-number">2.</span> <span class="nav-text">_LRScheduler</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Demo"><span class="nav-number">3.</span> <span class="nav-text">Demo</span></a></li></ol></div>
-      </div>
-      <!--/noindex-->
-
-      <div class="site-overview-wrap sidebar-panel">
-        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
-    <img class="site-author-image" itemprop="image" alt="suyc"
-      src="/images/myavatar.jpg">
-  <p class="site-author-name" itemprop="name">suyc</p>
-  <div class="site-description" itemprop="description">One meets its destiny on the road he takes to avoid it.</div>
-</div>
-<div class="site-state-wrap motion-element">
-  <nav class="site-state">
-      <div class="site-state-item site-state-posts">
-          <a href="/archives/">
         
-          <span class="site-state-item-count">10</span>
-          <span class="site-state-item-name">posts</span>
-        </a>
-      </div>
-      <div class="site-state-item site-state-categories">
-            <a href="/categories/">
-          
-        <span class="site-state-item-count">3</span>
-        <span class="site-state-item-name">categories</span></a>
-      </div>
-      <div class="site-state-item site-state-tags">
-            <a href="/tags/">
-          
-        <span class="site-state-item-count">15</span>
-        <span class="site-state-item-name">tags</span></a>
-      </div>
-  </nav>
-</div>
-  <div class="links-of-author motion-element">
-      <span class="links-of-author-item">
-        <span class="exturl" data-url="aHR0cHM6Ly9naXRodWIuY29tL3lpY2hlbmdzdQ==" title="GitHub → https://github.com/yichengsu"><i class="fa fa-fw fa-github"></i></span>
-      </span>
-      <span class="links-of-author-item">
-        <span class="exturl" data-url="bWFpbHRvOnN1eWljaGVuZzE5OTVAZ21haWwuY29t" title="E-Mail → mailto:suyicheng1995@gmail.com"><i class="fa fa-fw fa-envelope"></i></span>
-      </span>
-  </div>
-  <div class="cc-license motion-element" itemprop="license">
-    <span class="exturl cc-opacity" data-url="aHR0cHM6Ly9jcmVhdGl2ZWNvbW1vbnMub3JnL2xpY2Vuc2VzL2J5LW5jLXNhLzQuMC9lbg=="><img src="/images/cc-by-nc-sa.svg" alt="Creative Commons"></span>
-  </div>
 
-
-
-      </div>
-        <div class="back-to-top motion-element">
-          <i class="fa fa-arrow-up"></i>
-          <span>0%</span>
-        </div>
-
-    </div>
-  </aside>
-  <div id="sidebar-dimmer"></div>
-
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
 
       </div>
     </main>
@@ -469,19 +486,18 @@
       <div class="footer-inner">
         
 
+        
+
 <div class="copyright">
   
-  &copy; 
-  <span itemprop="copyrightYear">2019</span>
+  &copy; 2019 – 
+  <span itemprop="copyrightYear">2020</span>
   <span class="with-love">
-    <i class="fa fa-bug"></i>
+    <i class="fas fa-bug"></i>
   </span>
   <span class="author" itemprop="copyrightHolder">suyc</span>
 </div>
-  <div class="powered-by">Powered by <span class="exturl theme-link" data-url="aHR0cHM6Ly9oZXhvLmlv">Hexo</span> v4.0.0
-  </div>
-  <span class="post-meta-divider">|</span>
-  <div class="theme-info">Theme – <span class="exturl theme-link" data-url="aHR0cHM6Ly9waXNjZXMudGhlbWUtbmV4dC5vcmc=">NexT.Pisces</span> v7.5.0
+  <div class="powered-by">Powered by <span class="exturl theme-link" data-url="aHR0cHM6Ly9oZXhvLmlv">Hexo</span> & <span class="exturl theme-link" data-url="aHR0cHM6Ly90aGVtZS1uZXh0LmpzLm9yZy9waXNjZXMv">NexT.Pisces</span>
   </div>
 
         
@@ -513,24 +529,22 @@
 
 
 
-        
       </div>
     </footer>
   </div>
 
   
-  
-  <script color='207, 216, 220' opacity='0.5' zIndex='-1' count='99' src="//cdn.jsdelivr.net/gh/theme-next/theme-next-canvas-nest@1/canvas-nest.min.js"></script>
   <script src="/lib/anime.min.js"></script>
   <script src="//cdn.jsdelivr.net/npm/jquery@3/dist/jquery.min.js"></script>
-  <script src="//cdn.jsdelivr.net/gh/fancyapps/fancybox@3/dist/jquery.fancybox.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/@fancyapps/fancybox@3/dist/jquery.fancybox.min.js"></script>
   <script src="//cdn.jsdelivr.net/npm/lozad@1/dist/lozad.min.js"></script>
-  <script src="/lib/velocity/velocity.min.js"></script>
-  <script src="/lib/velocity/velocity.ui.min.js"></script>
-<script src="/js/utils.js"></script><script src="/js/motion.js"></script>
-<script src="/js/schemes/pisces.js"></script>
-<script src="/js/next-boot.js"></script>
 
+<script src="//cdn.jsdelivr.net/npm/hexo-theme-next@8.0.0-rc.5/source/js/utils.js"></script>
+
+<script src="//cdn.jsdelivr.net/npm/hexo-theme-next@8.0.0-rc.5/source/js/motion.js"></script>
+
+
+<script src="//cdn.jsdelivr.net/npm/hexo-theme-next@8.0.0-rc.5/source/js/next-boot.js"></script>
 
 
   
@@ -547,7 +561,8 @@
 
 
 
-  <script src="/js/local-search.js"></script>
+  
+<script src="//cdn.jsdelivr.net/npm/hexo-theme-next@8.0.0-rc.5/source/js/local-search.js"></script>
 
 
 
