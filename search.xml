@@ -96,6 +96,46 @@ a &= b + c \\
       </tags>
   </entry>
   <entry>
+    <title>CrossEntropyLoss之我见</title>
+    <url>/2019/08/CrossEntropyLoss/</url>
+    <content><![CDATA[<p>看了一天关于各种熵的解释，比较好的文章已经添加到了<a href="/bookmark/">Bookmark</a>。本文中的公式均来自<span class="exturl" data-url="aHR0cHM6Ly9weXRvcmNoLm9yZy9kb2NzL3N0YWJsZS9ubi5mdW5jdGlvbmFsLmh0bWw=">PyTorch文档<i class="fa fa-external-link-alt"></i></span>。</p>
+<h2 id="Softmax"><a href="#Softmax" class="headerlink" title="Softmax"></a>Softmax</h2><p>把数据缩放到$[0,1]$，且和为$1$。对每个元素进行了操作，结果并不改变维数，即输入N维，输出还是N维。</p>
+<script type="math/tex; mode=display">
+\operatorname{Softmax}\left(x_{i}\right)=\frac{\exp \left(x_{i}\right)}{\sum_{j} \exp \left(x_{j}\right)}</script><h2 id="LogSoftmax"><a href="#LogSoftmax" class="headerlink" title="LogSoftmax"></a>LogSoftmax</h2><p>结果似乎比Softmax更加稳定，结果的范围为$[-inf,0)$。结果维数依然不变。</p>
+<script type="math/tex; mode=display">
+\log \operatorname{Softmax}\left(x_{i}\right)=\log \left(\frac{\exp \left(x_{i}\right)}{\sum_{j} \exp \left(x_{j}\right)}\right)</script><a id="more"></a>
+<h2 id="NLLLoss"><a href="#NLLLoss" class="headerlink" title="NLLLoss"></a>NLLLoss</h2><p>negative log likelihood loss，负对数似然损失函数，对Log后的结果进行损失计算，例如Logsoftmax。<script type="math/tex">l_{n}=-w_{y_n}x_{n,y_n}</script>，如果不传入<em>weight</em>，那么<em>w</em>就是1，所以<script type="math/tex">l_{n}=-x_{n,y_n}</script>，即<em>input</em>的负数，<code>reduction=mean</code>也就变成了直接除以$N$。</p>
+<script type="math/tex; mode=display">
+\ell(x, y)=\left\{
+      \begin{array}{ll}
+      {\{l_{1}, \dots, l_{N}\},} & {\text{if reduction}=\text{'none';}} \\
+      {\sum_{n=1}^{N} l_{n},} & {\text{if reduction}=\text {'sum';}} \\
+      {\sum_{n=1}^{N} \frac{1}{\sum_{n=1}^{N} w_{y_n}} l_{n},} & {\text{if reduction}=\text{'mean'.}} \\
+      \end{array}\right.</script><h2 id="CrossEntropyLoss"><a href="#CrossEntropyLoss" class="headerlink" title="CrossEntropyLoss"></a>CrossEntropyLoss</h2><p>关于PyTorch<span class="exturl" data-url="aHR0cHM6Ly9weXRvcmNoLm9yZy9kb2NzL3N0YWJsZS9ubi5odG1sI2Nyb3NzZW50cm9weWxvc3M=">官网<i class="fa fa-external-link-alt"></i></span>的CrossEntropyLoss补充了几组小实验。<br>文档中给出的CrossEntropyLoss的公式如下(以下讨论的均不带<em>weight</em>)：</p>
+<script type="math/tex; mode=display">
+\operatorname{loss}(x, class)=-\log \left(\frac{\exp (x[class])}{\sum_{j} \exp (x[j])}\right)</script><p>其中的<script type="math/tex">\exp (x[class])</script>越大，就是说当这个类别对应的值越大，即占的比例越大，<em>loss</em>值越小，结果越靠近0。<br>用一个样本简单模拟一下这个过程：</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="meta">&gt;&gt;&gt; </span>loss = nn.CrossEntropyLoss()</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>input = torch.randn(<span class="number">1</span>, <span class="number">5</span>, requires_grad=<span class="literal">True</span>)</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>input</span><br><span class="line">tensor([[<span class="number">-1.4976</span>,  <span class="number">0.1278</span>,  <span class="number">1.6863</span>, <span class="number">-0.3295</span>,  <span class="number">1.4173</span>]], requires_grad=<span class="literal">True</span>)</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>target = torch.empty(<span class="number">1</span>, dtype=torch.long).random_(<span class="number">5</span>)</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>target</span><br><span class="line">tensor([<span class="number">3</span>])</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>loss(input, target)</span><br><span class="line">tensor(<span class="number">2.7809</span>, grad_fn=&lt;NllLossBackward&gt;)</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>i = input.detach().numpy()</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>i = i[<span class="number">0</span>]</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>i</span><br><span class="line">array([<span class="number">-1.4976473</span> ,  <span class="number">0.12782747</span>,  <span class="number">1.6863296</span> , <span class="number">-0.32949358</span>,  <span class="number">1.4173082</span> ],</span><br><span class="line">      dtype=float32)</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>np.log(np.sum(np.exp(i))/np.exp(i[<span class="number">3</span>]))</span><br><span class="line"><span class="number">2.7809231</span></span><br></pre></td></tr></table></figure>
+<p>文档中提到，对于多batch的情况，<em>The losses are averaged across observations for each minibatch.</em></p>
+<p>还有一句话，<em>This criterion combines nn.LogSoftmax() and nn.NLLLoss() in one single class.</em>所以上边给出的公式就是负的LogSoftmax，<em>负号把取值区间变成了(0,inf]，越靠近0，则结果越好，这样只需要最小化loss即可</em>，下面看一下CrossEntropyLoss源码，两者是怎么结合的：</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">return</span> nll_loss(log_softmax(input, <span class="number">1</span>), target, weight, <span class="literal">None</span>, ignore_index, <span class="literal">None</span>, reduction)</span><br></pre></td></tr></table></figure>
+<p>先对它进行logsoftmax，然后再nllloss，默认的参数<code>reduction=&#39;mean&#39;</code>，所以出现了上边所说的，结果是各个minibatch的均值。下边进行一下多minibatch的实验，分别指定<code>reduction</code>为<code>mean</code>和<code>none</code>。</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="meta">&gt;&gt;&gt; </span>input = torch.randn(<span class="number">3</span>, <span class="number">5</span>, requires_grad=<span class="literal">True</span>)</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>target = torch.empty(<span class="number">3</span>, dtype=torch.long).random_(<span class="number">5</span>)</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>loss = nn.CrossEntropyLoss(reduction=<span class="string">&#x27;none&#x27;</span>)</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>loss(input, target)</span><br><span class="line">tensor([<span class="number">1.2951</span>, <span class="number">1.9074</span>, <span class="number">1.6085</span>], grad_fn=&lt;NllLossBackward&gt;)</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>i = input.detach().numpy()</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>i</span><br><span class="line">array([[ <span class="number">1.7035984</span> , <span class="number">-0.8095179</span> , <span class="number">-0.22653757</span>, <span class="number">-0.19294807</span>,  <span class="number">1.0479178</span> ],</span><br><span class="line">       [ <span class="number">0.37498614</span>, <span class="number">-0.26111123</span>, <span class="number">-2.1978652</span> ,  <span class="number">0.80966765</span>, <span class="number">-0.5037327</span> ],</span><br><span class="line">       [ <span class="number">0.87008125</span>, <span class="number">-1.5282617</span> ,  <span class="number">0.25803488</span>, <span class="number">-1.0827187</span> ,  <span class="number">2.0395918</span> ]],</span><br><span class="line">      dtype=float32)</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>i=i[<span class="number">0</span>]</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>i</span><br><span class="line">array([ <span class="number">1.7035984</span> , <span class="number">-0.8095179</span> , <span class="number">-0.22653757</span>, <span class="number">-0.19294807</span>,  <span class="number">1.0479178</span> ],</span><br><span class="line">      dtype=float32)</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>target</span><br><span class="line">tensor([<span class="number">4</span>, <span class="number">1</span>, <span class="number">0</span>])</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>np.log(np.sum(np.exp(i))/np.exp(i[<span class="number">4</span>]))</span><br><span class="line"><span class="number">1.2950675</span></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>i = input.detach().numpy()[<span class="number">1</span>]</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>np.log(np.sum(np.exp(i))/np.exp(i[<span class="number">1</span>]))</span><br><span class="line"><span class="number">1.9073898</span></span><br></pre></td></tr></table></figure>
+<p>可以看到，已经计算出了<code>reduction</code>为<code>none</code>时的值，下边设为<code>mean</code>：</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="meta">&gt;&gt;&gt; </span>loss_mean = nn.CrossEntropyLoss(reduction=<span class="string">&#x27;mean&#x27;</span>)</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>loss_mean(input, target)</span><br><span class="line">tensor(<span class="number">1.6037</span>, grad_fn=&lt;NllLossBackward&gt;)</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>(<span class="number">1.2951</span> + <span class="number">1.9074</span> + <span class="number">1.6085</span>)/<span class="number">3</span></span><br><span class="line"><span class="number">1.6036666666666666</span></span><br></pre></td></tr></table></figure>
+<h3 id="恍然大悟"><a href="#恍然大悟" class="headerlink" title="恍然大悟"></a>恍然大悟</h3><p>我一直有个问题，就是交叉熵的公式分明是<script type="math/tex">H(p, q)=-\sum_{x} p(x) \log q(x)</script>，但是怎么到了CrossEntropyLoss里边$p(x)$就不见了，<span class="exturl" data-url="aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl8zNzU2NzQ1MS9hcnRpY2xlL2RldGFpbHMvODA4OTUzMDk=">《经典损失函数：交叉熵》<i class="fa fa-external-link-alt"></i></span>这篇文章写的非常好，不仅解释了为什么交叉熵要和Softmax一起用，而且让我明白了$p(x)$去哪了。</p>
+<p>我直接看的是PyTorch的源码，这里给了我一点误解。这篇文章中提到，CrossEntropyLoss实际上应该是先计算Softmax，把分布转换到概率分布，得到$q(x)$，然后在计算交叉熵。在计算交叉熵的时候，$p(x)$是<strong>one-hot</strong>之后的编码，也就是说只有对应的类别的那个值是1，其他的都是0，也就得到了公式<script type="math/tex">H(p, q)=- \log q(x_{class})</script>，消去了求和记号和$p(x)$，再把<script type="math/tex">q(x_{class})</script>替换成对应的Softmax公式，即可得到了PyTorch中给出的CrossEntropyLoss公式。但是PyTorch中不是这么组织这个过程的，它是使用了$LogSoftmax+NLLLoss$的形式，其实实现的相同的方法。<br>再次需要注意的是，NLLLoss中的<script type="math/tex">1/N</script>和<script type="math/tex">\sum</script>，是计算的不同样本之间结果，和交叉熵中的求和记号区分开。</p>
+]]></content>
+      <categories>
+        <category>Deep Learning</category>
+      </categories>
+      <tags>
+        <tag>Deep Learning</tag>
+        <tag>loss function</tag>
+        <tag>知其所以然</tag>
+        <tag>PyTorch</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>Hexo with VSCode</title>
     <url>/2019/07/Hexo-with-VSCode/</url>
     <content><![CDATA[<p>介绍一下怎么在vscode中预览hexo的图片、label和note~</p>
@@ -136,46 +176,6 @@ a &= b + c \\
         <tag>Hexo</tag>
         <tag>NexT</tag>
         <tag>vscode</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>CrossEntropyLoss之我见</title>
-    <url>/2019/08/CrossEntropyLoss/</url>
-    <content><![CDATA[<p>看了一天关于各种熵的解释，比较好的文章已经添加到了<a href="/bookmark/">Bookmark</a>。本文中的公式均来自<span class="exturl" data-url="aHR0cHM6Ly9weXRvcmNoLm9yZy9kb2NzL3N0YWJsZS9ubi5mdW5jdGlvbmFsLmh0bWw=">PyTorch文档<i class="fa fa-external-link-alt"></i></span>。</p>
-<h2 id="Softmax"><a href="#Softmax" class="headerlink" title="Softmax"></a>Softmax</h2><p>把数据缩放到$[0,1]$，且和为$1$。对每个元素进行了操作，结果并不改变维数，即输入N维，输出还是N维。</p>
-<script type="math/tex; mode=display">
-\operatorname{Softmax}\left(x_{i}\right)=\frac{\exp \left(x_{i}\right)}{\sum_{j} \exp \left(x_{j}\right)}</script><h2 id="LogSoftmax"><a href="#LogSoftmax" class="headerlink" title="LogSoftmax"></a>LogSoftmax</h2><p>结果似乎比Softmax更加稳定，结果的范围为$[-inf,0)$。结果维数依然不变。</p>
-<script type="math/tex; mode=display">
-\log \operatorname{Softmax}\left(x_{i}\right)=\log \left(\frac{\exp \left(x_{i}\right)}{\sum_{j} \exp \left(x_{j}\right)}\right)</script><a id="more"></a>
-<h2 id="NLLLoss"><a href="#NLLLoss" class="headerlink" title="NLLLoss"></a>NLLLoss</h2><p>negative log likelihood loss，负对数似然损失函数，对Log后的结果进行损失计算，例如Logsoftmax。<script type="math/tex">l_{n}=-w_{y_n}x_{n,y_n}</script>，如果不传入<em>weight</em>，那么<em>w</em>就是1，所以<script type="math/tex">l_{n}=-x_{n,y_n}</script>，即<em>input</em>的负数，<code>reduction=mean</code>也就变成了直接除以$N$。</p>
-<script type="math/tex; mode=display">
-\ell(x, y)=\left\{
-      \begin{array}{ll}
-      {\{l_{1}, \dots, l_{N}\},} & {\text{if reduction}=\text{'none';}} \\
-      {\sum_{n=1}^{N} l_{n},} & {\text{if reduction}=\text {'sum';}} \\
-      {\sum_{n=1}^{N} \frac{1}{\sum_{n=1}^{N} w_{y_n}} l_{n},} & {\text{if reduction}=\text{'mean'.}} \\
-      \end{array}\right.</script><h2 id="CrossEntropyLoss"><a href="#CrossEntropyLoss" class="headerlink" title="CrossEntropyLoss"></a>CrossEntropyLoss</h2><p>关于PyTorch<span class="exturl" data-url="aHR0cHM6Ly9weXRvcmNoLm9yZy9kb2NzL3N0YWJsZS9ubi5odG1sI2Nyb3NzZW50cm9weWxvc3M=">官网<i class="fa fa-external-link-alt"></i></span>的CrossEntropyLoss补充了几组小实验。<br>文档中给出的CrossEntropyLoss的公式如下(以下讨论的均不带<em>weight</em>)：</p>
-<script type="math/tex; mode=display">
-\operatorname{loss}(x, class)=-\log \left(\frac{\exp (x[class])}{\sum_{j} \exp (x[j])}\right)</script><p>其中的<script type="math/tex">\exp (x[class])</script>越大，就是说当这个类别对应的值越大，即占的比例越大，<em>loss</em>值越小，结果越靠近0。<br>用一个样本简单模拟一下这个过程：</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="meta">&gt;&gt;&gt; </span>loss = nn.CrossEntropyLoss()</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>input = torch.randn(<span class="number">1</span>, <span class="number">5</span>, requires_grad=<span class="literal">True</span>)</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>input</span><br><span class="line">tensor([[<span class="number">-1.4976</span>,  <span class="number">0.1278</span>,  <span class="number">1.6863</span>, <span class="number">-0.3295</span>,  <span class="number">1.4173</span>]], requires_grad=<span class="literal">True</span>)</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>target = torch.empty(<span class="number">1</span>, dtype=torch.long).random_(<span class="number">5</span>)</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>target</span><br><span class="line">tensor([<span class="number">3</span>])</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>loss(input, target)</span><br><span class="line">tensor(<span class="number">2.7809</span>, grad_fn=&lt;NllLossBackward&gt;)</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>i = input.detach().numpy()</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>i = i[<span class="number">0</span>]</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>i</span><br><span class="line">array([<span class="number">-1.4976473</span> ,  <span class="number">0.12782747</span>,  <span class="number">1.6863296</span> , <span class="number">-0.32949358</span>,  <span class="number">1.4173082</span> ],</span><br><span class="line">      dtype=float32)</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>np.log(np.sum(np.exp(i))/np.exp(i[<span class="number">3</span>]))</span><br><span class="line"><span class="number">2.7809231</span></span><br></pre></td></tr></table></figure>
-<p>文档中提到，对于多batch的情况，<em>The losses are averaged across observations for each minibatch.</em></p>
-<p>还有一句话，<em>This criterion combines nn.LogSoftmax() and nn.NLLLoss() in one single class.</em>所以上边给出的公式就是负的LogSoftmax，<em>负号把取值区间变成了(0,inf]，越靠近0，则结果越好，这样只需要最小化loss即可</em>，下面看一下CrossEntropyLoss源码，两者是怎么结合的：</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">return</span> nll_loss(log_softmax(input, <span class="number">1</span>), target, weight, <span class="literal">None</span>, ignore_index, <span class="literal">None</span>, reduction)</span><br></pre></td></tr></table></figure>
-<p>先对它进行logsoftmax，然后再nllloss，默认的参数<code>reduction=&#39;mean&#39;</code>，所以出现了上边所说的，结果是各个minibatch的均值。下边进行一下多minibatch的实验，分别指定<code>reduction</code>为<code>mean</code>和<code>none</code>。</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="meta">&gt;&gt;&gt; </span>input = torch.randn(<span class="number">3</span>, <span class="number">5</span>, requires_grad=<span class="literal">True</span>)</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>target = torch.empty(<span class="number">3</span>, dtype=torch.long).random_(<span class="number">5</span>)</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>loss = nn.CrossEntropyLoss(reduction=<span class="string">&#x27;none&#x27;</span>)</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>loss(input, target)</span><br><span class="line">tensor([<span class="number">1.2951</span>, <span class="number">1.9074</span>, <span class="number">1.6085</span>], grad_fn=&lt;NllLossBackward&gt;)</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>i = input.detach().numpy()</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>i</span><br><span class="line">array([[ <span class="number">1.7035984</span> , <span class="number">-0.8095179</span> , <span class="number">-0.22653757</span>, <span class="number">-0.19294807</span>,  <span class="number">1.0479178</span> ],</span><br><span class="line">       [ <span class="number">0.37498614</span>, <span class="number">-0.26111123</span>, <span class="number">-2.1978652</span> ,  <span class="number">0.80966765</span>, <span class="number">-0.5037327</span> ],</span><br><span class="line">       [ <span class="number">0.87008125</span>, <span class="number">-1.5282617</span> ,  <span class="number">0.25803488</span>, <span class="number">-1.0827187</span> ,  <span class="number">2.0395918</span> ]],</span><br><span class="line">      dtype=float32)</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>i=i[<span class="number">0</span>]</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>i</span><br><span class="line">array([ <span class="number">1.7035984</span> , <span class="number">-0.8095179</span> , <span class="number">-0.22653757</span>, <span class="number">-0.19294807</span>,  <span class="number">1.0479178</span> ],</span><br><span class="line">      dtype=float32)</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>target</span><br><span class="line">tensor([<span class="number">4</span>, <span class="number">1</span>, <span class="number">0</span>])</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>np.log(np.sum(np.exp(i))/np.exp(i[<span class="number">4</span>]))</span><br><span class="line"><span class="number">1.2950675</span></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>i = input.detach().numpy()[<span class="number">1</span>]</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>np.log(np.sum(np.exp(i))/np.exp(i[<span class="number">1</span>]))</span><br><span class="line"><span class="number">1.9073898</span></span><br></pre></td></tr></table></figure>
-<p>可以看到，已经计算出了<code>reduction</code>为<code>none</code>时的值，下边设为<code>mean</code>：</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="meta">&gt;&gt;&gt; </span>loss_mean = nn.CrossEntropyLoss(reduction=<span class="string">&#x27;mean&#x27;</span>)</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>loss_mean(input, target)</span><br><span class="line">tensor(<span class="number">1.6037</span>, grad_fn=&lt;NllLossBackward&gt;)</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>(<span class="number">1.2951</span> + <span class="number">1.9074</span> + <span class="number">1.6085</span>)/<span class="number">3</span></span><br><span class="line"><span class="number">1.6036666666666666</span></span><br></pre></td></tr></table></figure>
-<h3 id="恍然大悟"><a href="#恍然大悟" class="headerlink" title="恍然大悟"></a>恍然大悟</h3><p>我一直有个问题，就是交叉熵的公式分明是<script type="math/tex">H(p, q)=-\sum_{x} p(x) \log q(x)</script>，但是怎么到了CrossEntropyLoss里边$p(x)$就不见了，<span class="exturl" data-url="aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl8zNzU2NzQ1MS9hcnRpY2xlL2RldGFpbHMvODA4OTUzMDk=">《经典损失函数：交叉熵》<i class="fa fa-external-link-alt"></i></span>这篇文章写的非常好，不仅解释了为什么交叉熵要和Softmax一起用，而且让我明白了$p(x)$去哪了。</p>
-<p>我直接看的是PyTorch的源码，这里给了我一点误解。这篇文章中提到，CrossEntropyLoss实际上应该是先计算Softmax，把分布转换到概率分布，得到$q(x)$，然后在计算交叉熵。在计算交叉熵的时候，$p(x)$是<strong>one-hot</strong>之后的编码，也就是说只有对应的类别的那个值是1，其他的都是0，也就得到了公式<script type="math/tex">H(p, q)=- \log q(x_{class})</script>，消去了求和记号和$p(x)$，再把<script type="math/tex">q(x_{class})</script>替换成对应的Softmax公式，即可得到了PyTorch中给出的CrossEntropyLoss公式。但是PyTorch中不是这么组织这个过程的，它是使用了$LogSoftmax+NLLLoss$的形式，其实实现的相同的方法。<br>再次需要注意的是，NLLLoss中的<script type="math/tex">1/N</script>和<script type="math/tex">\sum</script>，是计算的不同样本之间结果，和交叉熵中的求和记号区分开。</p>
-]]></content>
-      <categories>
-        <category>Deep Learning</category>
-      </categories>
-      <tags>
-        <tag>Deep Learning</tag>
-        <tag>loss function</tag>
-        <tag>知其所以然</tag>
-        <tag>PyTorch</tag>
       </tags>
   </entry>
   <entry>
@@ -237,6 +237,50 @@ a &= b + c \\
       </tags>
   </entry>
   <entry>
+    <title>algorithm-notes</title>
+    <url>/2020/09/algorithm-notes/</url>
+    <content><![CDATA[<h1 id="字符串"><a href="#字符串" class="headerlink" title="字符串"></a>字符串</h1><h2 id="KMP"><a href="#KMP" class="headerlink" title="KMP"></a>KMP</h2><p>参考力扣28题。此外还有214、459题。</p>
+<figure class="highlight cpp"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">strStr</span><span class="params">(<span class="built_in">string</span> haystack, <span class="built_in">string</span> needle)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">if</span> (needle == <span class="string">&quot;&quot;</span>) <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">    <span class="comment">// get next</span></span><br><span class="line">    <span class="function"><span class="built_in">vector</span>&lt;<span class="keyword">int</span>&gt; <span class="title">next</span><span class="params">(needle.size(), <span class="number">0</span>)</span></span>;</span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">2</span>, j = <span class="number">0</span>; i &lt; needle.size(); ++i) &#123;</span><br><span class="line">        <span class="keyword">while</span> (j &gt; <span class="number">0</span> &amp;&amp; needle[j] != needle[i<span class="number">-1</span>]) j = next[j];</span><br><span class="line">        <span class="keyword">if</span> (needle[j] == needle[i<span class="number">-1</span>]) next[i] = ++j；</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">// matching</span></span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>, j = <span class="number">0</span>; i &lt; haystack.size(); ++i) &#123;</span><br><span class="line">        <span class="keyword">while</span> (j &gt; <span class="number">0</span> &amp;&amp; haystack[i] != needle[j]) j = next[j];</span><br><span class="line">        <span class="keyword">if</span> (needle[j] == haystack[i]) ++j;</span><br><span class="line">        <span class="keyword">if</span> (j == needle.size()) <span class="keyword">return</span> i - j + <span class="number">1</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> <span class="number">-1</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>]]></content>
+      <categories>
+        <category>Algorithm</category>
+      </categories>
+      <tags>
+        <tag>algorithm</tag>
+        <tag>cpp</tag>
+        <tag>c/c++</tag>
+        <tag>笔试</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>vscode C/C++ 笔试环境配置</title>
+    <url>/2020/08/cpp-for-vscode/</url>
+    <content><![CDATA[<p>大厂普遍用牛客或者赛码这种平台来出题，有的允许使用IDE调试，vscode应对这种算法题绰绰有余。</p>
+<a id="more"></a>
+<p>下边给出一个我自己配置的通用的环境配置，可以用来<strong>处理输入</strong>的问题，我大部分笔试都用的win10，但是有时候也有mac，目前这个配置在win10下用的，在mac上还没试，回头更新的时候把他弄成两边都兼容的，这样就可以使用OneDrive来同步了。</p>
+<p>目录结构如下：</p>
+<figure class="highlight text"><table><tr><td class="code"><pre><span class="line">.</span><br><span class="line">├── .vscode</span><br><span class="line">|   ├── c_cpp_properties.json</span><br><span class="line">|   ├── launch.json</span><br><span class="line">|   ├── settings.json</span><br><span class="line">|   └── tasks.json</span><br><span class="line">├── bytedance</span><br><span class="line">|   ├── bin</span><br><span class="line">|   |   ├── 1.exe</span><br><span class="line">|   |   └── ...</span><br><span class="line">|   ├── 1.cpp</span><br><span class="line">|   ├── 1.in</span><br><span class="line">|   └── ...</span><br><span class="line">└── ...</span><br></pre></td></tr></table></figure>
+<p>这是一个完整的目录，比如当前参加的是bytedance的笔试，就可以创建一个子文件夹，如果有其他的笔试，可以增加多个文件夹。<br>bytedance下包含多个可执行文件，例如<code>1.cpp</code>，以及对应的输入<code>1.in</code>，这个输入就是完整的来自牛客或者赛码的输入就行，格式要完全一样。需要<strong>手动创建</strong>一下<code>bin/</code>，编译后会生成<code>bin/1.exe</code>，可自动读取输入并debug。</p>
+<p><strong>tasks.json:</strong></p>
+<figure class="highlight json"><table><tr><td class="code"><pre><span class="line">&#123;</span><br><span class="line">    <span class="attr">&quot;version&quot;</span>: <span class="string">&quot;2.0.0&quot;</span>,</span><br><span class="line">    <span class="attr">&quot;tasks&quot;</span>: [</span><br><span class="line">        &#123;</span><br><span class="line">            <span class="attr">&quot;type&quot;</span>: <span class="string">&quot;shell&quot;</span>,</span><br><span class="line">            <span class="attr">&quot;label&quot;</span>: <span class="string">&quot;build&quot;</span>,</span><br><span class="line">            <span class="attr">&quot;command&quot;</span>: <span class="string">&quot;C:\\mingw64\\bin\\g++.exe&quot;</span>,</span><br><span class="line">            <span class="attr">&quot;args&quot;</span>: [</span><br><span class="line">                <span class="string">&quot;-g&quot;</span>,</span><br><span class="line">                <span class="string">&quot;$&#123;file&#125;&quot;</span>,</span><br><span class="line">                <span class="string">&quot;-o&quot;</span>,</span><br><span class="line">                <span class="string">&quot;$&#123;fileDirname&#125;\\bin\\$&#123;fileBasenameNoExtension&#125;.exe&quot;</span>,</span><br><span class="line">                <span class="string">&quot;-std=c++14&quot;</span>,</span><br><span class="line">            ],</span><br><span class="line">            <span class="attr">&quot;options&quot;</span>: &#123;</span><br><span class="line">                <span class="attr">&quot;cwd&quot;</span>: <span class="string">&quot;$&#123;workspaceFolder&#125;&quot;</span></span><br><span class="line">            &#125;,</span><br><span class="line">            <span class="attr">&quot;problemMatcher&quot;</span>: [</span><br><span class="line">                <span class="string">&quot;$gcc&quot;</span></span><br><span class="line">            ],</span><br><span class="line">            <span class="attr">&quot;group&quot;</span>: &#123;</span><br><span class="line">                <span class="attr">&quot;kind&quot;</span>: <span class="string">&quot;build&quot;</span>,</span><br><span class="line">                <span class="attr">&quot;isDefault&quot;</span>: <span class="literal">true</span></span><br><span class="line">            &#125;</span><br><span class="line">        &#125;,</span><br><span class="line">        &#123;</span><br><span class="line">            <span class="attr">&quot;label&quot;</span>: <span class="string">&quot;run&quot;</span>,</span><br><span class="line">            <span class="attr">&quot;type&quot;</span>: <span class="string">&quot;shell&quot;</span>,</span><br><span class="line">            <span class="attr">&quot;dependsOn&quot;</span>: <span class="string">&quot;build&quot;</span>,</span><br><span class="line">            <span class="attr">&quot;command&quot;</span>: <span class="string">&quot;$&#123;fileDirname&#125;\\bin\\$&#123;fileBasenameNoExtension&#125;.exe&quot;</span>,</span><br><span class="line">            <span class="attr">&quot;group&quot;</span>: <span class="string">&quot;test&quot;</span>,</span><br><span class="line">        &#125;,</span><br><span class="line">        &#123;</span><br><span class="line">            <span class="attr">&quot;label&quot;</span>: <span class="string">&quot;run with input&quot;</span>,</span><br><span class="line">            <span class="attr">&quot;type&quot;</span>: <span class="string">&quot;shell&quot;</span>,</span><br><span class="line">            <span class="attr">&quot;dependsOn&quot;</span>: <span class="string">&quot;build&quot;</span>,</span><br><span class="line">            <span class="attr">&quot;command&quot;</span>: <span class="string">&quot;$&#123;fileDirname&#125;\\bin\\$&#123;fileBasenameNoExtension&#125;.exe&quot;</span>,</span><br><span class="line">            <span class="attr">&quot;args&quot;</span>: [<span class="string">&quot;&lt;&quot;</span>, <span class="string">&quot;$&#123;fileDirname&#125;\\$&#123;fileBasenameNoExtension&#125;.in&quot;</span>],</span><br><span class="line">            <span class="attr">&quot;group&quot;</span>: <span class="string">&quot;test&quot;</span>,</span><br><span class="line">        &#125;</span><br><span class="line">    ]</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>除了一个gcc编译之外，后边还多了两个可以用于直接运行的task，即使用<code>ctrl+shift+p</code>-&gt;<code>run task</code>，可以自动运行程序，可能平时不需要debug的时候有点用，但是直接调用<code>F5</code>就行，这两个后边的配置项可有可无。</p>
+<p><strong>launch.json:</strong></p>
+<figure class="highlight json"><table><tr><td class="code"><pre><span class="line">&#123;</span><br><span class="line">    <span class="attr">&quot;version&quot;</span>: <span class="string">&quot;0.2.0&quot;</span>,</span><br><span class="line">    <span class="attr">&quot;configurations&quot;</span>: [</span><br><span class="line">        &#123;</span><br><span class="line">            <span class="attr">&quot;name&quot;</span>: <span class="string">&quot;g++.exe-INPUT&quot;</span>,</span><br><span class="line">            <span class="attr">&quot;type&quot;</span>: <span class="string">&quot;cppdbg&quot;</span>,</span><br><span class="line">            <span class="attr">&quot;request&quot;</span>: <span class="string">&quot;launch&quot;</span>,</span><br><span class="line">            <span class="attr">&quot;program&quot;</span>: <span class="string">&quot;$&#123;fileDirname&#125;\\bin\\$&#123;fileBasenameNoExtension&#125;.exe&quot;</span>,</span><br><span class="line">            <span class="attr">&quot;args&quot;</span>: [<span class="string">&quot;&lt;&quot;</span>, <span class="string">&quot;$&#123;fileDirname&#125;\\$&#123;fileBasenameNoExtension&#125;.in&quot;</span>],</span><br><span class="line">            <span class="attr">&quot;stopAtEntry&quot;</span>: <span class="literal">false</span>,</span><br><span class="line">            <span class="attr">&quot;cwd&quot;</span>: <span class="string">&quot;$&#123;workspaceFolder&#125;&quot;</span>,</span><br><span class="line">            <span class="attr">&quot;environment&quot;</span>: [],</span><br><span class="line">            <span class="attr">&quot;externalConsole&quot;</span>: <span class="literal">false</span>,</span><br><span class="line">            <span class="attr">&quot;MIMode&quot;</span>: <span class="string">&quot;gdb&quot;</span>,</span><br><span class="line">            <span class="attr">&quot;miDebuggerPath&quot;</span>: <span class="string">&quot;C:\\mingw64\\bin\\gdb.exe&quot;</span>,</span><br><span class="line">            <span class="attr">&quot;setupCommands&quot;</span>: [</span><br><span class="line">                &#123;</span><br><span class="line">                    <span class="attr">&quot;description&quot;</span>: <span class="string">&quot;Enable pretty-printing for gdb&quot;</span>,</span><br><span class="line">                    <span class="attr">&quot;text&quot;</span>: <span class="string">&quot;-enable-pretty-printing&quot;</span>,</span><br><span class="line">                    <span class="attr">&quot;ignoreFailures&quot;</span>: <span class="literal">true</span></span><br><span class="line">                &#125;</span><br><span class="line">            ],</span><br><span class="line">            <span class="attr">&quot;preLaunchTask&quot;</span>: <span class="string">&quot;build&quot;</span></span><br><span class="line">        &#125;,</span><br><span class="line">        &#123;</span><br><span class="line">            <span class="attr">&quot;name&quot;</span>: <span class="string">&quot;g++.exe-NOINPUT&quot;</span>,</span><br><span class="line">            <span class="attr">&quot;type&quot;</span>: <span class="string">&quot;cppdbg&quot;</span>,</span><br><span class="line">            <span class="attr">&quot;request&quot;</span>: <span class="string">&quot;launch&quot;</span>,</span><br><span class="line">            <span class="attr">&quot;program&quot;</span>: <span class="string">&quot;$&#123;fileDirname&#125;\\bin\\$&#123;fileBasenameNoExtension&#125;.exe&quot;</span>,</span><br><span class="line">            <span class="attr">&quot;args&quot;</span>: [],</span><br><span class="line">            <span class="attr">&quot;stopAtEntry&quot;</span>: <span class="literal">false</span>,</span><br><span class="line">            <span class="attr">&quot;cwd&quot;</span>: <span class="string">&quot;$&#123;workspaceFolder&#125;&quot;</span>,</span><br><span class="line">            <span class="attr">&quot;environment&quot;</span>: [],</span><br><span class="line">            <span class="attr">&quot;externalConsole&quot;</span>: <span class="literal">false</span>,</span><br><span class="line">            <span class="attr">&quot;MIMode&quot;</span>: <span class="string">&quot;gdb&quot;</span>,</span><br><span class="line">            <span class="attr">&quot;miDebuggerPath&quot;</span>: <span class="string">&quot;C:\\mingw64\\bin\\gdb.exe&quot;</span>,</span><br><span class="line">            <span class="attr">&quot;setupCommands&quot;</span>: [</span><br><span class="line">                &#123;</span><br><span class="line">                    <span class="attr">&quot;description&quot;</span>: <span class="string">&quot;Enable pretty-printing for gdb&quot;</span>,</span><br><span class="line">                    <span class="attr">&quot;text&quot;</span>: <span class="string">&quot;-enable-pretty-printing&quot;</span>,</span><br><span class="line">                    <span class="attr">&quot;ignoreFailures&quot;</span>: <span class="literal">true</span></span><br><span class="line">                &#125;</span><br><span class="line">            ],</span><br><span class="line">            <span class="attr">&quot;preLaunchTask&quot;</span>: <span class="string">&quot;build&quot;</span></span><br><span class="line">        &#125;</span><br><span class="line">    ]</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>主要关注的就是<code>program</code>和<code>args</code>，其他的和文档里的样例并无区别，上边的是适用于有输入的情况，下边适用于无输入。</p>
+<p>此外<code>c_cpp_properties.json</code>使用默认的就可以。</p>
+<p>此外，在<code>settings.json</code>中推荐一个format的格式，我一直在用的：<br><figure class="highlight"><table><tr><td class="code"><pre><span class="line">&quot;C_Cpp.clang_format_fallbackStyle&quot;: &quot;&#123;BasedOnStyle: LLVM, UseTab: Never, IndentWidth: 4, TabWidth: 4, AllowShortIfStatementsOnASingleLine: true, AllowShortLoopsOnASingleLine: true, ColumnLimit: 100&#125;&quot;,</span><br></pre></td></tr></table></figure></p>
+<p>用上这个环境，输入后单步调试，笔试无压力了呢~祝大家offer多多~</p>
+]]></content>
+      <categories>
+        <category>C/C++</category>
+      </categories>
+      <tags>
+        <tag>vscode</tag>
+        <tag>cpp</tag>
+        <tag>c/c++</tag>
+        <tag>笔试</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>如何设置PyTorch的动态学习率</title>
     <url>/2019/08/how-to-set-lr-in-pytorch/</url>
     <content><![CDATA[<p>本文主要涉及内容：<code>Optimizer</code>、<code>_LRScheduler</code>等源码分析。<br>本文依旧基于PyTorch 1.1.0。</p>
@@ -265,34 +309,6 @@ a &= b + c \\
         <tag>知其所以然</tag>
         <tag>PyTorch</tag>
         <tag>learning rate</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>vscode C/C++ 笔试环境配置</title>
-    <url>/2020/08/cpp-for-vscode/</url>
-    <content><![CDATA[<p>大厂普遍用牛客或者赛码这种平台来出题，有的允许使用IDE调试，vscode应对这种算法题绰绰有余。</p>
-<a id="more"></a>
-<p>下边给出一个我自己配置的通用的环境配置，可以用来<strong>处理输入</strong>的问题，我大部分笔试都用的win10，但是有时候也有mac，目前这个配置在win10下用的，在mac上还没试，回头更新的时候把他弄成两边都兼容的，这样就可以使用OneDrive来同步了。</p>
-<p>目录结构如下：</p>
-<figure class="highlight text"><table><tr><td class="code"><pre><span class="line">.</span><br><span class="line">├── .vscode</span><br><span class="line">|   ├── c_cpp_properties.json</span><br><span class="line">|   ├── launch.json</span><br><span class="line">|   ├── settings.json</span><br><span class="line">|   └── tasks.json</span><br><span class="line">├── bytedance</span><br><span class="line">|   ├── bin</span><br><span class="line">|   |   ├── 1.exe</span><br><span class="line">|   |   └── ...</span><br><span class="line">|   ├── 1.cpp</span><br><span class="line">|   ├── 1.in</span><br><span class="line">|   └── ...</span><br><span class="line">└── ...</span><br></pre></td></tr></table></figure>
-<p>这是一个完整的目录，比如当前参加的是bytedance的笔试，就可以创建一个子文件夹，如果有其他的笔试，可以增加多个文件夹。<br>bytedance下包含多个可执行文件，例如<code>1.cpp</code>，以及对应的输入<code>1.in</code>，这个输入就是完整的来自牛客或者赛码的输入就行，格式要完全一样。需要<strong>手动创建</strong>一下<code>bin/</code>，编译后会生成<code>bin/1.exe</code>，可自动读取输入并debug。</p>
-<p><strong>tasks.json:</strong></p>
-<figure class="highlight json"><table><tr><td class="code"><pre><span class="line">&#123;</span><br><span class="line">    <span class="attr">&quot;version&quot;</span>: <span class="string">&quot;2.0.0&quot;</span>,</span><br><span class="line">    <span class="attr">&quot;tasks&quot;</span>: [</span><br><span class="line">        &#123;</span><br><span class="line">            <span class="attr">&quot;type&quot;</span>: <span class="string">&quot;shell&quot;</span>,</span><br><span class="line">            <span class="attr">&quot;label&quot;</span>: <span class="string">&quot;build&quot;</span>,</span><br><span class="line">            <span class="attr">&quot;command&quot;</span>: <span class="string">&quot;C:\\mingw64\\bin\\g++.exe&quot;</span>,</span><br><span class="line">            <span class="attr">&quot;args&quot;</span>: [</span><br><span class="line">                <span class="string">&quot;-g&quot;</span>,</span><br><span class="line">                <span class="string">&quot;$&#123;file&#125;&quot;</span>,</span><br><span class="line">                <span class="string">&quot;-o&quot;</span>,</span><br><span class="line">                <span class="string">&quot;$&#123;fileDirname&#125;\\bin\\$&#123;fileBasenameNoExtension&#125;.exe&quot;</span>,</span><br><span class="line">                <span class="string">&quot;-std=c++14&quot;</span>,</span><br><span class="line">            ],</span><br><span class="line">            <span class="attr">&quot;options&quot;</span>: &#123;</span><br><span class="line">                <span class="attr">&quot;cwd&quot;</span>: <span class="string">&quot;$&#123;workspaceFolder&#125;&quot;</span></span><br><span class="line">            &#125;,</span><br><span class="line">            <span class="attr">&quot;problemMatcher&quot;</span>: [</span><br><span class="line">                <span class="string">&quot;$gcc&quot;</span></span><br><span class="line">            ],</span><br><span class="line">            <span class="attr">&quot;group&quot;</span>: &#123;</span><br><span class="line">                <span class="attr">&quot;kind&quot;</span>: <span class="string">&quot;build&quot;</span>,</span><br><span class="line">                <span class="attr">&quot;isDefault&quot;</span>: <span class="literal">true</span></span><br><span class="line">            &#125;</span><br><span class="line">        &#125;,</span><br><span class="line">        &#123;</span><br><span class="line">            <span class="attr">&quot;label&quot;</span>: <span class="string">&quot;run&quot;</span>,</span><br><span class="line">            <span class="attr">&quot;type&quot;</span>: <span class="string">&quot;shell&quot;</span>,</span><br><span class="line">            <span class="attr">&quot;dependsOn&quot;</span>: <span class="string">&quot;build&quot;</span>,</span><br><span class="line">            <span class="attr">&quot;command&quot;</span>: <span class="string">&quot;$&#123;fileDirname&#125;\\bin\\$&#123;fileBasenameNoExtension&#125;.exe&quot;</span>,</span><br><span class="line">            <span class="attr">&quot;group&quot;</span>: <span class="string">&quot;test&quot;</span>,</span><br><span class="line">        &#125;,</span><br><span class="line">        &#123;</span><br><span class="line">            <span class="attr">&quot;label&quot;</span>: <span class="string">&quot;run with input&quot;</span>,</span><br><span class="line">            <span class="attr">&quot;type&quot;</span>: <span class="string">&quot;shell&quot;</span>,</span><br><span class="line">            <span class="attr">&quot;dependsOn&quot;</span>: <span class="string">&quot;build&quot;</span>,</span><br><span class="line">            <span class="attr">&quot;command&quot;</span>: <span class="string">&quot;$&#123;fileDirname&#125;\\bin\\$&#123;fileBasenameNoExtension&#125;.exe&quot;</span>,</span><br><span class="line">            <span class="attr">&quot;args&quot;</span>: [<span class="string">&quot;&lt;&quot;</span>, <span class="string">&quot;$&#123;fileDirname&#125;\\$&#123;fileBasenameNoExtension&#125;.in&quot;</span>],</span><br><span class="line">            <span class="attr">&quot;group&quot;</span>: <span class="string">&quot;test&quot;</span>,</span><br><span class="line">        &#125;</span><br><span class="line">    ]</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>除了一个gcc编译之外，后边还多了两个可以用于直接运行的task，即使用<code>ctrl+shift+p</code>-&gt;<code>run task</code>，可以自动运行程序，可能平时不需要debug的时候有点用，但是直接调用<code>F5</code>就行，这两个后边的配置项可有可无。</p>
-<p><strong>launch.json:</strong></p>
-<figure class="highlight json"><table><tr><td class="code"><pre><span class="line">&#123;</span><br><span class="line">    <span class="attr">&quot;version&quot;</span>: <span class="string">&quot;0.2.0&quot;</span>,</span><br><span class="line">    <span class="attr">&quot;configurations&quot;</span>: [</span><br><span class="line">        &#123;</span><br><span class="line">            <span class="attr">&quot;name&quot;</span>: <span class="string">&quot;g++.exe-INPUT&quot;</span>,</span><br><span class="line">            <span class="attr">&quot;type&quot;</span>: <span class="string">&quot;cppdbg&quot;</span>,</span><br><span class="line">            <span class="attr">&quot;request&quot;</span>: <span class="string">&quot;launch&quot;</span>,</span><br><span class="line">            <span class="attr">&quot;program&quot;</span>: <span class="string">&quot;$&#123;fileDirname&#125;\\bin\\$&#123;fileBasenameNoExtension&#125;.exe&quot;</span>,</span><br><span class="line">            <span class="attr">&quot;args&quot;</span>: [<span class="string">&quot;&lt;&quot;</span>, <span class="string">&quot;$&#123;fileDirname&#125;\\$&#123;fileBasenameNoExtension&#125;.in&quot;</span>],</span><br><span class="line">            <span class="attr">&quot;stopAtEntry&quot;</span>: <span class="literal">false</span>,</span><br><span class="line">            <span class="attr">&quot;cwd&quot;</span>: <span class="string">&quot;$&#123;workspaceFolder&#125;&quot;</span>,</span><br><span class="line">            <span class="attr">&quot;environment&quot;</span>: [],</span><br><span class="line">            <span class="attr">&quot;externalConsole&quot;</span>: <span class="literal">false</span>,</span><br><span class="line">            <span class="attr">&quot;MIMode&quot;</span>: <span class="string">&quot;gdb&quot;</span>,</span><br><span class="line">            <span class="attr">&quot;miDebuggerPath&quot;</span>: <span class="string">&quot;C:\\mingw64\\bin\\gdb.exe&quot;</span>,</span><br><span class="line">            <span class="attr">&quot;setupCommands&quot;</span>: [</span><br><span class="line">                &#123;</span><br><span class="line">                    <span class="attr">&quot;description&quot;</span>: <span class="string">&quot;Enable pretty-printing for gdb&quot;</span>,</span><br><span class="line">                    <span class="attr">&quot;text&quot;</span>: <span class="string">&quot;-enable-pretty-printing&quot;</span>,</span><br><span class="line">                    <span class="attr">&quot;ignoreFailures&quot;</span>: <span class="literal">true</span></span><br><span class="line">                &#125;</span><br><span class="line">            ],</span><br><span class="line">            <span class="attr">&quot;preLaunchTask&quot;</span>: <span class="string">&quot;build&quot;</span></span><br><span class="line">        &#125;,</span><br><span class="line">        &#123;</span><br><span class="line">            <span class="attr">&quot;name&quot;</span>: <span class="string">&quot;g++.exe-NOINPUT&quot;</span>,</span><br><span class="line">            <span class="attr">&quot;type&quot;</span>: <span class="string">&quot;cppdbg&quot;</span>,</span><br><span class="line">            <span class="attr">&quot;request&quot;</span>: <span class="string">&quot;launch&quot;</span>,</span><br><span class="line">            <span class="attr">&quot;program&quot;</span>: <span class="string">&quot;$&#123;fileDirname&#125;\\bin\\$&#123;fileBasenameNoExtension&#125;.exe&quot;</span>,</span><br><span class="line">            <span class="attr">&quot;args&quot;</span>: [],</span><br><span class="line">            <span class="attr">&quot;stopAtEntry&quot;</span>: <span class="literal">false</span>,</span><br><span class="line">            <span class="attr">&quot;cwd&quot;</span>: <span class="string">&quot;$&#123;workspaceFolder&#125;&quot;</span>,</span><br><span class="line">            <span class="attr">&quot;environment&quot;</span>: [],</span><br><span class="line">            <span class="attr">&quot;externalConsole&quot;</span>: <span class="literal">false</span>,</span><br><span class="line">            <span class="attr">&quot;MIMode&quot;</span>: <span class="string">&quot;gdb&quot;</span>,</span><br><span class="line">            <span class="attr">&quot;miDebuggerPath&quot;</span>: <span class="string">&quot;C:\\mingw64\\bin\\gdb.exe&quot;</span>,</span><br><span class="line">            <span class="attr">&quot;setupCommands&quot;</span>: [</span><br><span class="line">                &#123;</span><br><span class="line">                    <span class="attr">&quot;description&quot;</span>: <span class="string">&quot;Enable pretty-printing for gdb&quot;</span>,</span><br><span class="line">                    <span class="attr">&quot;text&quot;</span>: <span class="string">&quot;-enable-pretty-printing&quot;</span>,</span><br><span class="line">                    <span class="attr">&quot;ignoreFailures&quot;</span>: <span class="literal">true</span></span><br><span class="line">                &#125;</span><br><span class="line">            ],</span><br><span class="line">            <span class="attr">&quot;preLaunchTask&quot;</span>: <span class="string">&quot;build&quot;</span></span><br><span class="line">        &#125;</span><br><span class="line">    ]</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>主要关注的就是<code>program</code>和<code>args</code>，其他的和文档里的样例并无区别，上边的是适用于有输入的情况，下边适用于无输入。</p>
-<p>此外<code>c_cpp_properties.json</code>使用默认的就可以。</p>
-<p>用上这个环境，输入后单步调试，笔试无压力了呢~祝大家offer多多~</p>
-]]></content>
-      <categories>
-        <category>C/C++</category>
-      </categories>
-      <tags>
-        <tag>vscode</tag>
-        <tag>cpp</tag>
-        <tag>c/c++</tag>
-        <tag>笔试</tag>
       </tags>
   </entry>
   <entry>
@@ -400,6 +416,196 @@ y=\frac{x-\mathrm{E}[x]}{\sqrt{\operatorname{Var}[x]+\epsilon}} * \gamma+\beta</
         <tag>PyTorch</tag>
         <tag>BatchNorm</tag>
         <tag>freeze</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>two-kmp-methods</title>
+    <url>/2020/09/two-kmp-methods/</url>
+    <content><![CDATA[<p>kmp简单来说就是，描述了一个<strong>前缀</strong>的<strong>最长公共前后缀</strong>。<br><img data-src="/images/two-kmp-methods-img1.png" class=""><br>关于kmp的算法，有很多人也写过了，我主要记录以下关于这个前缀是否包含当前节点的问题。也就是对图中X点来说的1和2两种情况。</p>
+<a id="more"></a>
+<h1 id="情况1：不包含当前节点"><a href="#情况1：不包含当前节点" class="headerlink" title="情况1：不包含当前节点"></a>情况1：不包含当前节点</h1><p>我觉得这种情况也是最容易理解的了。例子：</p>
+<div class="table-container">
+<table>
+<thead>
+<tr>
+<th style="text-align:center"><em>i</em></th>
+<th style="text-align:center">0</th>
+<th style="text-align:center">1</th>
+<th style="text-align:center">2</th>
+<th style="text-align:center">3</th>
+<th style="text-align:center">4</th>
+<th style="text-align:center">5</th>
+<th style="text-align:center">6</th>
+<th style="text-align:center">7</th>
+<th style="text-align:center">8</th>
+<th style="text-align:center">9</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center"><em>s</em></td>
+<td style="text-align:center">a</td>
+<td style="text-align:center">b</td>
+<td style="text-align:center">c</td>
+<td style="text-align:center">a</td>
+<td style="text-align:center">b</td>
+<td style="text-align:center">c</td>
+<td style="text-align:center">a</td>
+<td style="text-align:center">b</td>
+<td style="text-align:center">d</td>
+<td style="text-align:center">#</td>
+</tr>
+<tr>
+<td style="text-align:center"><em>next</em></td>
+<td style="text-align:center">0</td>
+<td style="text-align:center">0</td>
+<td style="text-align:center">0</td>
+<td style="text-align:center">0</td>
+<td style="text-align:center">1</td>
+<td style="text-align:center">2</td>
+<td style="text-align:center">3</td>
+<td style="text-align:center">4</td>
+<td style="text-align:center">5</td>
+<td style="text-align:center">0</td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>对于上述串的s[4]来说，b的前缀是abca，公共前后缀是1。<br>值得关注的点是s[8]，它的前缀是abcabcab，公共的前后缀为abcab，当匹配的时候，如果遇到s[8]和目标串的某位不相同，则可跳转到s[5]，<strong>s[5]!=s[8]就是kmp的精髓</strong>。<br>另外一点是有时候s[9]是额外增加的一个#，它并不属于串s，因为有些时候需要对s做个统计，看一下它的公共前后缀，则可使用多余的这一位。</p>
+<p>代码如下：</p>
+<figure class="highlight cpp"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="built_in">vector</span>&lt;<span class="keyword">int</span>&gt; <span class="title">getNext</span><span class="params">(<span class="keyword">const</span> <span class="built_in">string</span> &amp;pattern)</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="built_in">vector</span>&lt;<span class="keyword">int</span>&gt; <span class="title">next</span><span class="params">(pattern.size() + <span class="number">1</span>)</span></span>;</span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">2</span>, j = <span class="number">0</span>; i &lt;= pattern.size(); ++i) &#123;</span><br><span class="line">        <span class="keyword">while</span> (j &amp;&amp; pattern[i - <span class="number">1</span>] != pattern[j]) j = next[j];</span><br><span class="line">        <span class="keyword">if</span> (pattern[i - <span class="number">1</span>] == pattern[j]) next[i] = ++j;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> next;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>很容易理解，i代表当前节点，i-1和j比较即代表了前缀是否相等，并不包含当前节点。</p>
+<h1 id="情况2：包含当前节点"><a href="#情况2：包含当前节点" class="headerlink" title="情况2：包含当前节点"></a>情况2：包含当前节点</h1><p>例子：</p>
+<div class="table-container">
+<table>
+<thead>
+<tr>
+<th style="text-align:center"><em>i</em></th>
+<th style="text-align:center">0</th>
+<th style="text-align:center">1</th>
+<th style="text-align:center">2</th>
+<th style="text-align:center">3</th>
+<th style="text-align:center">4</th>
+<th style="text-align:center">5</th>
+<th style="text-align:center">6</th>
+<th style="text-align:center">7</th>
+<th style="text-align:center">8</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center"><em>s</em></td>
+<td style="text-align:center">a</td>
+<td style="text-align:center">b</td>
+<td style="text-align:center">c</td>
+<td style="text-align:center">a</td>
+<td style="text-align:center">b</td>
+<td style="text-align:center">c</td>
+<td style="text-align:center">a</td>
+<td style="text-align:center">b</td>
+<td style="text-align:center">d</td>
+</tr>
+<tr>
+<td style="text-align:center"><em>next</em></td>
+<td style="text-align:center">-1</td>
+<td style="text-align:center">-1</td>
+<td style="text-align:center">-1</td>
+<td style="text-align:center">0</td>
+<td style="text-align:center">1</td>
+<td style="text-align:center">2</td>
+<td style="text-align:center">3</td>
+<td style="text-align:center">4</td>
+<td style="text-align:center">-1</td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>代码如下：</p>
+<figure class="highlight cpp"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="built_in">vector</span>&lt;<span class="keyword">int</span>&gt; <span class="title">getNext</span><span class="params">(<span class="keyword">const</span> <span class="built_in">string</span> &amp;pattern)</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="built_in">vector</span>&lt;<span class="keyword">int</span>&gt; <span class="title">next</span><span class="params">(pattern.size(), <span class="number">-1</span>)</span></span>;</span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">1</span>, j = <span class="number">-1</span>; i &lt; pattern.size(); ++i) &#123;</span><br><span class="line">        <span class="keyword">while</span> (j != <span class="number">-1</span> &amp;&amp; pattern[j + <span class="number">1</span>] != pattern[i]) &#123;</span><br><span class="line">            j = next[j];</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">if</span> (pattern[j + <span class="number">1</span>] == pattern[i]) next[i] = ++j;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> next;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>全部初始化为-1，j+1和i相比较，i代表当前节点，所以这个结果next中的i是和当前节点相关的。<br><code>next[i] + 1</code>即可代表一个包含i位的前缀的最长公共前后缀。这个可以直接统计某个位置的前缀是否存在公共前后缀，不存在则为-1，对s来说，它不存在最长的公共前后缀，所以<code>s[8] = -1</code>。</p>
+<h1 id="比较"><a href="#比较" class="headerlink" title="比较"></a>比较</h1><p>其实，情况2往后错一位即和情况1吻合。所以要具体问题具体分析，看题目中更适合哪种情况。</p>
+<div class="table-container">
+<table>
+<thead>
+<tr>
+<th style="text-align:center"><em>i</em></th>
+<th style="text-align:center">0</th>
+<th style="text-align:center">1</th>
+<th style="text-align:center">2</th>
+<th style="text-align:center">3</th>
+<th style="text-align:center">4</th>
+<th style="text-align:center">5</th>
+<th style="text-align:center">6</th>
+<th style="text-align:center">7</th>
+<th style="text-align:center">8</th>
+<th style="text-align:center">9</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center"><em>s</em></td>
+<td style="text-align:center">a</td>
+<td style="text-align:center">b</td>
+<td style="text-align:center">c</td>
+<td style="text-align:center">a</td>
+<td style="text-align:center">b</td>
+<td style="text-align:center">c</td>
+<td style="text-align:center">a</td>
+<td style="text-align:center">b</td>
+<td style="text-align:center">d</td>
+<td style="text-align:center">#</td>
+</tr>
+<tr>
+<td style="text-align:center"><em>next1</em></td>
+<td style="text-align:center">0</td>
+<td style="text-align:center">0</td>
+<td style="text-align:center">0</td>
+<td style="text-align:center">0</td>
+<td style="text-align:center">1</td>
+<td style="text-align:center">2</td>
+<td style="text-align:center">3</td>
+<td style="text-align:center">4</td>
+<td style="text-align:center">5</td>
+<td style="text-align:center">0</td>
+</tr>
+<tr>
+<td style="text-align:center"><em>next2</em></td>
+<td style="text-align:center">-1</td>
+<td style="text-align:center">-1</td>
+<td style="text-align:center">-1</td>
+<td style="text-align:center">0</td>
+<td style="text-align:center">1</td>
+<td style="text-align:center">2</td>
+<td style="text-align:center">3</td>
+<td style="text-align:center">4</td>
+<td style="text-align:center">-1</td>
+<td style="text-align:center">-</td>
+</tr>
+<tr>
+<td style="text-align:center"><em>next2’</em></td>
+<td style="text-align:center">-</td>
+<td style="text-align:center">-1</td>
+<td style="text-align:center">-1</td>
+<td style="text-align:center">-1</td>
+<td style="text-align:center">0</td>
+<td style="text-align:center">1</td>
+<td style="text-align:center">2</td>
+<td style="text-align:center">3</td>
+<td style="text-align:center">4</td>
+<td style="text-align:center">-1</td>
+</tr>
+</tbody>
+</table>
+</div>
+]]></content>
+      <categories>
+        <category>Algorithm</category>
+      </categories>
+      <tags>
+        <tag>algorithm</tag>
+        <tag>cpp</tag>
+        <tag>c/c++</tag>
+        <tag>笔试</tag>
       </tags>
   </entry>
   <entry>

@@ -23,19 +23,24 @@
     var CONFIG = {"hostname":"yichengsu.github.io","root":"/","scheme":"Pisces","version":"8.0.0","exturl":true,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":false,"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":true,"mediumzoom":false,"lazyload":true,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"Searching...","empty":"We didn't find any results for the search: ${query}","hits_time":"${hits} results found in ${time} ms","hits":"${hits} results found"},"path":"search.xml","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false}};
   </script>
 
-  <meta name="description" content="One meets its destiny on the road he takes to avoid it.">
-<meta property="og:type" content="website">
-<meta property="og:title" content="suyc&#39;s blog">
-<meta property="og:url" content="https://yichengsu.github.io/archives/2020/08/index.html">
+  <meta name="description" content="字符串KMP参考力扣28题。此外还有214、459题。 12345678910111213141516int strStr(string haystack, string needle) &amp;#123;    if (needle &#x3D;&#x3D; &quot;&quot;) return 0;    &#x2F;&#x2F; get next    vector&lt;int&gt; next(needle.size(), 0)">
+<meta property="og:type" content="article">
+<meta property="og:title" content="algorithm-notes">
+<meta property="og:url" content="https://yichengsu.github.io/2020/09/algorithm-notes/index.html">
 <meta property="og:site_name" content="suyc&#39;s blog">
-<meta property="og:description" content="One meets its destiny on the road he takes to avoid it.">
+<meta property="og:description" content="字符串KMP参考力扣28题。此外还有214、459题。 12345678910111213141516int strStr(string haystack, string needle) &amp;#123;    if (needle &#x3D;&#x3D; &quot;&quot;) return 0;    &#x2F;&#x2F; get next    vector&lt;int&gt; next(needle.size(), 0)">
 <meta property="og:locale" content="en_US">
+<meta property="article:published_time" content="2020-09-01T12:55:30.000Z">
+<meta property="article:modified_time" content="2020-09-01T12:59:35.625Z">
 <meta property="article:author" content="suyc">
-<meta property="article:tag" content="python ML DL">
+<meta property="article:tag" content="algorithm">
+<meta property="article:tag" content="cpp">
+<meta property="article:tag" content="c&#x2F;c++">
+<meta property="article:tag" content="笔试">
 <meta name="twitter:card" content="summary">
 
 
-<link rel="canonical" href="https://yichengsu.github.io/archives/2020/08/">
+<link rel="canonical" href="https://yichengsu.github.io/2020/09/algorithm-notes/">
 
 
 <script class="page-configurations">
@@ -43,12 +48,12 @@
   CONFIG.page = {
     sidebar: "",
     isHome : false,
-    isPost : false,
+    isPost : true,
     lang   : 'en'
   };
 </script>
 
-  <title>Archive | suyc's blog</title>
+  <title>algorithm-notes | suyc's blog</title>
   
 
 
@@ -211,7 +216,7 @@
 
   <aside class="sidebar">
 
-    <div class="sidebar-inner sidebar-overview-active">
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
       <ul class="sidebar-nav">
         <li class="sidebar-nav-toc">
           Table of Contents
@@ -223,6 +228,7 @@
 
       <!--noindex-->
       <section class="post-toc-wrap sidebar-panel">
+          <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%AD%97%E7%AC%A6%E4%B8%B2"><span class="nav-number">1.</span> <span class="nav-text">字符串</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#KMP"><span class="nav-number">1.1.</span> <span class="nav-text">KMP</span></a></li></ol></li></ol></div>
       </section>
       <!--/noindex-->
 
@@ -289,52 +295,131 @@
 </noscript>
 
 
-    <div class="main-inner archive posts-collapse">
+    <div class="main-inner post posts-expand">
       
 
       
 
+    
   
   
-  
-  <div class="post-block">
-    <div class="post-content">
-      <div class="collection-title">
-        <span class="collection-header">Um..! 13 posts in total. Keep on posting.</span>
-      </div>
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="en">
+    <link itemprop="mainEntityOfPage" href="https://yichengsu.github.io/2020/09/algorithm-notes/">
 
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/myavatar.jpg">
+      <meta itemprop="name" content="suyc">
+      <meta itemprop="description" content="One meets its destiny on the road he takes to avoid it.">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="suyc's blog">
+    </span>
+
+    
+    
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          algorithm-notes
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">Posted on</span>
       
-    <div class="collection-year">
-      <span class="collection-header">2020</span>
+
+      <time title="Created: 2020-09-01 20:55:30 / Modified: 20:59:35" itemprop="dateCreated datePublished" datetime="2020-09-01T20:55:30+08:00">2020-09-01</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">In</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/Algorithm/" itemprop="url" rel="index"><span itemprop="name">Algorithm</span></a>
+        </span>
+    </span>
+
+  
+    <span class="post-meta-item" title="Views" id="busuanzi_container_page_pv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="post-meta-item-text">Views: </span>
+      <span id="busuanzi_value_page_pv"></span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <h1 id="字符串"><a href="#字符串" class="headerlink" title="字符串"></a>字符串</h1><h2 id="KMP"><a href="#KMP" class="headerlink" title="KMP"></a>KMP</h2><p>参考力扣28题。此外还有214、459题。</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">strStr</span><span class="params">(<span class="built_in">string</span> haystack, <span class="built_in">string</span> needle)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">if</span> (needle == <span class="string">&quot;&quot;</span>) <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">    <span class="comment">// get next</span></span><br><span class="line">    <span class="function"><span class="built_in">vector</span>&lt;<span class="keyword">int</span>&gt; <span class="title">next</span><span class="params">(needle.size(), <span class="number">0</span>)</span></span>;</span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">2</span>, j = <span class="number">0</span>; i &lt; needle.size(); ++i) &#123;</span><br><span class="line">        <span class="keyword">while</span> (j &gt; <span class="number">0</span> &amp;&amp; needle[j] != needle[i<span class="number">-1</span>]) j = next[j];</span><br><span class="line">        <span class="keyword">if</span> (needle[j] == needle[i<span class="number">-1</span>]) next[i] = ++j；</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">// matching</span></span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>, j = <span class="number">0</span>; i &lt; haystack.size(); ++i) &#123;</span><br><span class="line">        <span class="keyword">while</span> (j &gt; <span class="number">0</span> &amp;&amp; haystack[i] != needle[j]) j = next[j];</span><br><span class="line">        <span class="keyword">if</span> (needle[j] == haystack[i]) ++j;</span><br><span class="line">        <span class="keyword">if</span> (j == needle.size()) <span class="keyword">return</span> i - j + <span class="number">1</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> <span class="number">-1</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
     </div>
 
-  <article itemscope itemtype="http://schema.org/Article">
-    <header class="post-header">
-      <div class="post-meta-container">
-        <time itemprop="dateCreated"
-              datetime="2020-08-25T15:56:15+08:00"
-              content="2020-08-25">
-          08-25
-        </time>
-      </div>
-
-      <div class="post-title">
-          <a class="post-title-link" href="/2020/08/cpp-for-vscode/" itemprop="url">
-            <span itemprop="name">vscode C/C++ 笔试环境配置</span>
-          </a>
-      </div>
-
+    
+    
+    
       
-    </header>
+  <div class="popular-posts-header">Related Posts</div>
+  <ul class="popular-posts">
+    <li class="popular-posts-item">
+      <div class="popular-posts-title"><a href="\2020\09\two-kmp-methods\" rel="bookmark">two-kmp-methods</a></div>
+    </li>
+    <li class="popular-posts-item">
+      <div class="popular-posts-title"><a href="\2020\08\cpp-for-vscode\" rel="bookmark">vscode C/C++ 笔试环境配置</a></div>
+    </li>
+  </ul>
+
+
+    <footer class="post-footer">
+          
+
+<div class="post-copyright">
+<ul>
+  <li class="post-copyright-author">
+      <strong>Post author:  </strong>suyc
+  </li>
+  <li class="post-copyright-link">
+      <strong>Post link: </strong>
+      <a href="https://yichengsu.github.io/2020/09/algorithm-notes/" title="algorithm-notes">https://yichengsu.github.io/2020/09/algorithm-notes/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>Copyright Notice:  </strong>All articles in this blog are licensed under <span class="exturl" data-url="aHR0cHM6Ly9jcmVhdGl2ZWNvbW1vbnMub3JnL2xpY2Vuc2VzL2J5LW5jLXNhLzQuMC9lbg=="><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</span> unless stating additionally.
+  </li>
+</ul>
+</div>
+
+          <div class="post-tags">
+              <a href="/tags/algorithm/" rel="tag"># algorithm</a>
+              <a href="/tags/cpp/" rel="tag"># cpp</a>
+              <a href="/tags/c-c/" rel="tag"># c/c++</a>
+              <a href="/tags/%E7%AC%94%E8%AF%95/" rel="tag"># 笔试</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2020/09/two-kmp-methods/" rel="prev" title="two-kmp-methods">
+                  <i class="fa fa-chevron-left"></i> two-kmp-methods
+                </a>
+            </div>
+            <div class="post-nav-item">
+            </div>
+          </div>
+    </footer>
   </article>
-
-
-    </div>
-  </div>
   
   
-  
-
   
 
 

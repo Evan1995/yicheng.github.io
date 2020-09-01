@@ -2,9 +2,30 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   
   <url>
+    <loc>https://yichengsu.github.io/2020/09/algorithm-notes/</loc>
+    
+    <lastmod>2020-09-01</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>https://yichengsu.github.io/2020/09/two-kmp-methods/</loc>
+    
+    <lastmod>2020-09-01</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>https://yichengsu.github.io/2019/09/pytorch-backward-parameter/</loc>
+    
+    <lastmod>2020-09-01</lastmod>
+    
+  </url>
+  
+  <url>
     <loc>https://yichengsu.github.io/2020/08/cpp-for-vscode/</loc>
     
-    <lastmod>2020-08-25</lastmod>
+    <lastmod>2020-08-30</lastmod>
     
   </url>
   
@@ -65,13 +86,6 @@
   </url>
   
   <url>
-    <loc>https://yichengsu.github.io/2019/09/pytorch-backward-parameter/</loc>
-    
-    <lastmod>2019-12-11</lastmod>
-    
-  </url>
-  
-  <url>
     <loc>https://yichengsu.github.io/2019/08/CrossEntropyLoss/</loc>
     
     <lastmod>2019-12-11</lastmod>
@@ -116,7 +130,7 @@
 
   <url>
     <loc>https://yichengsu.github.io/</loc>
-    <lastmod>2020-08-25</lastmod>
+    <lastmod>2020-09-01</lastmod>
     <changefreq>daily</changefreq>
     <priority>1.0</priority>
   </url>
@@ -124,119 +138,126 @@
   
   <url>
     <loc>https://yichengsu.github.io/tags/Hexo/</loc>
-    <lastmod>2020-08-25</lastmod>
+    <lastmod>2020-09-01</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
   </url>
   
   <url>
     <loc>https://yichengsu.github.io/tags/NexT/</loc>
-    <lastmod>2020-08-25</lastmod>
-    <changefreq>daily</changefreq>
-    <priority>0.6</priority>
-  </url>
-  
-  <url>
-    <loc>https://yichengsu.github.io/tags/vscode/</loc>
-    <lastmod>2020-08-25</lastmod>
+    <lastmod>2020-09-01</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
   </url>
   
   <url>
     <loc>https://yichengsu.github.io/tags/Deep-Learning/</loc>
-    <lastmod>2020-08-25</lastmod>
+    <lastmod>2020-09-01</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
   </url>
   
   <url>
     <loc>https://yichengsu.github.io/tags/loss-function/</loc>
-    <lastmod>2020-08-25</lastmod>
+    <lastmod>2020-09-01</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
   </url>
   
   <url>
     <loc>https://yichengsu.github.io/tags/%E7%9F%A5%E5%85%B6%E6%89%80%E4%BB%A5%E7%84%B6/</loc>
-    <lastmod>2020-08-25</lastmod>
+    <lastmod>2020-09-01</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
   </url>
   
   <url>
     <loc>https://yichengsu.github.io/tags/PyTorch/</loc>
-    <lastmod>2020-08-25</lastmod>
+    <lastmod>2020-09-01</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
+    <loc>https://yichengsu.github.io/tags/vscode/</loc>
+    <lastmod>2020-09-01</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
   </url>
   
   <url>
     <loc>https://yichengsu.github.io/tags/Python/</loc>
-    <lastmod>2020-08-25</lastmod>
+    <lastmod>2020-09-01</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
   </url>
   
   <url>
     <loc>https://yichengsu.github.io/tags/Iterator/</loc>
-    <lastmod>2020-08-25</lastmod>
+    <lastmod>2020-09-01</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
   </url>
   
   <url>
     <loc>https://yichengsu.github.io/tags/Iterable/</loc>
-    <lastmod>2020-08-25</lastmod>
+    <lastmod>2020-09-01</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
   </url>
   
   <url>
-    <loc>https://yichengsu.github.io/tags/learning-rate/</loc>
-    <lastmod>2020-08-25</lastmod>
+    <loc>https://yichengsu.github.io/tags/algorithm/</loc>
+    <lastmod>2020-09-01</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
   </url>
   
   <url>
     <loc>https://yichengsu.github.io/tags/cpp/</loc>
-    <lastmod>2020-08-25</lastmod>
+    <lastmod>2020-09-01</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
   </url>
   
   <url>
     <loc>https://yichengsu.github.io/tags/c-c/</loc>
-    <lastmod>2020-08-25</lastmod>
+    <lastmod>2020-09-01</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
   </url>
   
   <url>
     <loc>https://yichengsu.github.io/tags/%E7%AC%94%E8%AF%95/</loc>
-    <lastmod>2020-08-25</lastmod>
+    <lastmod>2020-09-01</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
+    <loc>https://yichengsu.github.io/tags/learning-rate/</loc>
+    <lastmod>2020-09-01</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
   </url>
   
   <url>
     <loc>https://yichengsu.github.io/tags/backward/</loc>
-    <lastmod>2020-08-25</lastmod>
+    <lastmod>2020-09-01</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
   </url>
   
   <url>
     <loc>https://yichengsu.github.io/tags/BatchNorm/</loc>
-    <lastmod>2020-08-25</lastmod>
+    <lastmod>2020-09-01</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
   </url>
   
   <url>
     <loc>https://yichengsu.github.io/tags/freeze/</loc>
-    <lastmod>2020-08-25</lastmod>
+    <lastmod>2020-09-01</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
   </url>
@@ -245,28 +266,35 @@
   
   <url>
     <loc>https://yichengsu.github.io/categories/Hexo/</loc>
-    <lastmod>2020-08-25</lastmod>
+    <lastmod>2020-09-01</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
   </url>
   
   <url>
     <loc>https://yichengsu.github.io/categories/Deep-Learning/</loc>
-    <lastmod>2020-08-25</lastmod>
+    <lastmod>2020-09-01</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
   </url>
   
   <url>
     <loc>https://yichengsu.github.io/categories/Python/</loc>
-    <lastmod>2020-08-25</lastmod>
+    <lastmod>2020-09-01</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
+    <loc>https://yichengsu.github.io/categories/Algorithm/</loc>
+    <lastmod>2020-09-01</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
   </url>
   
   <url>
     <loc>https://yichengsu.github.io/categories/C-C/</loc>
-    <lastmod>2020-08-25</lastmod>
+    <lastmod>2020-09-01</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
   </url>
